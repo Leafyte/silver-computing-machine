@@ -5,7 +5,6 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Switch,
   SafeAreaView,
   TextInput
 } from 'react-native';
@@ -16,40 +15,38 @@ import { DriverIdentity } from '../api/driverClient';
 
 interface ProfileScreenProps {
   identity: DriverIdentity | null;
-  onPair: (code: string) => Promise<void>;
+  onLogin: (username: string, password: string) => Promise<void>;
+  onSendMessage: (message: string) => Promise<boolean>;
   onLogout: () => Promise<void>;
 }
 
-export const ProfileScreen: React.FC<ProfileScreenProps> = ({ identity, onPair, onLogout }) => {
-  const [offlineSync, setOfflineSync] = useState<boolean>(true);
-  const [hapticFeedback, setHapticFeedback] = useState<boolean>(true);
+export const ProfileScreen: React.FC<ProfileScreenProps> = ({ identity, onLogin, onSendMessage, onLogout }) => {
   const [actionNotice, setActionNotice] = useState<{ action: string; detail: string } | null>(null);
-  const [pairingCode, setPairingCode] = useState('');
-  const [isPairing, setIsPairing] = useState(false);
+  const [username, setUsername] = useState('driver');
+  const [password, setPassword] = useState('');
+  const [dispatchMessage, setDispatchMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handlePair = async () => {
-    setIsPairing(true);
-    try { await onPair(pairingCode.trim()); setPairingCode(''); }
-    catch (error) { setActionNotice({ action: 'Driver pairing failed', detail: error instanceof Error ? error.message : 'Could not pair this device.' }); }
-    finally { setIsPairing(false); }
+  const handleLogin = async () => {
+    setIsSubmitting(true);
+    try { await onLogin(username.trim(), password); setPassword(''); }
+    catch (error) { setActionNotice({ action: 'Login failed', detail: error instanceof Error ? error.message : 'Could not sign in.' }); }
+    finally { setIsSubmitting(false); }
   };
 
-  const handleToggleOfflineSync = (val: boolean) => {
-    setOfflineSync(val);
-    setActionNotice({
-      action: `Offline Manifest Cache ${val ? 'Enabled' : 'Disabled'}`,
-      detail: `Stop waypoints and consignment payloads ${
-        val ? 'cached in device local memory' : 'purged from local storage'
-      }. Local preview configuration only.`
-    });
-  };
-
-  const handleToggleHaptics = (val: boolean) => {
-    setHapticFeedback(val);
-    setActionNotice({
-      action: `Tactile Feedback ${val ? 'Enabled' : 'Disabled'}`,
-      detail: `Corridor alert vibration threshold set to ${val ? 'Active' : 'Off'}. No sensor permission required.`
-    });
+  const handleSendMessage = async () => {
+    const message = dispatchMessage.trim();
+    if (!message) return;
+    setIsSubmitting(true);
+    try {
+      const sent = await onSendMessage(message);
+      setActionNotice({ action: sent ? 'Message sent to dispatch' : 'Message was not sent', detail: sent ? 'Your message was saved to the backend audit feed.' : 'The backend did not accept the message. Check the connection and try again.' });
+      if (sent) setDispatchMessage('');
+    } catch (error) {
+      setActionNotice({ action: 'Message was not sent', detail: error instanceof Error ? error.message : 'Check the backend connection and try again.' });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleCallDispatch = () => {
@@ -72,16 +69,20 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({ identity, onPair, 
         </View>
 
         <View style={styles.sectionCard}>
-          <Text style={styles.sectionHeading}>{identity ? 'Signed-in Driver Session' : 'Pair this Driver Device'}</Text>
+          <Text style={styles.sectionHeading}>{identity ? 'Signed-in Driver Session' : 'Driver Demo Login'}</Text>
           {identity ? <>
             <Text style={styles.rowValueBold}>Driver {identity.driver_id}</Text>
             <Text style={styles.rowValue}>Assigned vehicle {identity.vehicle_id}</Text>
-            <Text style={styles.rowValue}>Session expires {identity.expires_at}</Text>
+            <Text style={styles.rowValue}>Session expires {Number.isNaN(Date.parse(identity.expires_at)) ? 'Unavailable' : new Date(identity.expires_at).toLocaleString()}</Text>
+            <TextInput value={dispatchMessage} onChangeText={setDispatchMessage} placeholder="Message dispatch (up to 280 characters)" multiline maxLength={280} style={styles.pairingInput} accessibilityLabel="Message to dispatch" />
+            <TouchableOpacity style={styles.dispatchCallBtn} onPress={() => void handleSendMessage()} disabled={isSubmitting || !dispatchMessage.trim()}><Text style={styles.dispatchCallBtnText}>{isSubmitting ? 'Sending…' : 'Send message to dispatch'}</Text></TouchableOpacity>
             <TouchableOpacity style={styles.dispatchCallBtn} onPress={onLogout}><Text style={styles.dispatchCallBtnText}>Sign out</Text></TouchableOpacity>
           </> : <>
-            <Text style={styles.rowValue}>Enter the one-time pairing code issued for your driver and vehicle.</Text>
-            <TextInput value={pairingCode} onChangeText={setPairingCode} placeholder="One-time pairing code" autoCapitalize="none" secureTextEntry style={styles.pairingInput} accessibilityLabel="One-time driver pairing code" />
-            <TouchableOpacity style={styles.dispatchCallBtn} onPress={handlePair} disabled={isPairing || !pairingCode.trim()}><Text style={styles.dispatchCallBtnText}>{isPairing ? 'Pairing…' : 'Pair with backend'}</Text></TouchableOpacity>
+            <Text style={styles.rowValue}>Sign in to load the driver manifest and message dispatch.</Text>
+            <TextInput value={username} onChangeText={setUsername} placeholder="Username" autoCapitalize="none" autoCorrect={false} style={styles.pairingInput} accessibilityLabel="Demo username" />
+            <TextInput value={password} onChangeText={setPassword} placeholder="Password" autoCapitalize="none" secureTextEntry style={styles.pairingInput} accessibilityLabel="Demo password" />
+            <Text style={styles.rowValue}>Demo credentials: driver / driver-demo-2026</Text>
+            <TouchableOpacity style={styles.dispatchCallBtn} onPress={() => void handleLogin()} disabled={isSubmitting || !username.trim() || !password}><Text style={styles.dispatchCallBtnText}>{isSubmitting ? 'Signing in…' : 'Sign in'}</Text></TouchableOpacity>
           </>}
         </View>
 
@@ -152,41 +153,12 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({ identity, onPair, 
         <View style={styles.noticeCard}>
           <Text style={styles.noticeHeading}>DATA SOURCES & CONNECTIONS</Text>
           <Text style={styles.noticeBody}>
-            {identity ? 'Manifest and stop/delay reports sync to the backend. Road navigation, GPS, consignee contact, proof of delivery, and shift services are not provided by the current API.' : 'Pair a driver session to load the assigned backend manifest and submit stop or delay reports. Without a session, route screens use preview fixtures.'}
+            {identity ? 'Manifest, stop/delay reports, and messages sync to the backend activity feed. Road navigation, GPS, consignee contact, proof of delivery, and shift services are not provided by the current API.' : 'Sign in to load the assigned backend manifest and submit stop, delay, and message reports. Without a session, route screens use preview fixtures.'}
           </Text>
           <View style={styles.noticePills}>
             {!identity && <Text style={styles.noticePill}>₹83/$ assumed rate</Text>}
             <Text style={styles.noticePill}>Simulated ETAs</Text>
             <Text style={styles.noticePill}>No speed-up claimed</Text>
-          </View>
-        </View>
-
-        {/* Device & Sync Settings */}
-        <View style={styles.sectionCard}>
-          <Text style={styles.sectionHeading}>Terminal Configuration</Text>
-
-          <View style={styles.switchRow}>
-            <View style={styles.switchTextWrap}>
-              <Text style={styles.switchTitle}>Offline Manifest Cache</Text>
-              <Text style={styles.switchSubtitle}>Local storage of stop waypoints and consignment payloads</Text>
-            </View>
-            <Switch
-              value={offlineSync}
-              onValueChange={handleToggleOfflineSync}
-              trackColor={{ false: '#EEF2ED', true: '#205A46' }}
-            />
-          </View>
-
-          <View style={styles.switchRow}>
-            <View style={styles.switchTextWrap}>
-              <Text style={styles.switchTitle}>Haptic Feedback</Text>
-              <Text style={styles.switchSubtitle}>Tactile impulse on corridor delay alert trigger</Text>
-            </View>
-            <Switch
-              value={hapticFeedback}
-              onValueChange={handleToggleHaptics}
-              trackColor={{ false: '#EEF2ED', true: '#205A46' }}
-            />
           </View>
         </View>
 

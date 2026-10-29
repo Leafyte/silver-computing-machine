@@ -81,6 +81,16 @@ class DriverSessionStore:
         return token, {"driver_id": driver_id, "vehicle_id": vehicle_id,
                        "expires_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(now + self.session_seconds))}
 
+    def create_demo_session(self, driver_id: str, vehicle_id: str) -> tuple[str, dict[str, str]]:
+        """Issue a short-lived session for a configured local demo account."""
+        token = secrets.token_urlsafe(32)
+        now = time.time()
+        with self._connect() as db:
+            db.execute("INSERT INTO driver_sessions VALUES(?,?,?,?,?,0)",
+                       (_digest(token), driver_id, vehicle_id, now, now + self.session_seconds))
+        return token, {"driver_id": driver_id, "vehicle_id": vehicle_id,
+                       "expires_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(now + self.session_seconds))}
+
     def authenticate(self, token: str) -> dict[str, str]:
         if not token or len(token) > 256:
             raise DriverError("authentication_required", "Valid driver session required", 401)
@@ -89,7 +99,11 @@ class DriverSessionStore:
                              (_digest(token),)).fetchone()
         if not row or row["revoked"] or row["expires_at"] <= time.time():
             raise DriverError("authentication_required", "Valid driver session required", 401)
-        return {"driver_id": row["driver_id"], "vehicle_id": row["vehicle_id"]}
+        return {
+            "driver_id": row["driver_id"],
+            "vehicle_id": row["vehicle_id"],
+            "expires_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(row["expires_at"])),
+        }
 
     def revoke(self, token: str) -> None:
         with self._connect() as db:
@@ -116,12 +130,12 @@ class DriverSessionStore:
                 payload["manifest_version"] != manifest.get("manifest_version")):
             raise DriverError("invalid_report", "Driver report does not match the active manifest")
         kind = payload["kind"]
-        if kind not in {"stop_arrived", "stop_completed", "delay_report"}:
+        if kind not in {"stop_arrived", "stop_completed", "delay_report", "driver_message"}:
             raise DriverError("invalid_report", "Driver report kind is unsupported")
         stop_id = payload.get("stop_id")
         stops = manifest.get("ordered_stops", [])
         stop_ids = [row.get("order_id") for row in stops if isinstance(row, dict)]
-        if kind != "delay_report" or stop_id is not None:
+        if kind in {"stop_arrived", "stop_completed"} or stop_id is not None:
             if not isinstance(stop_id, str) or stop_id not in stop_ids:
                 raise DriverError("invalid_report", "Stop is not in this driver's active manifest")
         severity = payload.get("severity")
@@ -130,6 +144,8 @@ class DriverSessionStore:
         note = payload.get("note", "")
         if not isinstance(note, str) or len(note) > 280:
             raise DriverError("invalid_report", "Driver note exceeds the 280 character limit")
+        if kind == "driver_message" and not note.strip():
+            raise DriverError("invalid_report", "Driver message cannot be empty")
         event = {"event_id": payload["event_id"], "manifest_version": payload["manifest_version"],
                  "kind": kind, "stop_id": stop_id, "severity": severity, "note": note}
         body_hash = _digest(json.dumps(event, sort_keys=True, separators=(",", ":")))

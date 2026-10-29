@@ -47,10 +47,16 @@ def create_eta_router(app, auth, *, db_path=None, registry=None, uncertainty_reg
             return state["jobs"]
 
     def principal(request):
-        if auth.mode != "token" or not auth.ready:
-            raise EtaError("configured_auth_required", "assignment changes require configured token-role authentication", status=403)
         value = request.headers.get("authorization", "")
         raw = value[7:].encode() if value.startswith("Bearer ") else b""
+        if auth.mode == "local":
+            demo_auth = getattr(app.state, "demo_auth_service", None)
+            role = demo_auth.role_for_local_token(value[7:]) if demo_auth and value.startswith("Bearer ") else None
+            if role in {"dispatcher", "admin"}:
+                return {"subject": role, "role": role}
+            raise EtaError("authorization_denied", "dispatcher demo login is required", status=403)
+        if not auth.ready:
+            raise EtaError("configured_auth_required", "assignment changes require configured token-role authentication", status=403)
         for role in ("dispatcher", "admin"):
             if hmac.compare_digest(raw, auth.tokens[role].encode()):
                 return {"subject": role, "role": role}

@@ -1,6 +1,5 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { OperationalEvent } from '../../types/api';
-import { apiClient } from '../../api/client';
 import {
   Activity,
   AlertTriangle,
@@ -13,32 +12,15 @@ import {
 
 interface ActivityViewProps {
   events: OperationalEvent[];
+  syncError?: string | null;
+  lastSyncedAt?: string | null;
   onRefresh?: () => void;
 }
 
-export const ActivityView: React.FC<ActivityViewProps> = ({ events, onRefresh }) => {
+export const ActivityView: React.FC<ActivityViewProps> = ({ events, syncError, lastSyncedAt, onRefresh }) => {
   const [filterCategory, setFilterCategory] = useState<string>('all');
   const [search, setSearch] = useState<string>('');
-  const [dispatcherToken, setDispatcherToken] = useState('');
-  const [driverEvents, setDriverEvents] = useState<OperationalEvent[]>([]);
-  const [driverEventError, setDriverEventError] = useState('');
-  const [loadingDriverEvents, setLoadingDriverEvents] = useState(false);
-
-  const allEvents = useMemo(() => [...driverEvents, ...events], [driverEvents, events]);
-
-  const loadDriverEvents = async () => {
-    setLoadingDriverEvents(true);
-    setDriverEventError('');
-    try {
-      setDriverEvents(await apiClient.getDriverReportEvents(dispatcherToken.trim() || undefined));
-    } catch (error) {
-      setDriverEventError(error instanceof Error ? error.message : 'Could not load driver reports.');
-    } finally {
-      setLoadingDriverEvents(false);
-    }
-  };
-
-  const filteredEvents = allEvents.filter((evt) => {
+  const filteredEvents = events.filter((evt) => {
     const matchCategory = filterCategory === 'all' || evt.category === filterCategory;
     const matchSearch =
       evt.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -123,16 +105,11 @@ export const ActivityView: React.FC<ActivityViewProps> = ({ events, onRefresh })
           </div>
         </div>
 
-        <div className="mt-4 rounded-2xl border border-[#E5E0D8] bg-[#F8F7F3] p-3 flex flex-wrap items-end gap-2">
-          <label className="flex-1 min-w-[220px] text-[10px] font-semibold text-[#4D5C54]">
-            Dispatcher/admin bearer token <span className="font-normal">(only required when backend token auth is enabled)</span>
-            <input type="password" autoComplete="off" value={dispatcherToken} onChange={(e) => setDispatcherToken(e.target.value)} placeholder="Token stays in this page only" className="mt-1 w-full px-3 py-2 text-xs bg-white border border-[#E5E0D8] rounded-xl" />
-          </label>
-          <button onClick={() => void loadDriverEvents()} disabled={loadingDriverEvents} className="px-4 py-2 rounded-xl bg-[#1E5A44] text-white font-bold disabled:opacity-60">
-            {loadingDriverEvents ? 'Loading…' : 'Load driver reports'}
-          </button>
-          <span className="basis-full text-[10px] text-[#7D8D85]">Driver stop and delay reports are read from the backend audit store. The token is not saved.</span>
-          {driverEventError && <span role="alert" className="basis-full text-[11px] text-[#C6534C]">{driverEventError}</span>}
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-[10px]">
+          <span className={syncError ? 'text-[#C6534C]' : 'text-[#7D8D85]'}>
+            {syncError ? `Driver event sync failed: ${syncError}` : `Live backend feed · ${lastSyncedAt ? `synced ${new Date(lastSyncedAt).toLocaleTimeString()}` : 'connecting…'}`}
+          </span>
+          <span className="text-[#7D8D85]">Phone reports refresh automatically every 3 seconds.</span>
         </div>
 
         {/* Category Pills (Atlas Style) */}
@@ -142,7 +119,7 @@ export const ActivityView: React.FC<ActivityViewProps> = ({ events, onRefresh })
             { id: 'delay_alert', label: 'Delay Alerts' },
             { id: 'recovery', label: 'Recovery Re-plans' },
             { id: 'status_change', label: 'Stop Completions' },
-            { id: 'assignment', label: 'Assignments' },
+            { id: 'assignment', label: 'Driver messages' },
             { id: 'job_lifecycle', label: 'Solver Lifecycle' }
           ].map((cat) => (
             <button
@@ -166,7 +143,7 @@ export const ActivityView: React.FC<ActivityViewProps> = ({ events, onRefresh })
           <div className="text-center py-12 text-[#7D8D85] space-y-2">
             <Activity className="w-8 h-8 text-[#A8DBC9] mx-auto" />
             <div className="font-bold text-sm text-[#141F1A]">No operational events match this filter</div>
-            <p className="text-[11px]">Clear search or switch category filter to inspect logs.</p>
+            <p className="text-[11px]">Phone arrival, completion, delay, and driver-message reports appear here after the backend accepts them.</p>
           </div>
         ) : (
           filteredEvents.map((evt) => {

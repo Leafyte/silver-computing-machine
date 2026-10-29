@@ -73,12 +73,4 @@ describe('arQ API Client & Solver Semaphore Contract', () => {
     expect(run?.provenance_badge).toBe('Classical re-plan');
   });
 
-  it('retrieves mathematical evidence and Platt calibration data', async () => {
-    const evidence = await apiClient.getIntelligenceEvidence();
-    expect(evidence.brier_score).toBe(0.142);
-    expect(evidence.brier_reduction_pct).toBe(-46.9);
-    expect(evidence.regret_reduction_pct).toBe(-30.8);
-    expect(evidence.calibration_points.length).toBeGreaterThan(5);
-    expect(evidence.benchmarks.some((b) => b.engine.includes('QpiAI Opt'))).toBe(true);
-  });
 });

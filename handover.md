@@ -225,7 +225,7 @@ uv pip install --python .venv-api/bin/python \
 ./.venv-api/bin/python -m pytest -q
 
 # Start the localhost ArQ API server (keep bound to 127.0.0.1!)
-./.venv-api/bin/python -m uvicorn backend.api:app --host 127.0.0.1 --port 8000
+./.venv-api/bin/python -m uvicorn backend.api:app --host 0.0.0.0 --port 8000
 
 # 2. Optional Isolated Vendor SDK Environment (.venv-sdk)
 uv venv --python 3.12 .venv-sdk

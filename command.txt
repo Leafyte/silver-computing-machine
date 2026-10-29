@@ -1,0 +1,57 @@
+# arQ / DebugLeaf local development commands (macOS, zsh)
+# Run backend, web, and Expo in three separate terminal windows.
+# From a physical Android phone, keep phone + Mac on the same Wi-Fi.
+
+# 1) One-time backend virtual environment setup, from project root
+python3 --version
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install fastapi uvicorn pydantic httpx numpy scipy
+
+# 2) Backend, from project root (Terminal 1)
+./.venv/bin/python -m uvicorn backend.api:app --host 0.0.0.0 --port 8000
+
+# 3) Confirm backend is ready (another terminal or browser)
+curl http://127.0.0.1:8000/api/v1/health
+# The API root / is not a webpage; use /api/v1/health to check status.
+
+# 4) Web dashboard dependencies (one-time)
+cd apps/web-frontend
+npm ci
+
+# 5) Web dashboard (Terminal 2, from apps/web-frontend)
+npm run dev
+# Open the localhost URL printed by Vite (normally http://localhost:5173).
+
+# 6) Expo mobile dependencies (one-time, from project root)
+cd apps/mobile-app
+npm ci
+
+# 7a) Physical Android phone over Wi-Fi: set API URL to this Mac's Wi-Fi IP
+# Run from apps/mobile-app; edit .env after checking the printed IP if needed.
+ipconfig getifaddr en0
+printf 'EXPO_PUBLIC_API_URL=http://%s:8000\n' "$(ipconfig getifaddr en0)" > .env
+npx expo start --lan --clear
+# Scan the Expo QR code with Expo Go. Keep phone and Mac on the same Wi-Fi.
+
+# 7b) Android emulator instead of a physical phone
+printf 'EXPO_PUBLIC_API_URL=http://10.0.2.2:8000\n' > .env
+npx expo start --android --clear
+
+# 7c) iOS Simulator (macOS with Xcode installed)
+printf 'EXPO_PUBLIC_API_URL=http://127.0.0.1:8000\n' > .env
+npx expo start --ios --clear
+
+# 8) Optional checks/builds
+# Web, from apps/web-frontend
+npm run typecheck
+npm run build
+
+# Mobile, from apps/mobile-app
+npm run typecheck
+npx expo export --platform android
+
+# 9) Demo sign-in
+# Mobile: driver / driver-demo-2026
+# Web: dispatcher / dispatch-demo-2026

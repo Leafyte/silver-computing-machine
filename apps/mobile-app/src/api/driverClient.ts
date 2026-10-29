@@ -9,7 +9,7 @@ export type BackendDriverState = {
     plan_version: number;
     manifest_version: number;
     ordered_stops: Array<Record<string, any>>;
-  };
+  } | null;
   stop_status: Record<string, 'pending' | 'arrived' | 'completed'>;
   reports: Array<Record<string, any>>;
 };
@@ -29,6 +29,7 @@ async function call<T>(path: string, init: RequestInit = {}): Promise<T> {
 }
 
 export const driverClient = {
+  getApiBaseUrl(): string { return API_BASE_URL; },
   async getHealth(): Promise<boolean> {
     try {
       const response = await fetch(`${API_BASE_URL}/api/v1/health`, { signal: AbortSignal.timeout(5_000) });
@@ -39,6 +40,18 @@ export const driverClient = {
     const response = await call<{ access_token: string; driver_id: string; vehicle_id: string; expires_at: string }>(
       '/api/v1/driver/sessions', { method: 'POST', body: JSON.stringify({ pairing_code: pairingCode }) },
     );
+    sessionToken = response.access_token;
+    identity = { driver_id: response.driver_id, vehicle_id: response.vehicle_id, expires_at: response.expires_at };
+    await SecureStore.setItemAsync('driver_session_token', sessionToken);
+    return identity;
+  },
+  async login(username: string, password: string): Promise<DriverIdentity> {
+    const response = await call<{ access_token: string; role: string; driver_id?: string; vehicle_id?: string; expires_at?: string }>(
+      '/api/v1/auth/login', { method: 'POST', body: JSON.stringify({ username, password }) },
+    );
+    if (response.role !== 'driver' || !response.driver_id || !response.vehicle_id || !response.expires_at) {
+      throw new Error('Use a driver demo account in the mobile app.');
+    }
     sessionToken = response.access_token;
     identity = { driver_id: response.driver_id, vehicle_id: response.vehicle_id, expires_at: response.expires_at };
     await SecureStore.setItemAsync('driver_session_token', sessionToken);
@@ -63,7 +76,7 @@ export const driverClient = {
   async getState(): Promise<BackendDriverState> {
     return call('/api/v1/driver/state');
   },
-  async report(payload: { event_id: string; manifest_version: number; kind: 'stop_arrived' | 'stop_completed' | 'delay_report'; stop_id?: string; severity?: 'light' | 'moderate' | 'heavy'; note?: string }): Promise<void> {
+  async report(payload: { event_id: string; manifest_version: number; kind: 'stop_arrived' | 'stop_completed' | 'delay_report' | 'driver_message'; stop_id?: string; severity?: 'light' | 'moderate' | 'heavy'; note?: string }): Promise<void> {
     await call('/api/v1/driver/reports', { method: 'POST', body: JSON.stringify(payload) });
   },
   async logout(): Promise<void> {

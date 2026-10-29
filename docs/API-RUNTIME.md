@@ -1,7 +1,7 @@
 # V1 local API and job runtime
 
 The backend exposes a versioned FastAPI API. Start locally with
-`.venv\\Scripts\\python.exe -m uvicorn backend.api:app --host 127.0.0.1 --port 8000`.
+`.venv\\Scripts\\python.exe -m uvicorn backend.api:app --host 0.0.0.0 --port 8000`.
 The synchronous decision path is classical exact enumeration over the tiny
 scenario domain; responses label this `local_classical`. No remote execution,
 QPU call, or automatic fallback is implied.

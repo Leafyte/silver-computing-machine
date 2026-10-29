@@ -4,7 +4,6 @@ import {
   Truck,
   Route as RouteIcon,
   ShieldAlert,
-  BrainCircuit,
   Activity,
   Cpu,
   Sun,
@@ -16,7 +15,6 @@ export type NavView =
   | 'fleet'
   | 'dispatch'
   | 'risk'
-  | 'intelligence'
   | 'activity'
   | 'jobs';
 
@@ -53,11 +51,6 @@ export const SidebarRail: React.FC<SidebarRailProps> = ({
       id: 'risk',
       label: 'SLA & Exposure',
       icon: <ShieldAlert className="w-4 h-4" />
-    },
-    {
-      id: 'intelligence',
-      label: 'QML Intelligence',
-      icon: <BrainCircuit className="w-4 h-4" />
     },
     {
       id: 'activity',

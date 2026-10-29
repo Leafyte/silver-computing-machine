@@ -26,7 +26,6 @@ export const DispatchPlanningView: React.FC<DispatchPlanningViewProps> = ({
   const [scenarioValidation, setScenarioValidation] = useState<ScenarioValidation | null>(null);
   const [isValidating, setIsValidating] = useState(false);
   const [vqcResult, setVqcResult] = useState<VqcPlanResult | null>(null);
-  const [dispatcherToken, setDispatcherToken] = useState('');
   const [publishedPlanId, setPublishedPlanId] = useState<string | null>(null);
   const [isPublishing, setIsPublishing] = useState(false);
   const isPublished = plan.data_source === 'backend' && (plan.status === 'active' || publishedPlanId !== null);
@@ -73,15 +72,10 @@ export const DispatchPlanningView: React.FC<DispatchPlanningViewProps> = ({
   };
 
   const handleActivateManifest = async () => {
-    if (!dispatcherToken.trim()) {
-      setSolveMessage('Enter a dispatcher/admin token. The backend must be running in token auth mode.');
-      return;
-    }
     setIsPublishing(true);
     try {
-      const response = await apiClient.registerSyntheticManifest(plan, dispatcherToken.trim());
+      const response = await apiClient.registerSyntheticManifest(plan);
       setPublishedPlanId(typeof response.plan_id === 'string' ? response.plan_id : null);
-      setDispatcherToken('');
       setSolveMessage(`Synthetic manifest ${response.plan_id ?? ''} activated at version ${response.version ?? 1}. It is separate from live vehicle dispatch.`);
     } catch (error) {
       setSolveMessage(error instanceof Error ? error.message : 'Manifest activation failed.');
@@ -286,7 +280,6 @@ export const DispatchPlanningView: React.FC<DispatchPlanningViewProps> = ({
             {!isPublished ? (
               plan.data_source === 'backend' && plan.backend_payload && plan.validator_result.passed ? (
                 <div className="flex items-center gap-2">
-                  <input type="password" autoComplete="off" value={dispatcherToken} onChange={(event) => setDispatcherToken(event.target.value)} placeholder="Dispatcher token" aria-label="Dispatcher token for manifest activation" className="w-36 px-3 py-2 border border-[#E5E0D8] rounded-full text-[10px] outline-none focus:border-[#1E5A44]" />
                   <button onClick={handleActivateManifest} disabled={isPublishing} title="Activates a synthetic ETA manifest after backend validation." className="px-4 py-2.5 bg-[#141F1A] hover:bg-[#1E5A44] text-white rounded-full font-bold flex items-center gap-2 disabled:opacity-50">
                     <ShieldCheck className="w-3.5 h-3.5" /><span>{isPublishing ? 'Activating…' : 'Activate synthetic manifest'}</span>
                   </button>

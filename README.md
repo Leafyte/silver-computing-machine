@@ -1,4 +1,4 @@
-# DebugLeaf / Q-VANTIS
+# DebugLeaf / ArQ
 
 ArQ is a research prototype for the Quant-A-Maze 3.0 QML-01 challenge: delay-risk-aware fleet dispatch for contract logistics. The active problem statement and rubric are extracted from the official source under `sources/`; the older team-submitted challenge PDF is historical context.
 
@@ -20,8 +20,14 @@ Start with:
 4. [bootstrap/ARCHITECTURE-READINESS.md](bootstrap/ARCHITECTURE-READINESS.md) for earlier proposals; treat its bootstrap-stage gates as historical where they conflict with the owner-opened V1 stage.
 5. [sources/q-vantis-build-spec.md](sources/q-vantis-build-spec.md) for the verbatim legacy specification, retained as reference only.
 
+## Run the apps on macOS
+
+The project has two frontend apps: the React + TypeScript dispatcher dashboard in `apps/web-frontend` and the Expo React Native driver app in `apps/mobile-app`. Start the backend, web app, and Expo app in separate terminal windows. Copy/paste commands, Android emulator details, physical-phone Wi-Fi setup, virtual-environment setup, and demo credentials are in [`command.txt`](command.txt).
+
+For a physical phone, set `EXPO_PUBLIC_API_URL` in `apps/mobile-app/.env` to `http://<your-Mac-Wi-Fi-IP>:8000`, connect both devices to the same Wi-Fi, and restart Metro with `npx expo start --clear`. The backend must listen on `0.0.0.0:8000` for other devices on the local network. This exposes the local demo API to that network; use only a trusted network. Android emulators use `http://10.0.2.2:8000` instead. The backend health check is `/api/v1/health`; the API root `/` does not serve a webpage.
+
 ## Evidence boundaries
 
 The challenge expects an operationally feasible dispatch plan with vehicle assignments, ordered stops, ETAs/SLA-risk estimates, financial exposure, and evaluation of SLA violations, coverage, cost, calibration, solver quality, and runtime. See `sources/problem-extract.txt` and the source PDF for the extracted requirements. SDK package inspection is recorded in `bootstrap/SDK-EVIDENCE.md`; it is not proof of authenticated service calls, QPU use, or end-to-end integration.
 
-No quantum advantage, novelty, calibrated risk, live-fleet dispatch, or operational performance claim is made by this README. Tiny plans have passed the independent validator in local tests and HTTP checks; this is prototype evidence only. The default local API mode has no authentication. An optional token-role mode passed a sentinel localhost smoke, but it is a prototype and has not had production security review. Keep local services on loopback. Results must identify whether they came from classical execution, a local simulator, a mock, cloud simulation, or QPU, and include only metrics actually measured. See [the runtime guide](docs/API-RUNTIME.md) for its role policy and [the acceptance report](docs/TERRA-V1-REPORT.md) for evidence and limits.
+No quantum advantage, novelty, calibrated risk, live-fleet dispatch, or operational performance claim is made by this README. Tiny plans have passed the independent validator in local tests and HTTP checks; this is prototype evidence only. The default local API mode has no authentication. An optional token-role mode passed a sentinel localhost smoke, but it is a prototype and has not had production security review. Keep the API on loopback when using only this computer; bind to `0.0.0.0` only for phone testing on a trusted Wi-Fi network, and stop it when finished. Results must identify whether they came from classical execution, a local simulator, a mock, cloud simulation, or QPU, and include only metrics actually measured. See [the runtime guide](docs/API-RUNTIME.md) for its role policy and [the acceptance report](docs/TERRA-V1-REPORT.md) for evidence and limits.

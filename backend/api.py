@@ -139,6 +139,8 @@ def create_app(job_manager: JobManager | None = None, *, auth_config: AuthConfig
         allow_headers=["Authorization", "Content-Type"],
     )
     app.state.job_manager = manager
+    app.state.eta_controller = eta_controller
+    app.state.eta_job_manager = eta_job_manager
     compute_slots = BoundedSemaphore(2)
 
     def jobs() -> JobManager:
@@ -612,6 +614,8 @@ def create_app(job_manager: JobManager | None = None, *, auth_config: AuthConfig
                                         job_manager=eta_job_manager))
     from .driver_api import create_driver_router
     app.include_router(create_driver_router(app, auth))
+    from .auth_api import create_auth_router
+    app.include_router(create_auth_router(app, auth))
     return app
 
 

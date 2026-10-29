@@ -5,7 +5,7 @@ The client apps are kept separate from the Python backend:
 - `web-frontend/` — React, TypeScript, and Vite dispatch dashboard.
 - `mobile-app/` — React Native with Expo driver app.
 
-The web app preserves the NMIT dashboard's visual structure and connects scenario validation, dispatch jobs, cancellation, health, risk replay, recovery, synthetic manifest activation, and driver report review to the local API. The driver app adapts the NMIT workflow and connects driver pairing, assigned manifest reads, stop-arrival/completion reports, and delay reports. The only maintained frontend source projects are `web-frontend/` and `mobile-app/`.
+The web app preserves the NMIT dashboard's visual structure and connects demo dispatcher login, scenario validation, dispatch jobs, cancellation, health, risk replay, recovery, synthetic manifest activation, and the live driver activity feed to the local API. The driver app adapts the NMIT workflow and connects demo driver login, assigned manifest reads, stop-arrival/completion reports, delay reports, and dispatch messages. The only maintained frontend source projects are `web-frontend/` and `mobile-app/`.
 
 ## Stack and integration boundary
 

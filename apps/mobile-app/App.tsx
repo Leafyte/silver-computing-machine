@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Platform, StatusBar as NativeStatusBar } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { TodayScreen } from './src/screens/TodayScreen';
 import { LiveRouteScreen } from './src/screens/LiveRouteScreen';
 import { LoadsScreen } from './src/screens/LoadsScreen';
 import { ProfileScreen } from './src/screens/ProfileScreen';
+import { DriverLoginScreen } from './src/screens/DriverLoginScreen';
 import { BackendDriverState, DriverIdentity, driverClient } from './src/api/driverClient';
 import {
   DRIVER_STOPS,
@@ -19,6 +20,7 @@ type BackendState = 'checking' | 'connected' | 'offline';
 const toPlanClock = (value: unknown) => typeof value === 'number' && Number.isFinite(value) ? `T+${value.toFixed(1)} units` : 'Unavailable';
 
 function toDriverStops(state: BackendDriverState): DriverStop[] {
+  if (!state.manifest) return [];
   const latestDelayByStop = new Set(state.reports.filter((report) => report.kind === 'delay_report' && report.stop_id).map((report) => report.stop_id));
   return state.manifest.ordered_stops.map((row, index) => {
     const id = String(row.order_id ?? `stop-${index + 1}`);
@@ -54,9 +56,13 @@ export default function App() {
     const state = await driverClient.getState();
     setManifestState(state);
     setDriverIdentity(driverClient.getIdentity());
-    const assignedStops = toDriverStops(state);
+    const assignedStops = state.manifest ? toDriverStops(state) : [];
     setStops(assignedStops);
-    setCurrentNavStop(assignedStops.find((stop) => stop.status !== 'completed') ?? assignedStops[0] ?? DRIVER_STOPS[0]);
+    if (assignedStops.length > 0) {
+      setCurrentNavStop(assignedStops.find((stop) => stop.status !== 'completed') ?? assignedStops[0]);
+    } else {
+      setActiveTab('profile');
+    }
   };
 
   useEffect(() => {
@@ -85,7 +91,7 @@ export default function App() {
   };
 
   const handleToggleComplete = async (stop: DriverStop): Promise<boolean> => {
-    if (driverClient.isPaired() && manifestState) {
+    if (driverClient.isPaired() && manifestState?.manifest) {
       if (stop.status === 'completed') return false;
       try {
         await driverClient.report({ event_id: `driver-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`, manifest_version: manifestState.manifest.manifest_version, kind: 'stop_completed', stop_id: stop.id });
@@ -114,7 +120,7 @@ export default function App() {
   };
 
   const handleStopArrived = async (arrivedStop: DriverStop): Promise<boolean> => {
-    if (driverClient.isPaired() && manifestState) {
+    if (driverClient.isPaired() && manifestState?.manifest) {
       try {
         await driverClient.report({ event_id: `driver-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`, manifest_version: manifestState.manifest.manifest_version, kind: 'stop_arrived', stop_id: arrivedStop.id });
         await refreshDriverState();
@@ -133,7 +139,7 @@ export default function App() {
   };
 
   const handleReportDelay = async (stopId: string, reason: string, minutes: number): Promise<boolean> => {
-    if (driverClient.isPaired() && manifestState) {
+    if (driverClient.isPaired() && manifestState?.manifest) {
       try {
         await driverClient.report({ event_id: `driver-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`, manifest_version: manifestState.manifest.manifest_version, kind: 'delay_report', stop_id: stopId, severity: minutes >= 20 ? 'heavy' : minutes >= 15 ? 'moderate' : 'light', note: `${reason} · driver estimate ${minutes} minutes` });
         await refreshDriverState();
@@ -166,16 +172,61 @@ export default function App() {
     return true;
   };
 
+  const handleSendDispatchMessage = async (message: string): Promise<boolean> => {
+    if (!driverClient.isPaired()) return false;
+    try {
+      await driverClient.report({
+        event_id: `driver-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        manifest_version: manifestState?.manifest?.manifest_version ?? 0,
+        kind: 'driver_message',
+        note: message,
+      });
+      return true;
+    } catch (error) {
+      setBackendMessage(error instanceof Error ? error.message : 'Dispatch message was rejected.');
+      return false;
+    }
+  };
+
   const handleToggleCheck = (id: string) => {
     setChecklist(prev =>
       prev.map(item => (item.id === id ? { ...item, checked: !item.checked } : item))
     );
   };
 
+  const handleDriverLogout = async () => {
+    await driverClient.logout();
+    setDriverIdentity(null);
+    setManifestState(null);
+    setStops(DRIVER_STOPS);
+    setCurrentNavStop(DRIVER_STOPS[1]);
+  };
+
+  const profileScreen = (
+    <ProfileScreen
+      identity={driverIdentity}
+      onLogin={async (username, password) => { await driverClient.login(username, password); await refreshDriverState(); }}
+      onSendMessage={handleSendDispatchMessage}
+      onLogout={handleDriverLogout}
+    />
+  );
+
   const isDarkTab = activeTab === 'live';
 
+  if (!driverIdentity) {
+    return (
+      <DriverLoginScreen
+        backendConnected={backendState === 'connected'}
+        onLogin={async (username, password) => {
+          await driverClient.login(username, password);
+          await refreshDriverState();
+        }}
+      />
+    );
+  }
+
   return (
-    <View style={[styles.root, isDarkTab ? styles.rootDark : styles.rootLight]}>
+    <View style={[styles.root, Platform.OS === 'android' && { paddingTop: Math.max(NativeStatusBar.currentHeight ?? 0, 28) }, isDarkTab ? styles.rootDark : styles.rootLight]}>
       <StatusBar style={isDarkTab ? 'light' : 'dark'} />
 
       <View style={styles.backendStatus} accessibilityRole="text">
@@ -187,7 +238,7 @@ export default function App() {
       {backendMessage && <TouchableOpacity onPress={() => setBackendMessage(null)} style={styles.backendMessage}><Text style={styles.backendMessageText}>{backendMessage} · tap to dismiss</Text></TouchableOpacity>}
 
       {/* Screen Container with Persistent Tab Views */}
-      <View style={styles.screenContainer}>
+      {manifestState?.manifest ? <View style={styles.screenContainer}>
         <View style={[styles.tabContent, activeTab === 'today' ? styles.tabContentVisible : styles.tabContentHidden]}>
           <TodayScreen
             stops={stops}
@@ -208,7 +259,7 @@ export default function App() {
             onSelectStop={setCurrentNavStop}
             onStopArrived={handleStopArrived}
             onReportDelay={handleReportDelay}
-            isBackendManifest={Boolean(driverIdentity && manifestState)}
+            isBackendManifest={Boolean(driverIdentity && manifestState?.manifest)}
           />
         </View>
 
@@ -216,21 +267,22 @@ export default function App() {
           <LoadsScreen
             checklist={checklist}
             onToggleCheck={handleToggleCheck}
-            backendManifestActive={Boolean(driverIdentity && manifestState)}
+            backendManifestActive={Boolean(driverIdentity && manifestState?.manifest)}
           />
         </View>
 
         <View style={[styles.tabContent, activeTab === 'profile' ? styles.tabContentVisible : styles.tabContentHidden]}>
-          <ProfileScreen
-            identity={driverIdentity}
-            onPair={async (code) => { await driverClient.pair(code); await refreshDriverState(); }}
-            onLogout={async () => { await driverClient.logout(); setDriverIdentity(null); setManifestState(null); setStops(DRIVER_STOPS); setCurrentNavStop(DRIVER_STOPS[1]); }}
-          />
+          {profileScreen}
         </View>
       </View>
+      : <View style={styles.noManifestContainer}>
+          <Text style={styles.noManifestTitle}>No active route manifest</Text>
+          <Text style={styles.noManifestDescription}>Signed in as {driverIdentity.driver_id} for {driverIdentity.vehicle_id}. You can still message dispatch below. Stop reports become available after a manifest is activated for this vehicle.</Text>
+          {profileScreen}
+        </View>}
 
       {/* Custom Bottom Tab Bar (Vanta Ride Spacing & High-Contrast Glyphs) */}
-      <View style={[styles.tabBar, isDarkTab ? styles.tabBarDark : styles.tabBarLight]}>
+      {manifestState?.manifest && <View style={[styles.tabBar, isDarkTab ? styles.tabBarDark : styles.tabBarLight]}>
         {[
           { id: 'today', label: 'Today', glyph: '◫' },
           { id: 'live', label: 'Live route', glyph: '◎' },
@@ -272,7 +324,7 @@ export default function App() {
             </TouchableOpacity>
           );
         })}
-      </View>
+      </View>}
     </View>
   );
 }
@@ -314,6 +366,9 @@ const styles = StyleSheet.create({
   screenContainer: {
     flex: 1,
   },
+  noManifestContainer: { flex: 1, padding: 16, backgroundColor: '#F6F8F5' },
+  noManifestTitle: { fontSize: 18, fontWeight: '900', color: '#15211D', marginBottom: 6 },
+  noManifestDescription: { fontSize: 12, lineHeight: 18, color: '#68756F', marginBottom: 8 },
   tabContent: {
     flex: 1,
   },

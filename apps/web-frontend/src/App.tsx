@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { PlanRun, SolverJob, SystemHealth, OperationalEvent, IntelligenceEvidence } from './types/api';
+import { PlanRun, SolverJob, SystemHealth, OperationalEvent } from './types/api';
 import { apiClient } from './api/client';
 import { Navbar } from './components/layout/Navbar';
 import { SidebarRail, NavView } from './components/layout/SidebarRail';
@@ -7,34 +7,45 @@ import { CommandCenterView } from './features/dashboard/CommandCenterView';
 import { FleetOperationsView } from './features/fleet/FleetOperationsView';
 import { DispatchPlanningView } from './features/dispatch/DispatchPlanningView';
 import { SlaRiskView } from './features/risk/SlaRiskView';
-import { IntelligenceView } from './features/intelligence/IntelligenceView';
 import { ActivityView } from './features/activity/ActivityView';
 import { JobsView } from './features/jobs/JobsView';
+import { LoginView } from './features/auth/LoginView';
 import { CheckCircle2, AlertTriangle, X } from 'lucide-react';
 
 import {
   BENGALURU_SCENARIO,
   SOLOMON_SCENARIO,
-  INTELLIGENCE_EVIDENCE,
-  OPERATIONAL_EVENTS,
   DEFAULT_HEALTH
 } from './data/mockScenarios';
 
 export default function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(() => apiClient.hasSession());
   const [plans, setPlans] = useState<PlanRun[]>([BENGALURU_SCENARIO, SOLOMON_SCENARIO]);
   const [activePlanId, setActivePlanId] = useState<string>('');
   const [currentView, setCurrentView] = useState<NavView>('command');
   const [health, setHealth] = useState<SystemHealth>(DEFAULT_HEALTH);
   const [jobs, setJobs] = useState<SolverJob[]>([]);
   const [events, setEvents] = useState<OperationalEvent[]>([]);
-  const [evidence, setEvidence] = useState<IntelligenceEvidence>(INTELLIGENCE_EVIDENCE);
+  const [auditError, setAuditError] = useState<string | null>(null);
+  const [auditLastSyncedAt, setAuditLastSyncedAt] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedVehicleId, setSelectedVehicleId] = useState<string | null>(null);
   const [selectedStopId, setSelectedStopId] = useState<string | null>(null);
   const [notification, setNotification] = useState<{ message: string; type: 'success' | 'warning' } | null>(null);
 
+  const refreshAuditEvents = async () => {
+    try {
+      setEvents(await apiClient.getOperationalEvents());
+      setAuditError(null);
+      setAuditLastSyncedAt(new Date().toISOString());
+    } catch (error) {
+      setAuditError(error instanceof Error ? error.message : 'Driver audit feed could not be loaded.');
+    }
+  };
+
   // Initial load
   useEffect(() => {
+    if (!isAuthenticated) return;
     async function loadData() {
       const initialPlans = await apiClient.getRuns();
       setPlans(initialPlans);
@@ -51,17 +62,14 @@ export default function App() {
       const initialJobs = await apiClient.getJobs();
       setJobs(initialJobs);
 
-      const initialEvents = await apiClient.getOperationalEvents();
-      setEvents(initialEvents);
-
-      const initialEvidence = await apiClient.getIntelligenceEvidence();
-      setEvidence(initialEvidence);
+      await refreshAuditEvents();
     }
     loadData();
-  }, []);
+  }, [isAuthenticated]);
 
   // Periodic polling for jobs, health, and events
   useEffect(() => {
+    if (!isAuthenticated) return;
     const interval = setInterval(async () => {
       const updatedJobs = await apiClient.getJobs();
       setJobs(updatedJobs);
@@ -69,8 +77,7 @@ export default function App() {
       const updatedHealth = await apiClient.getHealth();
       setHealth(updatedHealth);
 
-      const updatedEvents = await apiClient.getOperationalEvents();
-      setEvents(updatedEvents);
+      await refreshAuditEvents();
       const refreshedPlans = await apiClient.getRuns();
       setPlans(refreshedPlans);
       const newestBackendRun = refreshedPlans.find((plan) => plan.data_source === 'backend');
@@ -80,7 +87,7 @@ export default function App() {
     }, 3000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [isAuthenticated]);
 
   const activePlan = plans.find((p) => p.id === activePlanId) || plans[0];
 
@@ -117,14 +124,15 @@ export default function App() {
         message: `Recovery validated. Objective change: ${res.objective_delta_units.toFixed(2)} units · ${res.audit_log}`,
         type: 'success'
       });
-      const updatedEvents = await apiClient.getOperationalEvents();
-      setEvents(updatedEvents);
+      await refreshAuditEvents();
     } else {
       setNotification({ message: res.audit_log, type: 'warning' });
     }
   };
 
   const runningJobsCount = jobs.filter((j) => j.status === 'running' || j.status === 'queued').length;
+
+  if (!isAuthenticated) return <LoginView onAuthenticated={() => setIsAuthenticated(true)} />;
 
   return (
     <div className="flex flex-col h-screen w-screen bg-[#F5F3ED] text-[#141F1A] font-sans antialiased overflow-hidden">
@@ -162,6 +170,7 @@ export default function App() {
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
           activeJobsCount={runningJobsCount}
+          onLogout={() => { apiClient.logout(); setIsAuthenticated(false); }}
         />
       )}
 
@@ -228,17 +237,12 @@ export default function App() {
                 />
               )}
 
-              {currentView === 'intelligence' && evidence && (
-                <IntelligenceView evidence={evidence} />
-              )}
-
               {currentView === 'activity' && (
                 <ActivityView
                   events={events}
-                  onRefresh={async () => {
-                    const evts = await apiClient.getOperationalEvents();
-                    setEvents(evts);
-                  }}
+                  syncError={auditError}
+                  lastSyncedAt={auditLastSyncedAt}
+                  onRefresh={refreshAuditEvents}
                 />
               )}
 

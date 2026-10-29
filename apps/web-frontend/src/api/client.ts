@@ -2,18 +2,19 @@ import {
   PlanRun,
   SolverJob,
   OperationalEvent,
-  IntelligenceEvidence,
   SystemHealth,
 } from '../types/api';
 import {
   BENGALURU_SCENARIO,
   SOLOMON_SCENARIO,
-  INTELLIGENCE_EVIDENCE,
   DEFAULT_HEALTH,
 } from '../data/mockScenarios';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
 const ROUTE_COLORS = ['#2F5BEA', '#1E5A44', '#D97706', '#8B5CF6', '#DC2626'];
+const AUTH_TOKEN_KEY = 'debugleaf_demo_access_token';
+const AUTH_ROLE_KEY = 'debugleaf_demo_role';
+let authToken = typeof window === 'undefined' ? null : window.sessionStorage.getItem(AUTH_TOKEN_KEY);
 
 type BackendJob = {
   id: string;
@@ -62,7 +63,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   try {
     response = await fetch(`${API_BASE_URL}${path}`, {
       ...init,
-      headers: { 'Content-Type': 'application/json', ...init?.headers },
+      headers: { 'Content-Type': 'application/json', ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}), ...init?.headers },
       signal: init?.signal ?? AbortSignal.timeout(10_000),
     });
   } catch {
@@ -244,6 +245,34 @@ function asOperationalEvent(job: SolverJob): OperationalEvent {
 }
 
 export const apiClient = {
+  hasSession(): boolean {
+    return Boolean(authToken);
+  },
+
+  getSessionRole(): string | null {
+    return typeof window === 'undefined' ? null : window.sessionStorage.getItem(AUTH_ROLE_KEY);
+  },
+
+  async login(username: string, password: string): Promise<string> {
+    const session = await request<{ access_token: string; role: string }>('/api/v1/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ username, password }),
+    });
+    if (!['dispatcher', 'admin'].includes(session.role)) {
+      throw new ApiError(403, 'role_not_allowed', 'Use a dispatcher demo account to sign in to the web dashboard.');
+    }
+    authToken = session.access_token;
+    window.sessionStorage.setItem(AUTH_TOKEN_KEY, authToken);
+    window.sessionStorage.setItem(AUTH_ROLE_KEY, session.role);
+    return session.role;
+  },
+
+  logout(): void {
+    authToken = null;
+    window.sessionStorage.removeItem(AUTH_TOKEN_KEY);
+    window.sessionStorage.removeItem(AUTH_ROLE_KEY);
+  },
+
   getBaseUrl(): string {
     return API_BASE_URL;
   },
@@ -345,7 +374,7 @@ export const apiClient = {
     });
   },
 
-  registerSyntheticManifest(plan: PlanRun, dispatcherToken: string): Promise<Record<string, any>> {
+  registerSyntheticManifest(plan: PlanRun): Promise<Record<string, any>> {
     const context = plan.backend_payload;
     if (!context || !plan.validator_result.passed) {
       throw new ApiError(422, 'plan_not_publishable', 'Only a backend plan that passed independent validation can be activated.');
@@ -353,7 +382,6 @@ export const apiClient = {
     const scenario = context.scenario as unknown as DispatchScenario;
     return request('/api/v1/eta/plans', {
       method: 'POST',
-      headers: { Authorization: `Bearer ${dispatcherToken}` },
       body: JSON.stringify({
         plan_id: `web-${Date.now().toString(36)}`,
         version: 1,
@@ -454,12 +482,10 @@ export const apiClient = {
     }
   },
 
-  async getIntelligenceEvidence(): Promise<IntelligenceEvidence> {
-    return INTELLIGENCE_EVIDENCE;
-  },
-
   async getOperationalEvents(): Promise<OperationalEvent[]> {
-    return (await this.getJobs()).map(asOperationalEvent);
+    const jobs = await this.getJobs();
+    const driverReports = await this.getDriverReportEvents();
+    return [...driverReports, ...jobs.map(asOperationalEvent)].sort((left, right) => right.timestamp.localeCompare(left.timestamp));
   },
 
   async getDriverReportEvents(dispatcherToken?: string): Promise<OperationalEvent[]> {
@@ -469,8 +495,8 @@ export const apiClient = {
       id: `driver-${report.event_id}`,
       timestamp: report.created_at,
       severity: report.kind === 'delay_report' ? 'warning' : report.kind === 'stop_completed' ? 'success' : 'info',
-      category: report.kind === 'delay_report' ? 'delay_alert' : 'status_change',
-      title: report.kind === 'delay_report' ? 'Driver reported a delay' : report.kind === 'stop_arrived' ? 'Driver arrived at stop' : 'Driver completed stop',
+      category: report.kind === 'delay_report' ? 'delay_alert' : report.kind === 'driver_message' ? 'assignment' : 'status_change',
+      title: report.kind === 'delay_report' ? 'Driver reported a delay' : report.kind === 'stop_arrived' ? 'Driver arrived at stop' : report.kind === 'driver_message' ? 'Message from driver' : 'Driver completed stop',
       description: `${report.vehicle_id} · ${report.stop_id ?? 'route'}${report.severity ? ` · ${report.severity}` : ''}${report.note ? ` · ${report.note}` : ''}`,
       actor: `Driver ${report.driver_id}`,
       related_id: report.event_id,

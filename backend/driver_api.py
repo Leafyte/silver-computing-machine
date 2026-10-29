@@ -13,6 +13,7 @@ from fastapi.responses import JSONResponse
 
 from .auth import AuthConfig
 from .driver_sessions import DriverError, DriverSessionStore
+from .india_eta.errors import EtaError
 
 
 def create_driver_router(app, auth: AuthConfig) -> APIRouter:
@@ -79,7 +80,19 @@ def create_driver_router(app, auth: AuthConfig) -> APIRouter:
     def state(request: Request):
         def operation():
             identity = actor(request)
-            manifest = eta_controller().get_manifest(identity["vehicle_id"])
+            try:
+                manifest = eta_controller().get_manifest(identity["vehicle_id"])
+            except EtaError as exc:
+                if exc.status != 404:
+                    raise
+                manifest = None
+            if manifest is None:
+                plan_id = f"unassigned-{identity['vehicle_id']}"
+                reports = store.reports(identity["vehicle_id"], plan_id)
+                return {"driver_id": identity["driver_id"], "vehicle_id": identity["vehicle_id"],
+                        "manifest": None, "stop_status": {}, "reports": reports,
+                        "capabilities": ["driver_message"],
+                        "state_source": "driver session; no active manifest assigned"}
             reports = store.reports(identity["vehicle_id"], manifest["plan_id"])
             stop_status = {row["order_id"]: "completed" if row.get("immutable") else "pending"
                            for row in manifest.get("ordered_stops", [])}
@@ -88,7 +101,7 @@ def create_driver_router(app, auth: AuthConfig) -> APIRouter:
                     stop_status[report["stop_id"]] = "arrived" if report["kind"] == "stop_arrived" else "completed"
             return {"driver_id": identity["driver_id"], "vehicle_id": identity["vehicle_id"],
                     "manifest": manifest, "stop_status": stop_status, "reports": reports,
-                    "capabilities": ["manifest_read", "stop_arrival_report", "stop_completion_report", "delay_report"],
+                    "capabilities": ["manifest_read", "stop_arrival_report", "stop_completion_report", "delay_report", "driver_message"],
                     "state_source": "backend manifest plus driver-reported events"}
         return call(operation)
 
@@ -96,7 +109,17 @@ def create_driver_router(app, auth: AuthConfig) -> APIRouter:
     def report(request: Request, payload: Any = Body(...)):
         def operation():
             identity = actor(request)
-            manifest = eta_controller().get_manifest(identity["vehicle_id"])
+            try:
+                manifest = eta_controller().get_manifest(identity["vehicle_id"])
+            except EtaError as exc:
+                if exc.status != 404 or not isinstance(payload, dict) or payload.get("kind") != "driver_message":
+                    raise
+                manifest = None
+            if manifest is None:
+                if not isinstance(payload, dict) or payload.get("kind") != "driver_message":
+                    raise DriverError("manifest_not_found", "No active manifest is assigned to this vehicle", 409)
+                manifest = {"plan_id": f"unassigned-{identity['vehicle_id']}",
+                            "manifest_version": 0, "ordered_stops": []}
             return store.submit_report(identity, manifest, payload)
         return call(operation)
 

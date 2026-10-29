@@ -146,38 +146,6 @@ export interface OperationalEvent {
   related_id?: string;
 }
 
-export interface CalibrationPoint {
-  predicted_prob: number;
-  observed_freq: number;
-}
-
-export interface EngineBenchmark {
-  engine: string;
-  provenance: ProvenanceBadge;
-  gap_to_optimum_pct: number;
-  feasibility_pct: number;
-  runtime_seconds: number;
-  objective_cost: string;
-}
-
-export interface IntelligenceEvidence {
-  model_name: string;
-  brier_score: number;
-  brier_reduction_pct: number;
-  regret_reduction_pct: number;
-  user_claim_verified: boolean;
-  user_claim_note: string;
-  calibration_points: CalibrationPoint[];
-  benchmarks: EngineBenchmark[];
-  quantum_circuit_summary: {
-    type: string;
-    qubits: number;
-    backend_mode: string;
-    execution_badge: ProvenanceBadge;
-  };
-  disclaimer: string;
-}
-
 export interface SystemCapacity {
   max_slots: number;
   active_slots: number;

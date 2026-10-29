@@ -39,16 +39,8 @@ describe('Operator Journey Full Workflow Integration', () => {
       expect(screen.getByText(/PUBLISHED MANIFEST/i)).toBeInTheDocument();
     });
 
-    // 6. Navigate to QML Intelligence / Evidence view
-    const qmlNav = screen.getByRole('button', { name: /QML Intelligence/i });
-    fireEvent.click(qmlNav);
-
-    await waitFor(() => {
-      expect(screen.getByText(/Quantum Machine Learning & Optimization Evidence/i)).toBeInTheDocument();
-      expect(screen.getByText(/Platt Reliability Diagram/i)).toBeInTheDocument();
-      expect(screen.getAllByText(/Brier Score: 0.142/i).length).toBeGreaterThan(0);
-      expect(screen.getByText(/Parameterized Quantum Circuit \(VQC\)/i)).toBeInTheDocument();
-    });
+    // 6. QML fixture evidence is no longer exposed in the dispatcher UI.
+    expect(screen.queryByRole('button', { name: /QML Intelligence/i })).not.toBeInTheDocument();
 
     // 7. Navigate to SLA & Exposure view
     const slaNav = screen.getByRole('button', { name: /SLA & Exposure/i });

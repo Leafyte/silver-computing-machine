@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { HealthPill } from '../ui/HealthPill';
 import { SystemHealth, PlanRun } from '../../types/api';
-import { Layers, Bell, Search, Sparkles } from 'lucide-react';
+import { Layers, Bell, Search, Sparkles, LogOut } from 'lucide-react';
 
 interface NavbarProps {
   currentPlan: PlanRun;
@@ -12,6 +12,7 @@ interface NavbarProps {
   searchQuery: string;
   onSearchChange: (q: string) => void;
   activeJobsCount: number;
+  onLogout: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -22,7 +23,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   onRefreshHealth,
   searchQuery,
   onSearchChange,
-  activeJobsCount
+  activeJobsCount,
+  onLogout
 }) => {
   const [timeStr, setTimeStr] = useState<string>('');
 
@@ -130,10 +132,13 @@ export const Navbar: React.FC<NavbarProps> = ({
             AR
           </div>
           <div className="leading-tight hidden xl:block">
-            <div className="font-bold text-xs text-[#141F1A]">Aditya R.</div>
+            <div className="font-bold text-xs text-[#141F1A]">Karthik M.</div>
             <div className="text-[10px] text-[#7D8D85] font-medium">Lead Dispatcher</div>
           </div>
         </div>
+        <button onClick={onLogout} className="p-2 rounded-full border border-[#E5E0D8] hover:bg-[#F5F3ED] text-[#4D5C54]" title="Sign out" aria-label="Sign out">
+          <LogOut className="w-4 h-4" />
+        </button>
       </div>
     </header>
   );

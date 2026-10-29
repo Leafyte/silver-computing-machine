@@ -141,6 +141,8 @@ def authorize_request(config: AuthConfig, method: str, path: str,
     # backend.driver_api. The public pairing endpoint is one-time and bounded.
     if path.startswith("/api/v1/driver/"):
         return None
+    if method.upper() == "POST" and path == "/api/v1/auth/login":
+        return None
     if config.mode == "local" and config.ready:
         return None
     if not config.ready:
