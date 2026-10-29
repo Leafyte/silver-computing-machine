@@ -1,0 +1,21 @@
+{
+  "model_id": "india-eta-linear-fixture",
+  "model_version": "1.0.0",
+  "model_kind": "fixture",
+  "prediction_target": "travel_time",
+  "duration_unit": "minute",
+  "feature_schema_hash": "sha256:25c0fe95ab8d1cb722a5c7f8c3b9d059c09004ddfee1ebd7bfd5529930838563",
+  "feature_names": ["distance_km", "traffic_index"],
+  "coefficients": [3.2, 12.0],
+  "intercept": 5.0,
+  "supported_geographies": ["IN"],
+  "supported_vehicles": ["two_wheeler", "car", "van"],
+  "provenance": {
+    "status": "synthetic_fixture",
+    "data_hash": null,
+    "split_hash": null,
+    "training_data_hash": null,
+    "source": "hand-authored deterministic arithmetic fixture"
+  },
+  "content_sha256": "f644ed71adeecc4d8f2399910a087f57db6e5774ea40fe6f8534e2fa017a036a"
+}

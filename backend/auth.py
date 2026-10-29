@@ -91,6 +91,8 @@ def _dynamic_route_allowed(method: str, path: str) -> bool:
 
 def _route_role_allowed(role: str, method: str, path: str) -> bool:
     method = method.upper()
+    if path.startswith("/api/v1/eta/"):
+        return _eta_route_allowed(role, method, path)
     if role == "admin":
         return ((method, path) in (_COMMON_RESEARCHER | _DISPATCHER_ONLY | _ADMIN_ONLY) or
                 _dynamic_route_allowed(method, path))
@@ -112,6 +114,23 @@ def _route_role_allowed(role: str, method: str, path: str) -> bool:
         if _dynamic_route_allowed(method, path) and method == "POST" and path.endswith("/cancel"):
             return True
     return False
+
+
+def _eta_route_allowed(role: str, method: str, path: str) -> bool:
+    parts = path.strip("/").split("/")
+    if parts[:3] != ["api", "v1", "eta"] or role not in ROLES:
+        return False
+    resource = parts[3:]
+    if method == "POST" and resource in (["predictions"], ["sla"], ["compatibility"]):
+        return True
+    if method == "GET" and len(resource) == 2 and resource[0] in ("plans", "events", "proposals", "manifests"):
+        return bool(resource[1])
+    if role not in ("dispatcher", "admin"):
+        return False
+    if method == "POST" and resource in (["plans"], ["events"]):
+        return True
+    return (method == "POST" and len(resource) == 3 and bool(resource[1])
+            and (resource[0], resource[2]) in (("events", "cancel"), ("proposals", "approve")))
 
 
 def authorize_request(config: AuthConfig, method: str, path: str,

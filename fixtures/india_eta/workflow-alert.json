@@ -1,0 +1,383 @@
+{
+  "schema_version": "debugleaf.india_eta.synthetic_workflow.v1",
+  "evidence_label": "synthetic_fixture",
+  "plan": {
+    "status": "feasible",
+    "routes": [
+      {
+        "vehicle_id": "V1",
+        "order_ids": [
+          "A"
+        ],
+        "stops": [
+          {
+            "order_id": "A",
+            "arrival": 5.0,
+            "service_start": 5.0,
+            "departure": 5.0,
+            "lateness": 3.0,
+            "penalty_exposure": 30.0
+          }
+        ],
+        "return_time": 10.0,
+        "travel_cost": 10.0,
+        "lateness_exposure": 30.0,
+        "objective": 40.0
+      },
+      {
+        "vehicle_id": "V2",
+        "order_ids": [
+          "B",
+          "C"
+        ],
+        "stops": [
+          {
+            "order_id": "B",
+            "arrival": 5.0,
+            "service_start": 5.0,
+            "departure": 5.0,
+            "lateness": 3.0,
+            "penalty_exposure": 30.0
+          },
+          {
+            "order_id": "C",
+            "arrival": 10.0,
+            "service_start": 10.0,
+            "departure": 10.0,
+            "lateness": 8.0,
+            "penalty_exposure": 80.0
+          }
+        ],
+        "return_time": 15.0,
+        "travel_cost": 15.0,
+        "lateness_exposure": 110.0,
+        "objective": 125.0
+      }
+    ],
+    "objective": 165.0,
+    "travel_cost": 25.0,
+    "lateness_exposure": 140.0
+  },
+  "register": {
+    "plan_id": "workflow-plan",
+    "version": 1,
+    "model_version": "fixture-m1",
+    "as_of": "2026-10-29T10:00:00Z",
+    "scenario": {
+      "depot": "D",
+      "vehicles": [
+        {
+          "id": "V1",
+          "capacity": 2
+        },
+        {
+          "id": "V2",
+          "capacity": 2
+        }
+      ],
+      "orders": [
+        {
+          "id": "A",
+          "demand": 1,
+          "window": [
+            0,
+            2
+          ],
+          "service": 0,
+          "penalty": 10
+        },
+        {
+          "id": "B",
+          "demand": 1,
+          "window": [
+            0,
+            2
+          ],
+          "service": 0,
+          "penalty": 10
+        },
+        {
+          "id": "C",
+          "demand": 1,
+          "window": [
+            0,
+            2
+          ],
+          "service": 0,
+          "penalty": 10
+        }
+      ],
+      "travel": {
+        "D": {
+          "D": 0,
+          "A": 5,
+          "B": 5,
+          "C": 5
+        },
+        "A": {
+          "D": 5,
+          "A": 0,
+          "B": 5,
+          "C": 5
+        },
+        "B": {
+          "D": 5,
+          "A": 5,
+          "B": 0,
+          "C": 5
+        },
+        "C": {
+          "D": 5,
+          "A": 5,
+          "B": 5,
+          "C": 0
+        }
+      }
+    },
+    "weighted_scenarios": [
+      {
+        "id": "base",
+        "weight": 1.0,
+        "travel": {
+          "D": {
+            "D": 0,
+            "A": 5,
+            "B": 5,
+            "C": 5
+          },
+          "A": {
+            "D": 5,
+            "A": 0,
+            "B": 5,
+            "C": 5
+          },
+          "B": {
+            "D": 5,
+            "A": 5,
+            "B": 0,
+            "C": 5
+          },
+          "C": {
+            "D": 5,
+            "A": 5,
+            "B": 5,
+            "C": 0
+          }
+        },
+        "source_label": "synthetic_overlay",
+        "prediction_target": "travel_time"
+      }
+    ],
+    "plan": {
+      "status": "feasible",
+      "routes": [
+        {
+          "vehicle_id": "V1",
+          "order_ids": [
+            "A"
+          ],
+          "stops": [
+            {
+              "order_id": "A",
+              "arrival": 5.0,
+              "service_start": 5.0,
+              "departure": 5.0,
+              "lateness": 3.0,
+              "penalty_exposure": 30.0
+            }
+          ],
+          "return_time": 10.0,
+          "travel_cost": 10.0,
+          "lateness_exposure": 30.0,
+          "objective": 40.0
+        },
+        {
+          "vehicle_id": "V2",
+          "order_ids": [
+            "B",
+            "C"
+          ],
+          "stops": [
+            {
+              "order_id": "B",
+              "arrival": 5.0,
+              "service_start": 5.0,
+              "departure": 5.0,
+              "lateness": 3.0,
+              "penalty_exposure": 30.0
+            },
+            {
+              "order_id": "C",
+              "arrival": 10.0,
+              "service_start": 10.0,
+              "departure": 10.0,
+              "lateness": 8.0,
+              "penalty_exposure": 80.0
+            }
+          ],
+          "return_time": 15.0,
+          "travel_cost": 15.0,
+          "lateness_exposure": 110.0,
+          "objective": 125.0
+        }
+      ],
+      "objective": 165.0,
+      "travel_cost": 25.0,
+      "lateness_exposure": 140.0
+    },
+    "switching_cost_threshold": 0.1,
+    "switching_cost": 0.0,
+    "cooldown_seconds": 0.0,
+    "mode": "synthetic_scenario"
+  },
+  "observed_state": [
+    {
+      "vehicle_id": "V1",
+      "position": "D",
+      "position_type": "simulated",
+      "elapsed_minutes": 0.0,
+      "available_at": 0.0,
+      "completed_prefix": []
+    },
+    {
+      "vehicle_id": "V2",
+      "position": "D",
+      "position_type": "simulated",
+      "elapsed_minutes": 0.0,
+      "available_at": 0.0,
+      "completed_prefix": []
+    }
+  ],
+  "event": {
+    "event_id": "alert-event",
+    "plan_id": "workflow-plan",
+    "plan_version": 1,
+    "model_version": "fixture-m1",
+    "as_of": "2026-10-29T10:03:00Z",
+    "observed_state": [
+      {
+        "vehicle_id": "V1",
+        "position": "D",
+        "position_type": "simulated",
+        "elapsed_minutes": 0.0,
+        "available_at": 0.0,
+        "completed_prefix": []
+      },
+      {
+        "vehicle_id": "V2",
+        "position": "D",
+        "position_type": "simulated",
+        "elapsed_minutes": 0.0,
+        "available_at": 0.0,
+        "completed_prefix": []
+      }
+    ],
+    "scenario": {
+      "depot": "D",
+      "vehicles": [
+        {
+          "id": "V1",
+          "capacity": 2
+        },
+        {
+          "id": "V2",
+          "capacity": 2
+        }
+      ],
+      "orders": [
+        {
+          "id": "A",
+          "demand": 1,
+          "window": [
+            0,
+            2
+          ],
+          "service": 0,
+          "penalty": 10
+        },
+        {
+          "id": "B",
+          "demand": 1,
+          "window": [
+            0,
+            2
+          ],
+          "service": 0,
+          "penalty": 10
+        },
+        {
+          "id": "C",
+          "demand": 1,
+          "window": [
+            0,
+            2
+          ],
+          "service": 0,
+          "penalty": 10
+        }
+      ],
+      "travel": {
+        "D": {
+          "D": 0,
+          "A": 5,
+          "B": 5,
+          "C": 5
+        },
+        "A": {
+          "D": 5,
+          "A": 0,
+          "B": 5,
+          "C": 5
+        },
+        "B": {
+          "D": 5,
+          "A": 5,
+          "B": 0,
+          "C": 5
+        },
+        "C": {
+          "D": 5,
+          "A": 5,
+          "B": 5,
+          "C": 0
+        }
+      }
+    },
+    "weighted_scenarios": [
+      {
+        "id": "base",
+        "weight": 1.0,
+        "travel": {
+          "D": {
+            "D": 0,
+            "A": 5,
+            "B": 5,
+            "C": 5
+          },
+          "A": {
+            "D": 5,
+            "A": 0,
+            "B": 5,
+            "C": 5
+          },
+          "B": {
+            "D": 5,
+            "A": 5,
+            "B": 0,
+            "C": 5
+          },
+          "C": {
+            "D": 5,
+            "A": 5,
+            "B": 5,
+            "C": 0
+          }
+        },
+        "source_label": "synthetic_overlay",
+        "prediction_target": "travel_time"
+      }
+    ],
+    "event_type": "delay",
+    "mode": "synthetic_scenario"
+  }
+}
