@@ -1,0 +1,1476 @@
+{
+  "timestamp_utc": "2026-10-29 05:04:54",
+  "total_benchmark_wall_seconds": 846.487,
+  "environment": {
+    "os_name": "Darwin",
+    "os_release": "24.6.0",
+    "os_version": "Darwin Kernel Version 24.6.0: Wed Nov  5 21:28:03 PST 2025; root:xnu-11417.140.69.705.2~1/RELEASE_ARM64_T8122",
+    "architecture": "arm64",
+    "processor": "arm",
+    "logical_cpus": 8,
+    "python_version": "3.12.13",
+    "python_interpreter": "/Users/karthikm/Desktop/29nmit/silver-computing-machine/.venv/bin/python",
+    "macos_product_version": "15.7.3",
+    "cpu_brand": "Apple M3",
+    "total_ram_gb": 16.0,
+    "sdk_and_packages": {
+      "local_venv_packages": {
+        "qpiai_quantum": "not_installed_in_isolated_mac_venv",
+        "qpiai_opt": "not_installed_in_isolated_mac_venv",
+        "ortools": "not_installed_in_isolated_mac_venv",
+        "numpy": "not_installed_in_isolated_mac_venv",
+        "scipy": "not_installed_in_isolated_mac_venv"
+      },
+      "verified_repo_sdk_pins": {
+        "qpiai-opt": "0.0.9 (WarmStart, QAOA, QUBOProblem, build_circuit)",
+        "qpiai-quantum": "0.3.0 / 0.7.5 (Circuit, StatevectorSimulator)",
+        "ortools": "9.15.6755"
+      },
+      "cloud_qpu_authorized": false,
+      "execution_mode": "local_exact_cpu_statevector_verified_against_sdk_contract"
+    },
+    "gpu_accelerator": {
+      "type": "Apple M3 Integrated 8-Core GPU (Metal 3)",
+      "cuda_available": false,
+      "qpiai_metal_accelerated": false,
+      "note": "QpiAI Quantum StatevectorSimulator and reference backend execute on CPU only; Apple Metal/MPS acceleration is not supported by QpiAI Quantum."
+    }
+  },
+  "artifact_contract_verification": {
+    "path": "/Users/karthikm/Desktop/29nmit/silver-computing-machine/experiments_v1_1/artifacts/exported_hybrid_contract_sample.json",
+    "artifact_sha256": "54FF0477F5E505C2F18AFEA5EE2F40436179075EDE52E526F875B4A11AB95A0E",
+    "valid": true
+  },
+  "track_b_mathematical_verification": {
+    "tiny_4var": {
+      "n_variables": 4,
+      "total_assignments_checked": 16,
+      "feasible_assignments": 3,
+      "infeasible_assignments": 13,
+      "max_qubo_direct_discrepancy": 0.0,
+      "max_ising_direct_discrepancy": 0.0,
+      "min_feasible_energy": 3.0,
+      "min_infeasible_energy": 22.0,
+      "penalty_margin_gap": 19.0,
+      "ground_state_is_feasible": true,
+      "best_feasible_bitstring": "0100",
+      "best_feasible_cost": 3.0,
+      "coverage_penalty": 20.0,
+      "vehicle_penalty": 15.0,
+      "max_abs_ising_h": 25.25,
+      "max_abs_ising_J": 20.0
+    },
+    "dispatch_8var": {
+      "n_variables": 8,
+      "total_assignments_checked": 256,
+      "feasible_assignments": 6,
+      "infeasible_assignments": 250,
+      "max_qubo_direct_discrepancy": 0.0,
+      "max_ising_direct_discrepancy": 0.0,
+      "min_feasible_energy": 4.0,
+      "min_infeasible_energy": 31.0,
+      "penalty_margin_gap": 27.0,
+      "ground_state_is_feasible": true,
+      "best_feasible_bitstring": "00000001",
+      "best_feasible_cost": 4.0,
+      "coverage_penalty": 29.0,
+      "vehicle_penalty": 29.0,
+      "max_abs_ising_h": 139.75,
+      "max_abs_ising_J": 36.25
+    },
+    "prospective_12var": {
+      "n_variables": 12,
+      "total_assignments_checked": 4096,
+      "feasible_assignments": 8,
+      "infeasible_assignments": 4088,
+      "max_qubo_direct_discrepancy": 2.842170943040401e-14,
+      "max_ising_direct_discrepancy": 4.547473508864641e-13,
+      "min_feasible_energy": 7.575,
+      "min_infeasible_energy": 21.525,
+      "penalty_margin_gap": 13.95,
+      "ground_state_is_feasible": true,
+      "best_feasible_bitstring": "000001001000",
+      "best_feasible_cost": 7.575,
+      "coverage_penalty": 18.0,
+      "vehicle_penalty": 18.0,
+      "max_abs_ising_h": 118.95,
+      "max_abs_ising_J": 22.5
+    },
+    "penalty_threshold_study": {
+      "penalty_1.5": {
+        "penalty": 1.5,
+        "ground_state_is_feasible": false,
+        "penalty_margin_gap": -1.0,
+        "max_abs_ising_J": 1.875
+      },
+      "penalty_4.0": {
+        "penalty": 4.0,
+        "ground_state_is_feasible": true,
+        "penalty_margin_gap": 2.0,
+        "max_abs_ising_J": 5.0
+      },
+      "penalty_8.0": {
+        "penalty": 8.0,
+        "ground_state_is_feasible": true,
+        "penalty_margin_gap": 6.0,
+        "max_abs_ising_J": 10.0
+      },
+      "penalty_29.0": {
+        "penalty": 29.0,
+        "ground_state_is_feasible": true,
+        "penalty_margin_gap": 27.0,
+        "max_abs_ising_J": 36.25
+      },
+      "penalty_100.0": {
+        "penalty": 100.0,
+        "ground_state_is_feasible": true,
+        "penalty_margin_gap": 98.0,
+        "max_abs_ising_J": 125.0
+      }
+    }
+  },
+  "track_b_quantum_optimization": {
+    "classical_exact": {
+      "method": "classical_exact",
+      "best_bitstring": "00000001",
+      "best_objective": 4.0,
+      "worst_feasible_objective": 6.0,
+      "qubo_energy": 4.0,
+      "feasible": true,
+      "selected_route_ids": [
+        "V2:B>A"
+      ],
+      "evaluations": 256,
+      "wall_seconds": 0.015327000059187412,
+      "cpu_seconds": 0.01518899999999998,
+      "peak_memory_kb": 182.6162109375
+    },
+    "classical_heuristic": {
+      "method": "classical_heuristic_sampler",
+      "shots": 512,
+      "feasible_shots": 71,
+      "feasible_sample_probability": 0.138671875,
+      "best_objective": 4.0,
+      "best_bitstring": "00000010",
+      "qubo_energy": 4.0,
+      "mean_feasible_objective": 4.394366197183099,
+      "wall_seconds": 0.03361529065296054,
+      "cpu_seconds": 0.01249900000000001,
+      "peak_memory_kb": 4.9853515625,
+      "optimality_gap": 0.0
+    },
+    "standard_qaoa_depth_1": {
+      "method": "standard_qaoa_p1_grid",
+      "backend": "local_exact_statevector_cpu",
+      "layers": 1,
+      "warm_start": false,
+      "relaxation_mode": "none",
+      "optimizer_method": "grid",
+      "shots": 512,
+      "seed": 7,
+      "optimized_gammas": [
+        0.008992
+      ],
+      "optimized_betas": [
+        2.199115
+      ],
+      "expected_qubo_energy": 176.000084,
+      "circuit_evaluations": 101,
+      "classical_optimizer_iterations": 100,
+      "feasible_shots": 113,
+      "optimal_shots": 113,
+      "feasible_sample_probability": 0.220703,
+      "feasible_prob_95ci_halfwidth": 0.035923,
+      "first_feasible_shot": 6,
+      "first_optimal_shot": 6,
+      "time_to_99pct_feasible_seconds": 0.512295,
+      "best_feasible_objective": 4.0,
+      "best_feasible_bitstring": "00010000",
+      "best_feasible_routes": [
+        "V1:B>A"
+      ],
+      "mean_feasible_objective": 4.0,
+      "optimality_gap": 0.0,
+      "approximation_ratio": 1.0,
+      "relaxation_vector": null,
+      "circuit_profile": {
+        "qubits": 8,
+        "depth_layers": 1,
+        "single_qubit_gates": 50,
+        "two_qubit_gates": 52,
+        "total_gates": 102,
+        "circuit_depth": 17
+      },
+      "resource_accounting": {
+        "preprocessing_wall_seconds": 0.005995,
+        "preprocessing_cpu_seconds": 0.004768,
+        "parameter_optimization_wall_seconds": 0.500762,
+        "parameter_optimization_cpu_seconds": 0.498038,
+        "final_statevector_wall_seconds": 0.005072,
+        "final_statevector_cpu_seconds": 0.005072,
+        "sampling_wall_seconds": 0.002122,
+        "sampling_cpu_seconds": 0.002125,
+        "decoding_validation_wall_seconds": 0.010464,
+        "decoding_validation_cpu_seconds": 0.010412,
+        "total_wall_seconds": 0.524494,
+        "total_cpu_seconds": 0.520486,
+        "peak_memory_kb": 97.122
+      }
+    },
+    "standard_qaoa_depth_2": {
+      "method": "standard_qaoa_p2_pattern",
+      "backend": "local_exact_statevector_cpu",
+      "layers": 2,
+      "warm_start": false,
+      "relaxation_mode": "none",
+      "optimizer_method": "pattern",
+      "shots": 512,
+      "seed": 7,
+      "optimized_gammas": [
+        0.003496,
+        6.280881
+      ],
+      "optimized_betas": [
+        2.167389,
+        0.402177
+      ],
+      "expected_qubo_energy": 39.733672,
+      "circuit_evaluations": 213,
+      "classical_optimizer_iterations": 15,
+      "feasible_shots": 155,
+      "optimal_shots": 118,
+      "feasible_sample_probability": 0.302734,
+      "feasible_prob_95ci_halfwidth": 0.039797,
+      "first_feasible_shot": 2,
+      "first_optimal_shot": 2,
+      "time_to_99pct_feasible_seconds": 1.480777,
+      "best_feasible_objective": 4.0,
+      "best_feasible_bitstring": "00000001",
+      "best_feasible_routes": [
+        "V2:B>A"
+      ],
+      "mean_feasible_objective": 4.477419,
+      "optimality_gap": 0.0,
+      "approximation_ratio": 1.0,
+      "relaxation_vector": null,
+      "circuit_profile": {
+        "qubits": 8,
+        "depth_layers": 2,
+        "single_qubit_gates": 92,
+        "two_qubit_gates": 104,
+        "total_gates": 196,
+        "circuit_depth": 33
+      },
+      "resource_accounting": {
+        "preprocessing_wall_seconds": 0.002523,
+        "preprocessing_cpu_seconds": 0.002523,
+        "parameter_optimization_wall_seconds": 1.469667,
+        "parameter_optimization_cpu_seconds": 1.461322,
+        "final_statevector_wall_seconds": 0.008315,
+        "final_statevector_cpu_seconds": 0.008222,
+        "sampling_wall_seconds": 0.002503,
+        "sampling_cpu_seconds": 0.002503,
+        "decoding_validation_wall_seconds": 0.008255,
+        "decoding_validation_cpu_seconds": 0.008172,
+        "total_wall_seconds": 1.491322,
+        "total_cpu_seconds": 1.4828,
+        "peak_memory_kb": 58.751
+      }
+    },
+    "v1_box_warm_start_qaoa_depth_1": {
+      "method": "warm_box_v1_qaoa_p1_grid",
+      "backend": "local_exact_statevector_cpu",
+      "layers": 1,
+      "warm_start": true,
+      "relaxation_mode": "box_v1",
+      "optimizer_method": "grid",
+      "shots": 512,
+      "seed": 7,
+      "optimized_gammas": [
+        0.008992
+      ],
+      "optimized_betas": [
+        2.827433
+      ],
+      "expected_qubo_energy": 35.391555,
+      "circuit_evaluations": 101,
+      "classical_optimizer_iterations": 100,
+      "feasible_shots": 110,
+      "optimal_shots": 49,
+      "feasible_sample_probability": 0.214844,
+      "feasible_prob_95ci_halfwidth": 0.035576,
+      "first_feasible_shot": 2,
+      "first_optimal_shot": 2,
+      "time_to_99pct_feasible_seconds": 0.520043,
+      "best_feasible_objective": 4.0,
+      "best_feasible_bitstring": "00000001",
+      "best_feasible_routes": [
+        "V2:B>A"
+      ],
+      "mean_feasible_objective": 5.109091,
+      "optimality_gap": 0.0,
+      "approximation_ratio": 1.0,
+      "relaxation_vector": [
+        0.333333,
+        0.264368,
+        0.0,
+        0.0,
+        0.333333,
+        0.264368,
+        0.0,
+        0.0
+      ],
+      "circuit_profile": {
+        "qubits": 8,
+        "depth_layers": 1,
+        "single_qubit_gates": 66,
+        "two_qubit_gates": 52,
+        "total_gates": 118,
+        "circuit_depth": 19
+      },
+      "resource_accounting": {
+        "preprocessing_wall_seconds": 0.011672,
+        "preprocessing_cpu_seconds": 0.011673,
+        "parameter_optimization_wall_seconds": 0.502587,
+        "parameter_optimization_cpu_seconds": 0.499788,
+        "final_statevector_wall_seconds": 0.005396,
+        "final_statevector_cpu_seconds": 0.005317,
+        "sampling_wall_seconds": 0.002784,
+        "sampling_cpu_seconds": 0.002785,
+        "decoding_validation_wall_seconds": 0.007136,
+        "decoding_validation_cpu_seconds": 0.007135,
+        "total_wall_seconds": 0.529626,
+        "total_cpu_seconds": 0.526745,
+        "peak_memory_kb": 46.567
+      }
+    },
+    "warm_start_qaoa_depth_1": {
+      "method": "warm_lp_augmented_qaoa_p1_grid",
+      "backend": "local_exact_statevector_cpu",
+      "layers": 1,
+      "warm_start": true,
+      "relaxation_mode": "lp_augmented",
+      "optimizer_method": "grid",
+      "shots": 512,
+      "seed": 7,
+      "optimized_gammas": [
+        0.008992
+      ],
+      "optimized_betas": [
+        2.827433
+      ],
+      "expected_qubo_energy": 31.07125,
+      "circuit_evaluations": 101,
+      "classical_optimizer_iterations": 100,
+      "feasible_shots": 315,
+      "optimal_shots": 313,
+      "feasible_sample_probability": 0.615234,
+      "feasible_prob_95ci_halfwidth": 0.042144,
+      "first_feasible_shot": 1,
+      "first_optimal_shot": 1,
+      "time_to_99pct_feasible_seconds": 0.517927,
+      "best_feasible_objective": 4.0,
+      "best_feasible_bitstring": "00000001",
+      "best_feasible_routes": [
+        "V2:B>A"
+      ],
+      "mean_feasible_objective": 4.012698,
+      "optimality_gap": 0.0,
+      "approximation_ratio": 1.0,
+      "relaxation_vector": [
+        0.0,
+        0.0,
+        0.25,
+        0.25,
+        0.0,
+        0.0,
+        0.25,
+        0.25
+      ],
+      "circuit_profile": {
+        "qubits": 8,
+        "depth_layers": 1,
+        "single_qubit_gates": 66,
+        "two_qubit_gates": 52,
+        "total_gates": 118,
+        "circuit_depth": 19
+      },
+      "resource_accounting": {
+        "preprocessing_wall_seconds": 0.006944,
+        "preprocessing_cpu_seconds": 0.006846,
+        "parameter_optimization_wall_seconds": 0.505723,
+        "parameter_optimization_cpu_seconds": 0.503083,
+        "final_statevector_wall_seconds": 0.005165,
+        "final_statevector_cpu_seconds": 0.005166,
+        "sampling_wall_seconds": 0.001704,
+        "sampling_cpu_seconds": 0.001702,
+        "decoding_validation_wall_seconds": 0.008036,
+        "decoding_validation_cpu_seconds": 0.00797,
+        "total_wall_seconds": 0.527622,
+        "total_cpu_seconds": 0.524813,
+        "peak_memory_kb": 48.545
+      }
+    },
+    "warm_start_qaoa_depth_2": {
+      "method": "warm_lp_augmented_qaoa_p2_pattern",
+      "backend": "local_exact_statevector_cpu",
+      "layers": 2,
+      "warm_start": true,
+      "relaxation_mode": "lp_augmented",
+      "optimizer_method": "pattern",
+      "shots": 512,
+      "seed": 7,
+      "optimized_gammas": [
+        0.00662,
+        0.0
+      ],
+      "optimized_betas": [
+        2.839018,
+        0.0
+      ],
+      "expected_qubo_energy": 27.572932,
+      "circuit_evaluations": 222,
+      "classical_optimizer_iterations": 15,
+      "feasible_shots": 296,
+      "optimal_shots": 295,
+      "feasible_sample_probability": 0.578125,
+      "feasible_prob_95ci_halfwidth": 0.042778,
+      "first_feasible_shot": 1,
+      "first_optimal_shot": 1,
+      "time_to_99pct_feasible_seconds": 1.249916,
+      "best_feasible_objective": 4.0,
+      "best_feasible_bitstring": "00000001",
+      "best_feasible_routes": [
+        "V2:B>A"
+      ],
+      "mean_feasible_objective": 4.006757,
+      "optimality_gap": 0.0,
+      "approximation_ratio": 1.0,
+      "relaxation_vector": [
+        0.0,
+        0.0,
+        0.25,
+        0.25,
+        0.0,
+        0.0,
+        0.25,
+        0.25
+      ],
+      "circuit_profile": {
+        "qubits": 8,
+        "depth_layers": 2,
+        "single_qubit_gates": 124,
+        "two_qubit_gates": 104,
+        "total_gates": 228,
+        "circuit_depth": 37
+      },
+      "resource_accounting": {
+        "preprocessing_wall_seconds": 0.006649,
+        "preprocessing_cpu_seconds": 0.00665,
+        "parameter_optimization_wall_seconds": 1.238038,
+        "parameter_optimization_cpu_seconds": 1.233051,
+        "final_statevector_wall_seconds": 0.005115,
+        "final_statevector_cpu_seconds": 0.005116,
+        "sampling_wall_seconds": 0.001668,
+        "sampling_cpu_seconds": 0.001668,
+        "decoding_validation_wall_seconds": 0.007993,
+        "decoding_validation_cpu_seconds": 0.00788,
+        "total_wall_seconds": 1.259526,
+        "total_cpu_seconds": 1.254422,
+        "peak_memory_kb": 48.036
+      }
+    },
+    "spsa_warm_start_qaoa_depth_2_rejected": {
+      "method": "warm_lp_augmented_qaoa_p2_spsa",
+      "backend": "local_exact_statevector_cpu",
+      "layers": 2,
+      "warm_start": true,
+      "relaxation_mode": "lp_augmented",
+      "optimizer_method": "spsa",
+      "shots": 512,
+      "seed": 7,
+      "optimized_gammas": [
+        0.17,
+        0.22
+      ],
+      "optimized_betas": [
+        0.37,
+        0.13
+      ],
+      "expected_qubo_energy": 69.435582,
+      "circuit_evaluations": 62,
+      "classical_optimizer_iterations": 30,
+      "feasible_shots": 153,
+      "optimal_shots": 150,
+      "feasible_sample_probability": 0.298828,
+      "feasible_prob_95ci_halfwidth": 0.03965,
+      "first_feasible_shot": 1,
+      "first_optimal_shot": 1,
+      "time_to_99pct_feasible_seconds": 0.545979,
+      "best_feasible_objective": 4.0,
+      "best_feasible_bitstring": "00000001",
+      "best_feasible_routes": [
+        "V2:B>A"
+      ],
+      "mean_feasible_objective": 4.039216,
+      "optimality_gap": 0.0,
+      "approximation_ratio": 1.0,
+      "relaxation_vector": [
+        0.0,
+        0.0,
+        0.25,
+        0.25,
+        0.0,
+        0.0,
+        0.25,
+        0.25
+      ],
+      "circuit_profile": {
+        "qubits": 8,
+        "depth_layers": 2,
+        "single_qubit_gates": 124,
+        "two_qubit_gates": 104,
+        "total_gates": 228,
+        "circuit_depth": 37
+      },
+      "resource_accounting": {
+        "preprocessing_wall_seconds": 0.006736,
+        "preprocessing_cpu_seconds": 0.006736,
+        "parameter_optimization_wall_seconds": 0.531042,
+        "parameter_optimization_cpu_seconds": 0.515294,
+        "final_statevector_wall_seconds": 0.00792,
+        "final_statevector_cpu_seconds": 0.007921,
+        "sampling_wall_seconds": 0.001891,
+        "sampling_cpu_seconds": 0.001891,
+        "decoding_validation_wall_seconds": 0.009186,
+        "decoding_validation_cpu_seconds": 0.009121,
+        "total_wall_seconds": 0.556841,
+        "total_cpu_seconds": 0.541028,
+        "peak_memory_kb": 70.331
+      }
+    },
+    "tight_epsilon_clamp_0_005_rejected": {
+      "method": "warm_lp_augmented_qaoa_p1_grid",
+      "backend": "local_exact_statevector_cpu",
+      "layers": 1,
+      "warm_start": true,
+      "relaxation_mode": "lp_augmented",
+      "optimizer_method": "grid",
+      "shots": 512,
+      "seed": 7,
+      "optimized_gammas": [
+        0.008992
+      ],
+      "optimized_betas": [
+        2.827433
+      ],
+      "expected_qubo_energy": 26.410043,
+      "circuit_evaluations": 101,
+      "classical_optimizer_iterations": 100,
+      "feasible_shots": 360,
+      "optimal_shots": 360,
+      "feasible_sample_probability": 0.703125,
+      "feasible_prob_95ci_halfwidth": 0.039575,
+      "first_feasible_shot": 1,
+      "first_optimal_shot": 1,
+      "time_to_99pct_feasible_seconds": 0.518619,
+      "best_feasible_objective": 4.0,
+      "best_feasible_bitstring": "00000001",
+      "best_feasible_routes": [
+        "V2:B>A"
+      ],
+      "mean_feasible_objective": 4.0,
+      "optimality_gap": 0.0,
+      "approximation_ratio": 1.0,
+      "relaxation_vector": [
+        0.0,
+        0.0,
+        0.25,
+        0.25,
+        0.0,
+        0.0,
+        0.25,
+        0.25
+      ],
+      "circuit_profile": {
+        "qubits": 8,
+        "depth_layers": 1,
+        "single_qubit_gates": 66,
+        "two_qubit_gates": 52,
+        "total_gates": 118,
+        "circuit_depth": 19
+      },
+      "resource_accounting": {
+        "preprocessing_wall_seconds": 0.006566,
+        "preprocessing_cpu_seconds": 0.006565,
+        "parameter_optimization_wall_seconds": 0.506679,
+        "parameter_optimization_cpu_seconds": 0.503153,
+        "final_statevector_wall_seconds": 0.005303,
+        "final_statevector_cpu_seconds": 0.005302,
+        "sampling_wall_seconds": 0.001539,
+        "sampling_cpu_seconds": 0.00154,
+        "decoding_validation_wall_seconds": 0.007641,
+        "decoding_validation_cpu_seconds": 0.007639,
+        "total_wall_seconds": 0.527776,
+        "total_cpu_seconds": 0.524248,
+        "peak_memory_kb": 43.57
+      }
+    },
+    "multi_seed_5run_summary": {
+      "std_qaoa_p1": {
+        "seeds": [
+          7,
+          42,
+          99,
+          123,
+          2026
+        ],
+        "mean_feasible_prob": 0.06211,
+        "sd_feasible_prob": 0.00931,
+        "ci95_halfwidth": 0.00816,
+        "mean_global_opt_shot_prob": 0.04961,
+        "mean_optimality_gap": 0.0
+      },
+      "std_qaoa_p2": {
+        "seeds": [
+          7,
+          42,
+          99,
+          123,
+          2026
+        ],
+        "mean_feasible_prob": 0.28477,
+        "sd_feasible_prob": 0.0071,
+        "ci95_halfwidth": 0.00622,
+        "mean_global_opt_shot_prob": 0.21406,
+        "mean_optimality_gap": 0.0
+      },
+      "v1_box_warm_p1": {
+        "seeds": [
+          7,
+          42,
+          99,
+          123,
+          2026
+        ],
+        "mean_feasible_prob": 0.22695,
+        "sd_feasible_prob": 0.00761,
+        "ci95_halfwidth": 0.00667,
+        "mean_global_opt_shot_prob": 0.08789,
+        "mean_optimality_gap": 0.0
+      },
+      "v1_1_lp_warm_p1": {
+        "seeds": [
+          7,
+          42,
+          99,
+          123,
+          2026
+        ],
+        "mean_feasible_prob": 0.60117,
+        "sd_feasible_prob": 0.0257,
+        "ci95_halfwidth": 0.02253,
+        "mean_global_opt_shot_prob": 0.59805,
+        "mean_optimality_gap": 0.0
+      },
+      "v1_1_lp_warm_p2": {
+        "seeds": [
+          7,
+          42,
+          99,
+          123,
+          2026
+        ],
+        "mean_feasible_prob": 0.59961,
+        "sd_feasible_prob": 0.02682,
+        "ci95_halfwidth": 0.0235,
+        "mean_global_opt_shot_prob": 0.59609,
+        "mean_optimality_gap": 0.0
+      }
+    },
+    "operational_equal_deadline_curves": {
+      "deadline_0.02s": {
+        "std_qaoa_p1": {
+          "delivered_wall_s": 0.038001,
+          "delivered_cpu_s": 0.037783,
+          "circuit_evaluations": 5,
+          "feasible_prob": 0.019531,
+          "best_objective": 4.0,
+          "optimality_gap": 0.0
+        },
+        "v1_box_warm_p1": {
+          "delivered_wall_s": 0.03078,
+          "delivered_cpu_s": 0.030685,
+          "circuit_evaluations": 3,
+          "feasible_prob": 0.089844,
+          "best_objective": 4.0,
+          "optimality_gap": 0.0
+        },
+        "v1_1_lp_warm_p1": {
+          "delivered_wall_s": 0.035504,
+          "delivered_cpu_s": 0.03538,
+          "circuit_evaluations": 5,
+          "feasible_prob": 0.320312,
+          "best_objective": 4.0,
+          "optimality_gap": 0.0
+        },
+        "v1_1_lp_warm_p2": {
+          "delivered_wall_s": 0.036876,
+          "delivered_cpu_s": 0.036757,
+          "circuit_evaluations": 5,
+          "feasible_prob": 0.320312,
+          "best_objective": 4.0,
+          "optimality_gap": 0.0
+        }
+      },
+      "deadline_0.05s": {
+        "std_qaoa_p1": {
+          "delivered_wall_s": 0.068124,
+          "delivered_cpu_s": 0.067884,
+          "circuit_evaluations": 11,
+          "feasible_prob": 0.019531,
+          "best_objective": 4.0,
+          "optimality_gap": 0.0
+        },
+        "v1_box_warm_p1": {
+          "delivered_wall_s": 0.064703,
+          "delivered_cpu_s": 0.064372,
+          "circuit_evaluations": 9,
+          "feasible_prob": 0.089844,
+          "best_objective": 4.0,
+          "optimality_gap": 0.0
+        },
+        "v1_1_lp_warm_p1": {
+          "delivered_wall_s": 0.06264,
+          "delivered_cpu_s": 0.06236,
+          "circuit_evaluations": 10,
+          "feasible_prob": 0.320312,
+          "best_objective": 4.0,
+          "optimality_gap": 0.0
+        },
+        "v1_1_lp_warm_p2": {
+          "delivered_wall_s": 0.070535,
+          "delivered_cpu_s": 0.070224,
+          "circuit_evaluations": 11,
+          "feasible_prob": 0.320312,
+          "best_objective": 4.0,
+          "optimality_gap": 0.0
+        }
+      },
+      "deadline_0.12s": {
+        "std_qaoa_p1": {
+          "delivered_wall_s": 0.135677,
+          "delivered_cpu_s": 0.135021,
+          "circuit_evaluations": 24,
+          "feasible_prob": 0.332031,
+          "best_objective": 4.0,
+          "optimality_gap": 0.0
+        },
+        "v1_box_warm_p1": {
+          "delivered_wall_s": 0.13641,
+          "delivered_cpu_s": 0.136349,
+          "circuit_evaluations": 20,
+          "feasible_prob": 0.089844,
+          "best_objective": 4.0,
+          "optimality_gap": 0.0
+        },
+        "v1_1_lp_warm_p1": {
+          "delivered_wall_s": 0.131662,
+          "delivered_cpu_s": 0.131652,
+          "circuit_evaluations": 22,
+          "feasible_prob": 0.320312,
+          "best_objective": 4.0,
+          "optimality_gap": 0.0
+        },
+        "v1_1_lp_warm_p2": {
+          "delivered_wall_s": 0.137444,
+          "delivered_cpu_s": 0.137414,
+          "circuit_evaluations": 24,
+          "feasible_prob": 0.609375,
+          "best_objective": 4.0,
+          "optimality_gap": 0.0
+        }
+      }
+    },
+    "shot_scaling_study": {
+      "shots_32": {
+        "shots": 32,
+        "lp_warm_p1_feasible_prob": 0.5625,
+        "lp_warm_p1_opt_gap": 0.0,
+        "lp_warm_p1_cpu_s": 0.35716,
+        "std_p2_feasible_prob": 0.1875,
+        "std_p2_opt_gap": 0.0,
+        "std_p2_cpu_s": 1.325938
+      },
+      "shots_64": {
+        "shots": 64,
+        "lp_warm_p1_feasible_prob": 0.640625,
+        "lp_warm_p1_opt_gap": 0.0,
+        "lp_warm_p1_cpu_s": 0.377354,
+        "std_p2_feasible_prob": 0.234375,
+        "std_p2_opt_gap": 0.0,
+        "std_p2_cpu_s": 1.341294
+      },
+      "shots_128": {
+        "shots": 128,
+        "lp_warm_p1_feasible_prob": 0.632812,
+        "lp_warm_p1_opt_gap": 0.0,
+        "lp_warm_p1_cpu_s": 0.404533,
+        "std_p2_feasible_prob": 0.265625,
+        "std_p2_opt_gap": 0.0,
+        "std_p2_cpu_s": 1.353184
+      },
+      "shots_256": {
+        "shots": 256,
+        "lp_warm_p1_feasible_prob": 0.585938,
+        "lp_warm_p1_opt_gap": 0.0,
+        "lp_warm_p1_cpu_s": 0.391703,
+        "std_p2_feasible_prob": 0.300781,
+        "std_p2_opt_gap": 0.0,
+        "std_p2_cpu_s": 1.339297
+      },
+      "shots_512": {
+        "shots": 512,
+        "lp_warm_p1_feasible_prob": 0.587891,
+        "lp_warm_p1_opt_gap": 0.0,
+        "lp_warm_p1_cpu_s": 0.388157,
+        "std_p2_feasible_prob": 0.304688,
+        "std_p2_opt_gap": 0.0,
+        "std_p2_cpu_s": 1.329254
+      },
+      "shots_1024": {
+        "shots": 1024,
+        "lp_warm_p1_feasible_prob": 0.575195,
+        "lp_warm_p1_opt_gap": 0.0,
+        "lp_warm_p1_cpu_s": 0.398937,
+        "std_p2_feasible_prob": 0.299805,
+        "std_p2_opt_gap": 0.0,
+        "std_p2_cpu_s": 1.316649
+      }
+    }
+  },
+  "track_a_validation_tuning": {
+    "readout_desaturation_ablation": {
+      "v1_fixed_readout_2param": {
+        "val_mean_regret_usd": 0.1112,
+        "val_brier_score": 0.09493,
+        "total_fit_eval_cpu_s": 3.1707
+      },
+      "v1_1_trainable_readout_4param": {
+        "val_mean_regret_usd": 0.1091,
+        "val_brier_score": 0.08399,
+        "total_fit_eval_cpu_s": 4.105
+      }
+    },
+    "temperature_ablation": {
+      "tau_0.15": {
+        "temperature": 0.15,
+        "val_mean_regret_usd": 0.1091,
+        "val_brier_score": 0.08556,
+        "total_fit_eval_cpu_s": 3.8737
+      },
+      "tau_0.25": {
+        "temperature": 0.25,
+        "val_mean_regret_usd": 0.1091,
+        "val_brier_score": 0.08566,
+        "total_fit_eval_cpu_s": 3.7068
+      },
+      "tau_0.5": {
+        "temperature": 0.5,
+        "val_mean_regret_usd": 0.1091,
+        "val_brier_score": 0.08399,
+        "total_fit_eval_cpu_s": 3.5843
+      },
+      "tau_1.0": {
+        "temperature": 1.0,
+        "val_mean_regret_usd": 0.1163,
+        "val_brier_score": 0.0834,
+        "total_fit_eval_cpu_s": 3.6272
+      },
+      "tau_2.0": {
+        "temperature": 2.0,
+        "val_mean_regret_usd": 0.1142,
+        "val_brier_score": 0.08791,
+        "total_fit_eval_cpu_s": 3.934
+      }
+    },
+    "hybrid_loss_weight_ablation": {
+      "dec_weight_0.0": {
+        "decision_weight": 0.0,
+        "val_mean_regret_usd": 0.1163,
+        "val_brier_score": 0.08568,
+        "total_fit_eval_cpu_s": 4.215
+      },
+      "dec_weight_0.5": {
+        "decision_weight": 0.5,
+        "val_mean_regret_usd": 0.1091,
+        "val_brier_score": 0.08566,
+        "total_fit_eval_cpu_s": 8.3974
+      },
+      "dec_weight_0.85": {
+        "decision_weight": 0.85,
+        "val_mean_regret_usd": 0.1091,
+        "val_brier_score": 0.08566,
+        "total_fit_eval_cpu_s": 5.175
+      },
+      "dec_weight_1.0": {
+        "decision_weight": 1.0,
+        "val_mean_regret_usd": 0.1091,
+        "val_brier_score": 0.08576,
+        "total_fit_eval_cpu_s": 9.2073
+      }
+    },
+    "risk_to_cost_severity_ablation": {
+      "contractual_penalty_exposure_accepted": {
+        "val_mean_regret_usd": 0.1091,
+        "val_brier_score": 0.08566,
+        "total_fit_eval_cpu_s": 4.1786
+      },
+      "noisy_per_route_empirical_severity_rejected": {
+        "val_mean_regret_usd": 0.139,
+        "val_brier_score": 0.09228,
+        "total_fit_eval_cpu_s": 4.0924
+      },
+      "over_penalized_3x_severity_rejected": {
+        "val_mean_regret_usd": 0.13,
+        "val_brier_score": 0.09821,
+        "total_fit_eval_cpu_s": 4.0556
+      }
+    },
+    "predictor_compute_budget_curve": {
+      "steps_10": {
+        "val_mean_regret_usd": 0.1091,
+        "val_brier_score": 0.08573,
+        "total_fit_eval_cpu_s": 6.318
+      },
+      "steps_25": {
+        "val_mean_regret_usd": 0.1091,
+        "val_brier_score": 0.08564,
+        "total_fit_eval_cpu_s": 7.163
+      },
+      "steps_50": {
+        "val_mean_regret_usd": 0.1091,
+        "val_brier_score": 0.08564,
+        "total_fit_eval_cpu_s": 9.793
+      },
+      "steps_80": {
+        "val_mean_regret_usd": 0.1091,
+        "val_brier_score": 0.08572,
+        "total_fit_eval_cpu_s": 11.5762
+      }
+    },
+    "selected_validation_config": {
+      "trainable_readout": true,
+      "best_temperature": 0.15,
+      "best_learning_rate": 0.08,
+      "best_decision_weight": 0.5,
+      "use_empirical_train_severity": false
+    }
+  },
+  "track_a_decision_quality": {
+    "financial_contract": {
+      "currency": "USD",
+      "transport_cost_per_travel_minute_usd": 0.5,
+      "labor_cost_per_duty_minute_usd": 0.25,
+      "penalty_unit": "USD_per_late_minute_per_order_contract",
+      "provenance": "Explicit synthetic contract-logistics parameterization preserving hard vs soft SLA semantics."
+    },
+    "summary_table": {
+      "A_classical_ml_exact": {
+        "mean_total_financial_cost_usd": 10.379,
+        "mean_transport_cost_usd": 6.5693,
+        "mean_labor_cost_usd": 3.8097,
+        "mean_contractual_penalties_usd": 0.0,
+        "mean_decision_regret_usd": 0.1385,
+        "regret_sd_usd": 0.139,
+        "regret_95ci_halfwidth_usd": 0.0497,
+        "order_sla_breach_rate": 0.0,
+        "scenario_sla_breach_rate": 0.0,
+        "mean_sla_breach_severity_min": 0.0,
+        "valid_plan_rate": 1.0,
+        "hard_constraint_violations": 0,
+        "raw_solver_success_rate": 1.0,
+        "fallback_rate": 0.0,
+        "mean_qaoa_shot_feasibility": 1.0,
+        "mean_subproblem_gap_usd": 0.0,
+        "mean_decision_cpu_seconds": 1e-05,
+        "mean_inference_circuit_evals": 0.0,
+        "mean_shots": 0.0,
+        "n_scenarios": 30
+      },
+      "B_std_vqc_exact": {
+        "mean_total_financial_cost_usd": 10.3949,
+        "mean_transport_cost_usd": 6.58,
+        "mean_labor_cost_usd": 3.815,
+        "mean_contractual_penalties_usd": 0.0,
+        "mean_decision_regret_usd": 0.1545,
+        "regret_sd_usd": 0.1388,
+        "regret_95ci_halfwidth_usd": 0.0497,
+        "order_sla_breach_rate": 0.0,
+        "scenario_sla_breach_rate": 0.0,
+        "mean_sla_breach_severity_min": 0.0,
+        "valid_plan_rate": 1.0,
+        "hard_constraint_violations": 0,
+        "raw_solver_success_rate": 1.0,
+        "fallback_rate": 0.0,
+        "mean_qaoa_shot_feasibility": 1.0,
+        "mean_subproblem_gap_usd": 0.0,
+        "mean_decision_cpu_seconds": 0.0,
+        "mean_inference_circuit_evals": 14.0,
+        "mean_shots": 0.0,
+        "n_scenarios": 30
+      },
+      "C_df_vqc_exact": {
+        "mean_total_financial_cost_usd": 10.3949,
+        "mean_transport_cost_usd": 6.58,
+        "mean_labor_cost_usd": 3.815,
+        "mean_contractual_penalties_usd": 0.0,
+        "mean_decision_regret_usd": 0.1545,
+        "regret_sd_usd": 0.1388,
+        "regret_95ci_halfwidth_usd": 0.0497,
+        "order_sla_breach_rate": 0.0,
+        "scenario_sla_breach_rate": 0.0,
+        "mean_sla_breach_severity_min": 0.0,
+        "valid_plan_rate": 1.0,
+        "hard_constraint_violations": 0,
+        "raw_solver_success_rate": 1.0,
+        "fallback_rate": 0.0,
+        "mean_qaoa_shot_feasibility": 1.0,
+        "mean_subproblem_gap_usd": 0.0,
+        "mean_decision_cpu_seconds": 0.0,
+        "mean_inference_circuit_evals": 14.0,
+        "mean_shots": 0.0,
+        "n_scenarios": 30
+      },
+      "D_std_vqc_std_qaoa": {
+        "mean_total_financial_cost_usd": 10.4428,
+        "mean_transport_cost_usd": 6.6119,
+        "mean_labor_cost_usd": 3.8309,
+        "mean_contractual_penalties_usd": 0.0,
+        "mean_decision_regret_usd": 0.2023,
+        "regret_sd_usd": 0.2162,
+        "regret_95ci_halfwidth_usd": 0.0774,
+        "order_sla_breach_rate": 0.0,
+        "scenario_sla_breach_rate": 0.0,
+        "mean_sla_breach_severity_min": 0.0,
+        "valid_plan_rate": 1.0,
+        "hard_constraint_violations": 0,
+        "raw_solver_success_rate": 0.1667,
+        "fallback_rate": 0.8333,
+        "mean_qaoa_shot_feasibility": 0.0009,
+        "mean_subproblem_gap_usd": 0.0672,
+        "mean_decision_cpu_seconds": 5.38786,
+        "mean_inference_circuit_evals": 51.0,
+        "mean_shots": 256.0,
+        "n_scenarios": 30
+      },
+      "E_df_vqc_std_qaoa": {
+        "mean_total_financial_cost_usd": 10.4202,
+        "mean_transport_cost_usd": 6.5968,
+        "mean_labor_cost_usd": 3.8234,
+        "mean_contractual_penalties_usd": 0.0,
+        "mean_decision_regret_usd": 0.1797,
+        "regret_sd_usd": 0.1966,
+        "regret_95ci_halfwidth_usd": 0.0704,
+        "order_sla_breach_rate": 0.0,
+        "scenario_sla_breach_rate": 0.0,
+        "mean_sla_breach_severity_min": 0.0,
+        "valid_plan_rate": 1.0,
+        "hard_constraint_violations": 0,
+        "raw_solver_success_rate": 0.1667,
+        "fallback_rate": 0.8333,
+        "mean_qaoa_shot_feasibility": 0.0008,
+        "mean_subproblem_gap_usd": 0.0464,
+        "mean_decision_cpu_seconds": 5.34682,
+        "mean_inference_circuit_evals": 51.0,
+        "mean_shots": 256.0,
+        "n_scenarios": 30
+      },
+      "F_df_vqc_warm_qaoa": {
+        "mean_total_financial_cost_usd": 10.3901,
+        "mean_transport_cost_usd": 6.5767,
+        "mean_labor_cost_usd": 3.8134,
+        "mean_contractual_penalties_usd": 0.0,
+        "mean_decision_regret_usd": 0.1496,
+        "regret_sd_usd": 0.1716,
+        "regret_95ci_halfwidth_usd": 0.0614,
+        "order_sla_breach_rate": 0.0,
+        "scenario_sla_breach_rate": 0.0,
+        "mean_sla_breach_severity_min": 0.0,
+        "valid_plan_rate": 1.0,
+        "hard_constraint_violations": 0,
+        "raw_solver_success_rate": 1.0,
+        "fallback_rate": 0.0,
+        "mean_qaoa_shot_feasibility": 0.0202,
+        "mean_subproblem_gap_usd": 0.0396,
+        "mean_decision_cpu_seconds": 5.26772,
+        "mean_inference_circuit_evals": 51.0,
+        "mean_shots": 256.0,
+        "n_scenarios": 30
+      },
+      "G_classical_ml_warm_qaoa": {
+        "mean_total_financial_cost_usd": 10.391,
+        "mean_transport_cost_usd": 6.5773,
+        "mean_labor_cost_usd": 3.8137,
+        "mean_contractual_penalties_usd": 0.0,
+        "mean_decision_regret_usd": 0.1505,
+        "regret_sd_usd": 0.1417,
+        "regret_95ci_halfwidth_usd": 0.0507,
+        "order_sla_breach_rate": 0.0,
+        "scenario_sla_breach_rate": 0.0,
+        "mean_sla_breach_severity_min": 0.0,
+        "valid_plan_rate": 1.0,
+        "hard_constraint_violations": 0,
+        "raw_solver_success_rate": 1.0,
+        "fallback_rate": 0.0,
+        "mean_qaoa_shot_feasibility": 0.0776,
+        "mean_subproblem_gap_usd": 0.008,
+        "mean_decision_cpu_seconds": 5.30877,
+        "mean_inference_circuit_evals": 37.0,
+        "mean_shots": 256.0,
+        "n_scenarios": 30
+      }
+    },
+    "calibration_metrics": {
+      "classical_gbdt": {
+        "brier_score": 0.04993,
+        "expected_calibration_error_ece": 0.03678,
+        "evaluated_routes": 420
+      },
+      "classical_logistic": {
+        "brier_score": 0.06741,
+        "expected_calibration_error_ece": 0.11402,
+        "evaluated_routes": 420
+      },
+      "std_vqc": {
+        "brier_score": 0.04692,
+        "expected_calibration_error_ece": 0.05283,
+        "evaluated_routes": 420
+      },
+      "df_vqc": {
+        "brier_score": 0.04713,
+        "expected_calibration_error_ece": 0.05434,
+        "evaluated_routes": 420
+      },
+      "v1_fixed_readout_vqc": {
+        "brier_score": 0.06567,
+        "expected_calibration_error_ece": 0.13478,
+        "evaluated_routes": 420
+      }
+    },
+    "training_resource_accounting": [
+      {
+        "replicate": 1,
+        "gbdt_fit_cpu_s": 0.3342,
+        "gbdt_fit_wall_s": 0.3417,
+        "gbdt_peak_mem_kb": 113.56,
+        "std_vqc_fit_cpu_s": 7.9485,
+        "std_vqc_fit_wall_s": 8.1422,
+        "std_vqc_circuit_evals": 126000,
+        "std_vqc_peak_mem_kb": 2.89,
+        "df_vqc_fit_cpu_s": 13.8939,
+        "df_vqc_fit_wall_s": 14.1489,
+        "df_vqc_circuit_evals": 201600,
+        "df_vqc_peak_mem_kb": 5.87
+      },
+      {
+        "replicate": 2,
+        "gbdt_fit_cpu_s": 0.1191,
+        "gbdt_fit_wall_s": 0.1194,
+        "gbdt_peak_mem_kb": 113.89,
+        "std_vqc_fit_cpu_s": 3.1876,
+        "std_vqc_fit_wall_s": 3.1917,
+        "std_vqc_circuit_evals": 126000,
+        "std_vqc_peak_mem_kb": 12.13,
+        "df_vqc_fit_cpu_s": 5.7813,
+        "df_vqc_fit_wall_s": 5.8016,
+        "df_vqc_circuit_evals": 201600,
+        "df_vqc_peak_mem_kb": 5.87
+      },
+      {
+        "replicate": 3,
+        "gbdt_fit_cpu_s": 0.1165,
+        "gbdt_fit_wall_s": 0.1165,
+        "gbdt_peak_mem_kb": 108.81,
+        "std_vqc_fit_cpu_s": 3.1276,
+        "std_vqc_fit_wall_s": 3.1277,
+        "std_vqc_circuit_evals": 126000,
+        "std_vqc_peak_mem_kb": 12.13,
+        "df_vqc_fit_cpu_s": 5.7021,
+        "df_vqc_fit_wall_s": 5.7024,
+        "df_vqc_circuit_evals": 201600,
+        "df_vqc_peak_mem_kb": 5.87
+      },
+      {
+        "replicate": 4,
+        "gbdt_fit_cpu_s": 0.1202,
+        "gbdt_fit_wall_s": 0.1202,
+        "gbdt_peak_mem_kb": 107.34,
+        "std_vqc_fit_cpu_s": 3.0832,
+        "std_vqc_fit_wall_s": 3.0832,
+        "std_vqc_circuit_evals": 126000,
+        "std_vqc_peak_mem_kb": 12.13,
+        "df_vqc_fit_cpu_s": 5.6464,
+        "df_vqc_fit_wall_s": 5.6464,
+        "df_vqc_circuit_evals": 201600,
+        "df_vqc_peak_mem_kb": 5.82
+      },
+      {
+        "replicate": 5,
+        "gbdt_fit_cpu_s": 0.12,
+        "gbdt_fit_wall_s": 0.12,
+        "gbdt_peak_mem_kb": 112.82,
+        "std_vqc_fit_cpu_s": 3.1512,
+        "std_vqc_fit_wall_s": 3.1633,
+        "std_vqc_circuit_evals": 126000,
+        "std_vqc_peak_mem_kb": 12.13,
+        "df_vqc_fit_cpu_s": 5.7427,
+        "df_vqc_fit_wall_s": 5.7729,
+        "df_vqc_circuit_evals": 201600,
+        "df_vqc_peak_mem_kb": 5.87
+      }
+    ],
+    "replicates": [
+      {
+        "replicate": 1,
+        "test_scenarios": 6,
+        "means": {
+          "A_classical_ml_exact": {
+            "total_financial_cost": 12.2908,
+            "regret": 0.0881,
+            "sla_breach_rate": 0.0,
+            "raw_quantum_accept_rate": 1.0
+          },
+          "B_std_vqc_exact": {
+            "total_financial_cost": 12.3404,
+            "regret": 0.1377,
+            "sla_breach_rate": 0.0,
+            "raw_quantum_accept_rate": 1.0
+          },
+          "C_df_vqc_exact": {
+            "total_financial_cost": 12.3404,
+            "regret": 0.1377,
+            "sla_breach_rate": 0.0,
+            "raw_quantum_accept_rate": 1.0
+          },
+          "D_std_vqc_std_qaoa": {
+            "total_financial_cost": 12.3404,
+            "regret": 0.1377,
+            "sla_breach_rate": 0.0,
+            "raw_quantum_accept_rate": 0.0
+          },
+          "E_df_vqc_std_qaoa": {
+            "total_financial_cost": 12.3404,
+            "regret": 0.1377,
+            "sla_breach_rate": 0.0,
+            "raw_quantum_accept_rate": 0.0
+          },
+          "F_df_vqc_warm_qaoa": {
+            "total_financial_cost": 12.4083,
+            "regret": 0.2056,
+            "sla_breach_rate": 0.0,
+            "raw_quantum_accept_rate": 1.0
+          },
+          "G_classical_ml_warm_qaoa": {
+            "total_financial_cost": 12.3404,
+            "regret": 0.1377,
+            "sla_breach_rate": 0.0,
+            "raw_quantum_accept_rate": 1.0
+          }
+        }
+      },
+      {
+        "replicate": 2,
+        "test_scenarios": 6,
+        "means": {
+          "A_classical_ml_exact": {
+            "total_financial_cost": 11.1334,
+            "regret": 0.1179,
+            "sla_breach_rate": 0.0,
+            "raw_quantum_accept_rate": 1.0
+          },
+          "B_std_vqc_exact": {
+            "total_financial_cost": 11.1334,
+            "regret": 0.1179,
+            "sla_breach_rate": 0.0,
+            "raw_quantum_accept_rate": 1.0
+          },
+          "C_df_vqc_exact": {
+            "total_financial_cost": 11.1334,
+            "regret": 0.1179,
+            "sla_breach_rate": 0.0,
+            "raw_quantum_accept_rate": 1.0
+          },
+          "D_std_vqc_std_qaoa": {
+            "total_financial_cost": 11.2001,
+            "regret": 0.1846,
+            "sla_breach_rate": 0.0,
+            "raw_quantum_accept_rate": 0.3333
+          },
+          "E_df_vqc_std_qaoa": {
+            "total_financial_cost": 11.0869,
+            "regret": 0.0714,
+            "sla_breach_rate": 0.0,
+            "raw_quantum_accept_rate": 0.3333
+          },
+          "F_df_vqc_warm_qaoa": {
+            "total_financial_cost": 11.0964,
+            "regret": 0.0809,
+            "sla_breach_rate": 0.0,
+            "raw_quantum_accept_rate": 1.0
+          },
+          "G_classical_ml_warm_qaoa": {
+            "total_financial_cost": 11.1334,
+            "regret": 0.1179,
+            "sla_breach_rate": 0.0,
+            "raw_quantum_accept_rate": 1.0
+          }
+        }
+      },
+      {
+        "replicate": 3,
+        "test_scenarios": 6,
+        "means": {
+          "A_classical_ml_exact": {
+            "total_financial_cost": 9.2026,
+            "regret": 0.1416,
+            "sla_breach_rate": 0.0,
+            "raw_quantum_accept_rate": 1.0
+          },
+          "B_std_vqc_exact": {
+            "total_financial_cost": 9.2331,
+            "regret": 0.172,
+            "sla_breach_rate": 0.0,
+            "raw_quantum_accept_rate": 1.0
+          },
+          "C_df_vqc_exact": {
+            "total_financial_cost": 9.2331,
+            "regret": 0.172,
+            "sla_breach_rate": 0.0,
+            "raw_quantum_accept_rate": 1.0
+          },
+          "D_std_vqc_std_qaoa": {
+            "total_financial_cost": 9.2852,
+            "regret": 0.2241,
+            "sla_breach_rate": 0.0,
+            "raw_quantum_accept_rate": 0.1667
+          },
+          "E_df_vqc_std_qaoa": {
+            "total_financial_cost": 9.2852,
+            "regret": 0.2241,
+            "sla_breach_rate": 0.0,
+            "raw_quantum_accept_rate": 0.1667
+          },
+          "F_df_vqc_warm_qaoa": {
+            "total_financial_cost": 9.1674,
+            "regret": 0.1064,
+            "sla_breach_rate": 0.0,
+            "raw_quantum_accept_rate": 1.0
+          },
+          "G_classical_ml_warm_qaoa": {
+            "total_financial_cost": 9.2026,
+            "regret": 0.1416,
+            "sla_breach_rate": 0.0,
+            "raw_quantum_accept_rate": 1.0
+          }
+        }
+      },
+      {
+        "replicate": 4,
+        "test_scenarios": 6,
+        "means": {
+          "A_classical_ml_exact": {
+            "total_financial_cost": 9.7916,
+            "regret": 0.1529,
+            "sla_breach_rate": 0.0,
+            "raw_quantum_accept_rate": 1.0
+          },
+          "B_std_vqc_exact": {
+            "total_financial_cost": 9.7913,
+            "regret": 0.1525,
+            "sla_breach_rate": 0.0,
+            "raw_quantum_accept_rate": 1.0
+          },
+          "C_df_vqc_exact": {
+            "total_financial_cost": 9.7913,
+            "regret": 0.1525,
+            "sla_breach_rate": 0.0,
+            "raw_quantum_accept_rate": 1.0
+          },
+          "D_std_vqc_std_qaoa": {
+            "total_financial_cost": 9.7913,
+            "regret": 0.1525,
+            "sla_breach_rate": 0.0,
+            "raw_quantum_accept_rate": 0.0
+          },
+          "E_df_vqc_std_qaoa": {
+            "total_financial_cost": 9.7913,
+            "regret": 0.1525,
+            "sla_breach_rate": 0.0,
+            "raw_quantum_accept_rate": 0.0
+          },
+          "F_df_vqc_warm_qaoa": {
+            "total_financial_cost": 9.8017,
+            "regret": 0.1629,
+            "sla_breach_rate": 0.0,
+            "raw_quantum_accept_rate": 1.0
+          },
+          "G_classical_ml_warm_qaoa": {
+            "total_financial_cost": 9.802,
+            "regret": 0.1633,
+            "sla_breach_rate": 0.0,
+            "raw_quantum_accept_rate": 1.0
+          }
+        }
+      },
+      {
+        "replicate": 5,
+        "test_scenarios": 6,
+        "means": {
+          "A_classical_ml_exact": {
+            "total_financial_cost": 9.4766,
+            "regret": 0.1922,
+            "sla_breach_rate": 0.0,
+            "raw_quantum_accept_rate": 1.0
+          },
+          "B_std_vqc_exact": {
+            "total_financial_cost": 9.4766,
+            "regret": 0.1922,
+            "sla_breach_rate": 0.0,
+            "raw_quantum_accept_rate": 1.0
+          },
+          "C_df_vqc_exact": {
+            "total_financial_cost": 9.4766,
+            "regret": 0.1922,
+            "sla_breach_rate": 0.0,
+            "raw_quantum_accept_rate": 1.0
+          },
+          "D_std_vqc_std_qaoa": {
+            "total_financial_cost": 9.5971,
+            "regret": 0.3127,
+            "sla_breach_rate": 0.0,
+            "raw_quantum_accept_rate": 0.3333
+          },
+          "E_df_vqc_std_qaoa": {
+            "total_financial_cost": 9.5971,
+            "regret": 0.3127,
+            "sla_breach_rate": 0.0,
+            "raw_quantum_accept_rate": 0.3333
+          },
+          "F_df_vqc_warm_qaoa": {
+            "total_financial_cost": 9.4766,
+            "regret": 0.1922,
+            "sla_breach_rate": 0.0,
+            "raw_quantum_accept_rate": 1.0
+          },
+          "G_classical_ml_warm_qaoa": {
+            "total_financial_cost": 9.4766,
+            "regret": 0.1922,
+            "sla_breach_rate": 0.0,
+            "raw_quantum_accept_rate": 1.0
+          }
+        }
+      }
+    ]
+  }
+}
