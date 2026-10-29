@@ -1,0 +1,570 @@
+{
+  "audit_run_tag": "final",
+  "total_verification_wall_seconds": 6.4759,
+  "audit_a_quantum_feature_map": {
+    "closed_form_expectation": "cos(theta0)*cos(theta1)*cos(pi*x1) - cos(theta0)*sin(theta1)*cos(pi*x0)*sin(pi*x1) + sin(theta0)*sin(theta1)*sin(pi*x0)",
+    "symbolic_simplification_residual": "0",
+    "heisenberg_pauli_branches_before_encoding": {
+      "cos(theta0)*cos(theta1)": "+I0 Z1 -> cos(pi*x1)",
+      "cos(theta0)*sin(theta1)": "+Z0 X1 -> -cos(pi*x0)*sin(pi*x1) [vanishes when x1 in {0, 1}]",
+      "sin(theta0)*cos(theta1)": "-Y0 Y1 -> 0 identically [unobservable on real RY product states]",
+      "sin(theta0)*sin(theta1)": "+X0 I1 -> +sin(pi*x0) [symmetric around x0=0.5]"
+    },
+    "circuit_gate_count": {
+      "ry": 4,
+      "cnot": 2,
+      "total": 6,
+      "compiled_parallel_depth": 4,
+      "repetitions": 1
+    },
+    "max_abs_diff_custom_vs_closed_form": 1.1102230246251565e-16,
+    "max_abs_diff_sdk_vs_custom": 1.1102230246251565e-16,
+    "total_candidate_routes_in_base": 14,
+    "boundary_x1_routes_canceling_cos_pi_x0": [
+      {
+        "route_id": "R1:Q",
+        "x1_nominal_pressure": 0.0
+      },
+      {
+        "route_id": "R1:R",
+        "x1_nominal_pressure": 0.0
+      },
+      {
+        "route_id": "R1:Q>R",
+        "x1_nominal_pressure": 0.0
+      },
+      {
+        "route_id": "R1:R>P",
+        "x1_nominal_pressure": 1.0
+      },
+      {
+        "route_id": "R2:Q",
+        "x1_nominal_pressure": 0.0
+      },
+      {
+        "route_id": "R2:R",
+        "x1_nominal_pressure": 0.0
+      }
+    ],
+    "boundary_x1_route_fraction": 0.428571,
+    "symmetry_collision_at_x1_eq_0": {
+      "z0_at_x0_0.1": 0.685233918404,
+      "z0_at_x0_0.9": 0.685233918404,
+      "abs_difference_z0": 0.0,
+      "prob_at_x0_0.1": 0.020214665173,
+      "prob_at_x0_0.9": 0.020214665173
+    },
+    "saddle_gradient_at_x0_0.5_x1_1.0": {
+      "dz_dx0": 5.551115123125783e-11,
+      "dz_dx1": 1.1102230246251565e-10
+    },
+    "gradient_verification": {
+      "normal_regime_max_abs_err_vs_fd": 6.079459158314648e-11,
+      "bce_tail_logit_minus16_analytic_grad": [
+        -0.01995802,
+        0.01191795,
+        0.04226616,
+        0.07366882
+      ],
+      "bce_tail_logit_minus16_fd_grad": [
+        -0.24588444,
+        0.15837419,
+        0.53983486,
+        0.88095879
+      ],
+      "bce_tail_max_abs_err_vs_fd": 0.8072899688961054
+    },
+    "monotonic_domain_ablation_preview": {
+      "encoding": "u = 0.05 + 0.40 * x in [0.05, 0.45] -> pi*u in (0, pi/2)",
+      "z0_at_x0_0.1_x1_0": 0.721374,
+      "z0_at_x0_0.5_x1_0": 0.624694,
+      "z0_at_x0_0.9_x1_0": 0.556128,
+      "strictly_monotonic": true
+    }
+  },
+  "audit_b_financial_model": {
+    "cost_rates": {
+      "transport_usd_per_travel_min": 0.5,
+      "labor_usd_per_duty_min": 0.25,
+      "order_penalties_usd_per_late_min": {
+        "P": 4.0,
+        "Q": 1.5,
+        "R": 3.0
+      }
+    },
+    "hard_window_realized_breach_check": {
+      "crash_reproduced": true,
+      "exception_type": "KeyError",
+      "exception_message": "'R1:R>P'"
+    },
+    "prospective_12var_labor_cost_audit": {
+      "routes_checked": 12,
+      "max_route_understatement_usd": 0.375,
+      "min_route_understatement_usd": 0.15,
+      "optimal_plan_R1_Q_R_plus_R2_P_travel_only_usd": 7.575,
+      "optimal_plan_R1_Q_R_plus_R2_P_true_duty_usd": 8.1,
+      "per_route": [
+        {
+          "route_id": "R1:R",
+          "travel_min": 5.4,
+          "duty_min": 6.0,
+          "service_plus_wait_min": 0.6,
+          "travel_only_cost_usd": 4.05,
+          "true_duty_cost_usd": 4.2,
+          "understatement_usd": 0.15
+        },
+        {
+          "route_id": "R1:P>Q",
+          "travel_min": 5.2,
+          "duty_min": 6.7,
+          "service_plus_wait_min": 1.5,
+          "travel_only_cost_usd": 3.9,
+          "true_duty_cost_usd": 4.275,
+          "understatement_usd": 0.375
+        },
+        {
+          "route_id": "R1:P>R",
+          "travel_min": 6.9,
+          "duty_min": 8.2,
+          "service_plus_wait_min": 1.3,
+          "travel_only_cost_usd": 5.175,
+          "true_duty_cost_usd": 5.5,
+          "understatement_usd": 0.325
+        },
+        {
+          "route_id": "R1:Q>P",
+          "travel_min": 4.7,
+          "duty_min": 6.2,
+          "service_plus_wait_min": 1.5,
+          "travel_only_cost_usd": 3.525,
+          "true_duty_cost_usd": 3.9,
+          "understatement_usd": 0.375
+        },
+        {
+          "route_id": "R1:Q>R",
+          "travel_min": 6.0,
+          "duty_min": 7.4,
+          "service_plus_wait_min": 1.4,
+          "travel_only_cost_usd": 4.5,
+          "true_duty_cost_usd": 4.85,
+          "understatement_usd": 0.35
+        },
+        {
+          "route_id": "R1:R>P",
+          "travel_min": 6.9,
+          "duty_min": 8.2,
+          "service_plus_wait_min": 1.3,
+          "travel_only_cost_usd": 5.175,
+          "true_duty_cost_usd": 5.5,
+          "understatement_usd": 0.325
+        },
+        {
+          "route_id": "R1:R>Q",
+          "travel_min": 6.5,
+          "duty_min": 7.9,
+          "service_plus_wait_min": 1.4,
+          "travel_only_cost_usd": 4.875,
+          "true_duty_cost_usd": 5.225,
+          "understatement_usd": 0.35
+        },
+        {
+          "route_id": "R2:P",
+          "travel_min": 4.1,
+          "duty_min": 4.8,
+          "service_plus_wait_min": 0.7,
+          "travel_only_cost_usd": 3.075,
+          "true_duty_cost_usd": 3.25,
+          "understatement_usd": 0.175
+        },
+        {
+          "route_id": "R2:Q",
+          "travel_min": 3.2,
+          "duty_min": 4.0,
+          "service_plus_wait_min": 0.8,
+          "travel_only_cost_usd": 2.4,
+          "true_duty_cost_usd": 2.6,
+          "understatement_usd": 0.2
+        },
+        {
+          "route_id": "R2:R",
+          "travel_min": 5.4,
+          "duty_min": 6.0,
+          "service_plus_wait_min": 0.6,
+          "travel_only_cost_usd": 4.05,
+          "true_duty_cost_usd": 4.2,
+          "understatement_usd": 0.15
+        },
+        {
+          "route_id": "R2:P>Q",
+          "travel_min": 5.2,
+          "duty_min": 6.7,
+          "service_plus_wait_min": 1.5,
+          "travel_only_cost_usd": 3.9,
+          "true_duty_cost_usd": 4.275,
+          "understatement_usd": 0.375
+        },
+        {
+          "route_id": "R2:Q>P",
+          "travel_min": 4.7,
+          "duty_min": 6.2,
+          "service_plus_wait_min": 1.5,
+          "travel_only_cost_usd": 3.525,
+          "true_duty_cost_usd": 3.9,
+          "understatement_usd": 0.375
+        }
+      ]
+    },
+    "feature_future_leakage_detected": false
+  },
+  "audit_c_qubo_and_lp_warm_start": {
+    "candidate_validity": {
+      "dispatch_8var_invalid_routes": 0,
+      "prospective_12var_invalid_routes": 0
+    },
+    "isomorphism_baseline_module": {
+      "tiny_4var": {
+        "n_variables": 4,
+        "total_assignments_checked": 16,
+        "feasible_assignments": 3,
+        "infeasible_assignments": 13,
+        "max_qubo_direct_discrepancy": 0.0,
+        "max_ising_direct_discrepancy": 0.0,
+        "min_feasible_energy": 3.0,
+        "min_infeasible_energy": 22.0,
+        "penalty_margin_gap": 19.0,
+        "ground_state_is_feasible": true,
+        "best_feasible_bitstring": "0100",
+        "best_feasible_cost": 3.0,
+        "coverage_penalty": 20.0,
+        "vehicle_penalty": 15.0,
+        "max_abs_ising_h": 25.25,
+        "max_abs_ising_J": 20.0
+      },
+      "dispatch_8var": {
+        "n_variables": 8,
+        "total_assignments_checked": 256,
+        "feasible_assignments": 6,
+        "infeasible_assignments": 250,
+        "max_qubo_direct_discrepancy": 0.0,
+        "max_ising_direct_discrepancy": 0.0,
+        "min_feasible_energy": 4.0,
+        "min_infeasible_energy": 31.0,
+        "penalty_margin_gap": 27.0,
+        "ground_state_is_feasible": true,
+        "best_feasible_bitstring": "00000001",
+        "best_feasible_cost": 4.0,
+        "coverage_penalty": 29.0,
+        "vehicle_penalty": 29.0,
+        "max_abs_ising_h": 139.75,
+        "max_abs_ising_J": 36.25
+      },
+      "prospective_12var": {
+        "n_variables": 12,
+        "total_assignments_checked": 4096,
+        "feasible_assignments": 8,
+        "infeasible_assignments": 4088,
+        "max_qubo_direct_discrepancy": 5.684341886080802e-14,
+        "max_ising_direct_discrepancy": 2.2737367544323206e-13,
+        "min_feasible_energy": 8.1,
+        "min_infeasible_energy": 21.9,
+        "penalty_margin_gap": 13.8,
+        "ground_state_is_feasible": true,
+        "best_feasible_bitstring": "000001001000",
+        "best_feasible_cost": 8.1,
+        "coverage_penalty": 18.0,
+        "vehicle_penalty": 18.0,
+        "max_abs_ising_h": 119.1375,
+        "max_abs_ising_J": 22.5
+      },
+      "penalty_threshold_study": {
+        "penalty_1.5": {
+          "penalty": 1.5,
+          "ground_state_is_feasible": false,
+          "penalty_margin_gap": -1.0,
+          "max_abs_ising_J": 1.875
+        },
+        "penalty_4.0": {
+          "penalty": 4.0,
+          "ground_state_is_feasible": true,
+          "penalty_margin_gap": 2.0,
+          "max_abs_ising_J": 5.0
+        },
+        "penalty_8.0": {
+          "penalty": 8.0,
+          "ground_state_is_feasible": true,
+          "penalty_margin_gap": 6.0,
+          "max_abs_ising_J": 10.0
+        },
+        "penalty_29.0": {
+          "penalty": 29.0,
+          "ground_state_is_feasible": true,
+          "penalty_margin_gap": 27.0,
+          "max_abs_ising_J": 36.25
+        },
+        "penalty_100.0": {
+          "penalty": 100.0,
+          "ground_state_is_feasible": true,
+          "penalty_margin_gap": 98.0,
+          "max_abs_ising_J": 125.0
+        }
+      }
+    },
+    "critical_penalty_thresholds": {
+      "tiny_4var": {
+        "certified_optimum_cost": 3.0,
+        "critical_equal_penalty_P_crit": 1.5,
+        "limiting_infeasible_bitstring": "0000"
+      },
+      "dispatch_8var": {
+        "certified_optimum_cost": 4.0,
+        "critical_equal_penalty_P_crit": 2.0,
+        "limiting_infeasible_bitstring": "00000000"
+      },
+      "prospective_12var_true_cost": {
+        "certified_optimum_cost": 8.1,
+        "critical_equal_penalty_P_crit": 4.2,
+        "limiting_infeasible_bitstring": "000000000001"
+      }
+    },
+    "lp_vs_scipy_highs_fixtures": {
+      "tiny_4var": {
+        "highs_objective": 3.0,
+        "custom_objective": 2.99999999,
+        "abs_objective_diff": 8.224804837198008e-09,
+        "custom_max_primal_violation": 2.741601612399336e-09,
+        "highs_x": [
+          -0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        "custom_x": [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ]
+      },
+      "dispatch_8var": {
+        "highs_objective": 4.0,
+        "custom_objective": 4.00000001,
+        "abs_objective_diff": 8.803295870052352e-09,
+        "custom_max_primal_violation": 2.200823967513088e-09,
+        "highs_x": [
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          -0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "custom_x": [
+          0.0,
+          0.0,
+          0.25,
+          0.25,
+          0.0,
+          0.0,
+          0.25,
+          0.25
+        ]
+      },
+      "prospective_12var_true_cost": {
+        "highs_objective": 7.125,
+        "custom_objective": 7.125,
+        "abs_objective_diff": 2.985789393505911e-09,
+        "custom_max_primal_violation": 2.9384881194971513e-09,
+        "highs_x": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.5,
+          0.5,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.5
+        ],
+        "custom_x": [
+          0.0,
+          0.0,
+          0.25,
+          0.0,
+          0.5,
+          0.25,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.5
+        ]
+      }
+    },
+    "lp_vs_scipy_highs_150_scenarios": {
+      "total_scenarios": 150,
+      "unconverged_count_tol_1e6": 4,
+      "max_primal_violation": 9.898365127547493e-09,
+      "max_abs_objective_error": 0.0002538238806488735,
+      "scenarios_with_fractional_lp_optimum_odd_hole": 150
+    },
+    "warm_start_state_and_mixer_verification": {
+      "max_initial_state_linf_error": 0.0,
+      "max_ref_backend_linf_error": 0.0,
+      "max_mixer_eigenstate_evolution_linf_error": 1.6653345369377348e-16,
+      "max_mixer_hermiticity_error": 0.0,
+      "max_mixer_involutory_error": 3.141221134165848e-16
+    },
+    "circuit_profile_current": {
+      "dispatch_8var_std_p1": {
+        "qubits": 8,
+        "depth_layers": 1,
+        "single_qubit_gates": 50,
+        "two_qubit_gates": 52,
+        "total_gates": 102,
+        "circuit_depth": 24
+      },
+      "dispatch_8var_warm_p1": {
+        "qubits": 8,
+        "depth_layers": 1,
+        "single_qubit_gates": 66,
+        "two_qubit_gates": 52,
+        "total_gates": 118,
+        "circuit_depth": 26
+      }
+    }
+  },
+  "audit_e_known_reported_concerns": {
+    "e1_box_vs_lp_8var": {
+      "v1_box_relaxation_vector": [
+        0.333333,
+        0.264368,
+        0.0,
+        0.0,
+        0.333333,
+        0.264368,
+        0.0,
+        0.0
+      ],
+      "v1_box_mass_on_optimal_routes_2_3_6_7": 0.0,
+      "v1_1_lp_augmented_vector": [
+        0.0,
+        0.0,
+        0.25,
+        0.25,
+        0.0,
+        0.0,
+        0.25,
+        0.25
+      ],
+      "scipy_highs_vertex_vector": [
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        -0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "e2_60pct_8var_sampling_explanation": {
+      "lp_barycenter_clamped_initial_feas_prob": 0.345048,
+      "integral_vertex_clamped_initial_feas_prob": 0.669127,
+      "reported_8var_lp_warm_p1_mean_feas_prob": 0.60117
+    },
+    "e3_e4_12var_low_feas_vs_30_of_30_selection": {
+      "feasible_space_fraction": 0.001953,
+      "analytical_odd_hole_warm_start_initial_feas_prob": 0.01353,
+      "prob_at_least_1_feasible_in_256_shots_at_2.02pct": 0.994615,
+      "prob_at_least_1_feasible_in_256_shots_at_1.56pct": 0.982138
+    },
+    "e5_e6_zero_sla_and_classical_vs_hybrid_cost": {
+      "saved_replicates_where_std_vqc_equals_df_vqc": "5/5",
+      "test_split_sla_breaches_by_plan": {
+        "R1:P>R+R2:Q": 0,
+        "R1:Q>R+R2:P": 0,
+        "R1:R+R2:P>Q": 1,
+        "R1:R+R2:Q>P": 2,
+        "R1:R>P+R2:Q": 23,
+        "R1:R>Q+R2:P": 12,
+        "R1:P>Q+R2:R": 1,
+        "R1:Q>P+R2:R": 2
+      },
+      "plan_realized_statistics_across_150_scenarios": {
+        "R1:P>Q+R2:R": {
+          "scenarios": 150,
+          "sla_breach_scenarios": 16,
+          "mean_deterministic_cost_usd": 11.5818,
+          "mean_total_realized_cost_usd": 11.6361
+        },
+        "R1:P>R+R2:Q": {
+          "scenarios": 150,
+          "sla_breach_scenarios": 1,
+          "mean_deterministic_cost_usd": 11.0598,
+          "mean_total_realized_cost_usd": 11.0606
+        },
+        "R1:Q>P+R2:R": {
+          "scenarios": 150,
+          "sla_breach_scenarios": 31,
+          "mean_deterministic_cost_usd": 11.0329,
+          "mean_total_realized_cost_usd": 11.4316
+        },
+        "R1:Q>R+R2:P": {
+          "scenarios": 150,
+          "sla_breach_scenarios": 0,
+          "mean_deterministic_cost_usd": 11.0077,
+          "mean_total_realized_cost_usd": 11.0077
+        },
+        "R1:R+R2:P>Q": {
+          "scenarios": 150,
+          "sla_breach_scenarios": 16,
+          "mean_deterministic_cost_usd": 11.5818,
+          "mean_total_realized_cost_usd": 11.6361
+        },
+        "R1:R+R2:Q>P": {
+          "scenarios": 150,
+          "sla_breach_scenarios": 31,
+          "mean_deterministic_cost_usd": 11.0329,
+          "mean_total_realized_cost_usd": 11.4316
+        },
+        "R1:R>P+R2:Q": {
+          "scenarios": 150,
+          "sla_breach_scenarios": 121,
+          "mean_deterministic_cost_usd": 11.049,
+          "mean_total_realized_cost_usd": 19.2083
+        },
+        "R1:R>Q+R2:P": {
+          "scenarios": 150,
+          "sla_breach_scenarios": 74,
+          "mean_deterministic_cost_usd": 11.5606,
+          "mean_total_realized_cost_usd": 12.5634
+        }
+      }
+    },
+    "e7_deadline_overshoot_check_20ms": {
+      "requested_deadline_seconds": 0.02,
+      "actual_total_wall_seconds": 0.018517,
+      "stage_breakdown": {
+        "preprocessing_wall_seconds": 0.006536,
+        "preprocessing_cpu_seconds": 0.006534,
+        "parameter_optimization_wall_seconds": 0.002852,
+        "parameter_optimization_cpu_seconds": 0.002851,
+        "final_statevector_wall_seconds": 0.002766,
+        "final_statevector_cpu_seconds": 0.002767,
+        "sampling_wall_seconds": 0.002251,
+        "sampling_cpu_seconds": 0.002252,
+        "decoding_validation_wall_seconds": 0.004051,
+        "decoding_validation_cpu_seconds": 0.004051,
+        "total_wall_seconds": 0.018517,
+        "total_cpu_seconds": 0.018518,
+        "peak_memory_kb": 64.644
+      }
+    }
+  }
+}

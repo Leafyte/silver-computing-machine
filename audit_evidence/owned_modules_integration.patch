@@ -1,0 +1,341 @@
+diff --git a/experiments_v1_1/mathematical_verification.py b/experiments_v1_1/mathematical_verification.py
+index 00cb5a3..2d508e5 100644
+--- a/experiments_v1_1/mathematical_verification.py
++++ b/experiments_v1_1/mathematical_verification.py
+@@ -112,6 +112,21 @@ def verify_qubo_isomorphism(qubo: Qubo) -> Dict[str, Any]:
+     }
+ 
+ 
++def _deterministic_route_cost_usd(route: Dict[str, Any]) -> float:
++    """Transport ($0.50/travel min) + driver labor ($0.25/duty min including service & wait)."""
++    travel = float(route["travel_cost"])
++    service_and_wait = sum(
++        max(0.0, float(st.get("service_start", st.get("arrival", 0.0))) - float(st.get("arrival", 0.0)))
++        + max(
++            0.0,
++            float(st.get("departure", st.get("service_end", st.get("service_start", 0.0))))
++            - float(st.get("service_start", st.get("arrival", 0.0))),
++        )
++        for st in route.get("stops", ())
++    )
++    return round(travel * 0.50 + (travel + service_and_wait) * 0.25, 4)
++
++
+ def run_independent_mathematical_audit() -> Dict[str, Any]:
+     """Audit mathematical properties across 4-var, 8-var, and 12-var dispatch QUBOs."""
+     results: Dict[str, Any] = {}
+@@ -165,7 +180,7 @@ def run_independent_mathematical_audit() -> Dict[str, Any]:
+             "id": _route_id(r),
+             "vehicle": r["vehicle_id"],
+             "stops": r["order_ids"],
+-            "cost": round(float(r["travel_cost"]) * 0.50 + float(r["travel_cost"]) * 0.25, 4),
++            "cost": _deterministic_route_cost_usd(r),
+         }
+         for r in r12_all
+         if _route_id(r) in active12
+diff --git a/experiments_v1_1/quantum_optimization.py b/experiments_v1_1/quantum_optimization.py
+index 652f799..a574bb2 100644
+--- a/experiments_v1_1/quantum_optimization.py
++++ b/experiments_v1_1/quantum_optimization.py
+@@ -41,23 +41,53 @@ class CircuitProfile:
+ 
+ 
+ def get_circuit_profile(qubo: Qubo, layers: int, warm_start: bool) -> CircuitProfile:
+-    """Compute formal circuit gate counts and depth."""
++    """Compute formal circuit gate counts and parallel ASAP depth from nonzero Ising terms."""
+     n = qubo.n
+-    n_couplings = len(qubo.quadratic)
+-    if not warm_start:
+-        init_single = n
+-        layer_single = 2 * n + n_couplings
+-        layer_two = 2 * n_couplings
+-        total_single = init_single + layers * layer_single
+-        total_two = layers * layer_two
+-        depth = 1 + layers * (2 + 2 * max(1, n - 1))
+-    else:
+-        init_single = n
+-        layer_single = 4 * n + n_couplings
+-        layer_two = 2 * n_couplings
+-        total_single = init_single + layers * layer_single
+-        total_two = layers * layer_two
+-        depth = 1 + layers * (4 + 2 * max(1, n - 1))
++    if n <= 0:
++        return CircuitProfile(0, layers, 0, 0, 0, 0)
++
++    _, h_ising, j_ising = qubo_to_ising(qubo)
++    active_h = [q for q, h_val in enumerate(h_ising) if abs(h_val) > 1e-12]
++    active_j = sorted((i, k) for (i, k), j_val in j_ising.items() if abs(j_val) > 1e-12)
++    n_couplings = len(active_j)
++
++    # Greedy edge-coloring into parallel disjoint matchings per cost layer
++    remaining = list(active_j)
++    parallel_rzz_rounds: List[List[Tuple[int, int]]] = []
++    while remaining:
++        busy = set()
++        round_edges: List[Tuple[int, int]] = []
++        next_rem: List[Tuple[int, int]] = []
++        for u, v in remaining:
++            if u not in busy and v not in busy:
++                round_edges.append((u, v))
++                busy.add(u)
++                busy.add(v)
++            else:
++                next_rem.append((u, v))
++        parallel_rzz_rounds.append(round_edges)
++        remaining = next_rem
++
++    init_single = n
++    mixer_single = 3 * n if warm_start else n
++    layer_single = len(active_h) + n_couplings + mixer_single
++    layer_two = 2 * n_couplings
++    total_single = init_single + layers * layer_single
++    total_two = layers * layer_two
++
++    wire_clock = [1] * n  # initial state preparation H^n or RY^n
++    for _ in range(layers):
++        for q in active_h:
++            wire_clock[q] += 1
++        for round_edges in parallel_rzz_rounds:
++            for u, v in round_edges:
++                t_start = max(wire_clock[u], wire_clock[v])
++                # RZZ(u, v) = CNOT(u, v) -> RZ(v) -> CNOT(u, v)
++                wire_clock[u] = t_start + 3
++                wire_clock[v] = t_start + 3
++        mixer_depth = 3 if warm_start else 1
++        for q in range(n):
++            wire_clock[q] += mixer_depth
+ 
+     return CircuitProfile(
+         qubits=n,
+@@ -65,11 +95,15 @@ def get_circuit_profile(qubo: Qubo, layers: int, warm_start: bool) -> CircuitPro
+         single_qubit_gates=total_single,
+         two_qubit_gates=total_two,
+         total_gates=total_single + total_two,
+-        circuit_depth=depth,
++        circuit_depth=max(wire_clock),
+     )
+ 
+ 
+-def lp_augmented_relaxation(qubo: Qubo, steps: int = 1200) -> List[float]:
++def lp_augmented_relaxation(
++    qubo: Qubo,
++    steps: int = 5000,
++    wall_deadline: Optional[float] = None,
++) -> List[float]:
+     """Primal-Dual Augmented-Lagrangian LP relaxation of the Set-Partitioning problem.
+ 
+     Eliminates V1's non-convex x_i^2 = x_i diagonal-folding artifact by solving the
+@@ -78,7 +112,10 @@ def lp_augmented_relaxation(qubo: Qubo, steps: int = 1200) -> List[float]:
+         s.t. sum_{i covers s} x_i = 1  for all stops s
+              sum_{i on v} x_i <= 1     for all vehicles v
+     """
++    t0 = time.perf_counter()
+     n = qubo.n
++    if n == 0:
++        return []
+     by_stop = {
+         s: [i for i, c in enumerate(qubo.candidates) if s in c["stops"]]
+         for s in qubo.required_stops
+@@ -91,30 +128,77 @@ def lp_augmented_relaxation(qubo: Qubo, steps: int = 1200) -> List[float]:
+     rho = max(10.0, 2.0 * max(costs, default=1.0))
+     lam_s = {s: 0.0 for s in by_stop}
+     mu_v = {v: 0.0 for v in by_veh}
+-    x = [1.0 / max(1, n) for _ in range(n)]
+-    alpha = 0.8 / (2.0 * rho * (len(by_stop) + 1))
++    x = [1.0 / n for _ in range(n)]
++    y = list(x)
++    t_fista = 1.0
++    prev_viol = float("inf")
++
++    # Exact Gershgorin upper bound on ||A^T A||_inf guarantees alpha <= 1 / L_grad
++    max_ata_row_sum = max(
++        (
++            sum(len(by_stop[s]) for s in c["stops"] if s in by_stop)
++            + len(by_veh[c["vehicle"]])
++            for c in qubo.candidates
++        ),
++        default=1,
++    )
++    ata_bound = max(1, max_ata_row_sum)
++    alpha = 1.0 / (rho * ata_bound)
+ 
+     for it in range(steps):
++        if wall_deadline is not None and (it & 15) == 15 and (time.perf_counter() - t0) >= wall_deadline:
++            break
+         grad = list(costs)
+         for s, idxs in by_stop.items():
+-            viol = sum(x[i] for i in idxs) - 1.0
++            viol = sum(y[i] for i in idxs) - 1.0
++            g_s = lam_s[s] + rho * viol
+             for i in idxs:
+-                grad[i] += lam_s[s] + rho * viol
++                grad[i] += g_s
+         for v, idxs in by_veh.items():
+-            term = max(0.0, mu_v[v] + rho * (sum(x[i] for i in idxs) - 1.0))
++            term = max(0.0, mu_v[v] + rho * (sum(y[i] for i in idxs) - 1.0))
+             if term > 0.0:
+                 for i in idxs:
+                     grad[i] += term
+-        nxt = [min(1.0, max(0.0, x[i] - alpha * grad[i])) for i in range(n)]
+-        if (it + 1) % 25 == 0:
+-            for s, idxs in by_stop.items():
+-                lam_s[s] += rho * (sum(nxt[i] for i in idxs) - 1.0)
+-            for v, idxs in by_veh.items():
+-                mu_v[v] = max(0.0, mu_v[v] + rho * (sum(nxt[i] for i in idxs) - 1.0))
+-        if it > 100 and max(abs(nxt[i] - x[i]) for i in range(n)) < 1e-8:
+-            x = nxt
+-            break
++
++        nxt = [min(1.0, max(0.0, y[i] - alpha * grad[i])) for i in range(n)]
++        # True KKT projected-gradient stationarity residual (scale-invariant wrt alpha)
++        kkt_stationarity = max(abs(nxt[i] - y[i]) for i in range(n)) / alpha
++
++        if kkt_stationarity < 1e-6 or (it + 1) % 80 == 0:
++            eq_viol = max(
++                (abs(sum(nxt[i] for i in idxs) - 1.0) for idxs in by_stop.values()),
++                default=0.0,
++            )
++            ub_viol = max(
++                (max(0.0, sum(nxt[i] for i in idxs) - 1.0) for idxs in by_veh.values()),
++                default=0.0,
++            )
++            comp_viol = max(
++                (mu_v[v] * max(0.0, 1.0 - sum(nxt[i] for i in idxs)) for v, idxs in by_veh.items()),
++                default=0.0,
++            )
++            primal_viol = max(eq_viol, ub_viol, comp_viol)
++            if kkt_stationarity < 1e-6 and primal_viol < 1e-8:
++                x = nxt
++                break
++            if kkt_stationarity < 1e-4 or (it + 1) % 160 == 0:
++                for s, idxs in by_stop.items():
++                    lam_s[s] += rho * (sum(nxt[i] for i in idxs) - 1.0)
++                for v, idxs in by_veh.items():
++                    mu_v[v] = max(0.0, mu_v[v] + rho * (sum(nxt[i] for i in idxs) - 1.0))
++                if primal_viol > 0.5 * prev_viol and rho < 1000.0:
++                    rho = min(1000.0, rho * 1.5)
++                    alpha = 1.0 / (rho * ata_bound)
++                prev_viol = primal_viol
++                x = nxt
++                y = list(nxt)
++                t_fista = 1.0
++                continue
++        t_next = 0.5 * (1.0 + math.sqrt(1.0 + 4.0 * t_fista * t_fista))
++        mom = (t_fista - 1.0) / t_next
++        y = [min(1.0, max(0.0, nxt[i] + mom * (nxt[i] - x[i]))) for i in range(n)]
+         x = nxt
++        t_fista = t_next
+     return x
+ 
+ 
+@@ -126,15 +210,27 @@ def precompute_hamiltonian_spectrum(qubo: Qubo) -> Tuple[List[float], float]:
+     """
+     n = qubo.n
+     c_ising, h_ising, j_ising = qubo_to_ising(qubo)
+-    energies: List[float] = []
+-    for basis in range(1 << n):
+-        z = [1 - 2 * ((basis >> (n - 1 - q)) & 1) for q in range(n)]
+-        val = (
+-            c_ising
+-            + sum(h_ising[q] * z[q] for q in range(n))
+-            + sum(v * z[i] * z[k] for (i, k), v in j_ising.items())
+-        )
+-        energies.append(val)
++    size = 1 << n
++    energies: List[float] = [float(c_ising)] * size
++    for q in range(n):
++        hq = float(h_ising[q])
++        if abs(hq) <= 1e-15:
++            continue
++        bit_mask = 1 << (n - 1 - q)
++        for basis in range(size):
++            energies[basis] += -hq if (basis & bit_mask) else hq
++    for (i, k), j_val in j_ising.items():
++        jv = float(j_val)
++        if abs(jv) <= 1e-15:
++            continue
++        mask_i = 1 << (n - 1 - i)
++        mask_k = 1 << (n - 1 - k)
++        mask_ik = mask_i | mask_k
++        for basis in range(size):
++            b = basis & mask_ik
++            # z_i * z_k == +1 iff bits i and k agree (both 0 or both 1)
++            energies[basis] += jv if (b == 0 or b == mask_ik) else -jv
++
+     max_coupling = max(
+         max((abs(v) for v in j_ising.values()), default=1.0),
+         max((abs(v) for v in h_ising), default=1.0),
+@@ -326,8 +422,11 @@ def optimize_qaoa_angles(
+         for i in range(grid_size):
+             g = i * g_step
+             for j in range(grid_size):
+-                if wall_deadline is not None and (time.perf_counter() - t_start) >= wall_deadline and eval_count > 0:
+-                    return [best_gamma], [best_beta], best_val, eval_count, opt_iters
++                if wall_deadline is not None and eval_count > 0:
++                    elapsed_opt = time.perf_counter() - t_start
++                    avg_eval = elapsed_opt / eval_count
++                    if elapsed_opt + avg_eval >= wall_deadline:
++                        return [best_gamma], [best_beta], best_val, eval_count, opt_iters
+                 opt_iters += 1
+                 b = j * b_step
+                 val = objective([g, b])
+@@ -461,7 +560,12 @@ def execute_qaoa_benchmark(
+         if relaxation_mode == "box_v1":
+             raw_relax = continuous_relaxation(qubo)
+         else:
+-            raw_relax = lp_augmented_relaxation(qubo)
++            lp_budget = (
++                max(0.001, (wall_deadline_seconds - (time.perf_counter() - t0_wall)) * 0.15)
++                if wall_deadline_seconds is not None
++                else None
++            )
++            raw_relax = lp_augmented_relaxation(qubo, wall_deadline=lp_budget)
+         relaxation_vector = [round(float(v), 6) for v in raw_relax]
+         low, high = relaxation_clamp
+         probs = [min(high, max(low, float(v))) for v in raw_relax]
+@@ -473,11 +577,14 @@ def execute_qaoa_benchmark(
+     # Phase 2: Classical Parameter Optimization
+     t_opt_w = time.perf_counter()
+     t_opt_c = time.process_time()
+-    rem_deadline = (
+-        max(0.005, wall_deadline_seconds - (time.perf_counter() - t0_wall))
+-        if wall_deadline_seconds is not None
+-        else None
+-    )
++    if wall_deadline_seconds is not None:
++        # Reserve wall-clock headroom for final statevector, shot sampling, and validation
++        post_reserve = max(0.012, pre_wall * 1.15)
++        rem_deadline: Optional[float] = max(
++            0.0, wall_deadline_seconds - post_reserve - (time.perf_counter() - t0_wall)
++        )
++    else:
++        rem_deadline = None
+     opt_gammas, opt_betas, exp_energy, circuit_evals, opt_iters = optimize_qaoa_angles(
+         qubo,
+         layers=layers,
+@@ -531,6 +638,7 @@ def execute_qaoa_benchmark(
+     t_dec_w = time.perf_counter()
+     t_dec_c = time.process_time()
+     val_cache: Dict[int, Dict[str, Any]] = {}
++    bitstr_cache: Dict[int, str] = {}
+     counts: Dict[str, int] = {}
+     feasible_count = 0
+     optimal_shot_count = 0
+@@ -541,11 +649,14 @@ def execute_qaoa_benchmark(
+     best_feasible_plan = None
+     feasible_objectives: List[float] = []
+ 
++    fmt_spec = f"0{qubo.n}b"
+     for shot_idx, idx in enumerate(sampled_indices, start=1):
+-        bitstr = format(idx, f"0{qubo.n}b")
+-        counts[bitstr] = counts.get(bitstr, 0) + 1
+-        if idx not in val_cache:
++        bitstr = bitstr_cache.get(idx)
++        if bitstr is None:
++            bitstr = format(idx, fmt_spec)
++            bitstr_cache[idx] = bitstr
+             val_cache[idx] = validate_selection(qubo, [int(b) for b in bitstr])
++        counts[bitstr] = counts.get(bitstr, 0) + 1
+         val = val_cache[idx]
+         if val["feasible"]:
+             feasible_count += 1

@@ -137,7 +137,7 @@ class JobManager:
             return True
         except PermissionError:
             return True
-        except OSError:
+        except (OSError, OverflowError, ValueError):
             return False
 
     def _claim_runtime(self) -> None:
