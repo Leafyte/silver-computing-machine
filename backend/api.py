@@ -6,6 +6,7 @@ from typing import Any
 from threading import BoundedSemaphore
 from datetime import datetime, timezone
 
+# pyrefly: ignore[missing-import]
 from fastapi import Body, FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
