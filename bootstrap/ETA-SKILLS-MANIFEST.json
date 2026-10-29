@@ -14,37 +14,44 @@
         {
           "path": "LICENSE",
           "bytes": 1088,
-          "sha256": "402666abc624142a13aaf2a6fbeb46bd03b9f9dd53f77704991244134fe8169a"
+          "sha256": "402666abc624142a13aaf2a6fbeb46bd03b9f9dd53f77704991244134fe8169a",
+          "git_lf_sha256": "f89abb55d9f073f38f1703e4518f0613c788c6174be7f13b8dfe48a1c076c746"
         },
         {
           "path": "SKILL.md",
           "bytes": 3603,
-          "sha256": "1f6166c23c0a0f32d703c19d84b3c30c2873daefb9e8732339a009934fa17013"
+          "sha256": "1f6166c23c0a0f32d703c19d84b3c30c2873daefb9e8732339a009934fa17013",
+          "git_lf_sha256": "1f6166c23c0a0f32d703c19d84b3c30c2873daefb9e8732339a009934fa17013"
         },
         {
           "path": "assets/api-design-checklist.md",
           "bytes": 3884,
-          "sha256": "ef98cb8910cdc555514198df7becc6de8b04e1a98e2291b1440bc62e14cd07e5"
+          "sha256": "ef98cb8910cdc555514198df7becc6de8b04e1a98e2291b1440bc62e14cd07e5",
+          "git_lf_sha256": "ef98cb8910cdc555514198df7becc6de8b04e1a98e2291b1440bc62e14cd07e5"
         },
         {
           "path": "assets/rest-api-template.py",
           "bytes": 5323,
-          "sha256": "b359cda817740ee2cd3c9a901d7d5a14178cc0e2dcb46b75af053e5cc4d6012c"
+          "sha256": "b359cda817740ee2cd3c9a901d7d5a14178cc0e2dcb46b75af053e5cc4d6012c",
+          "git_lf_sha256": "b359cda817740ee2cd3c9a901d7d5a14178cc0e2dcb46b75af053e5cc4d6012c"
         },
         {
           "path": "references/details.md",
           "bytes": 9808,
-          "sha256": "e8b19b192ab1e1e99a5d7fed285670c2cfc0f23877338efe68da56eeaeaf1649"
+          "sha256": "e8b19b192ab1e1e99a5d7fed285670c2cfc0f23877338efe68da56eeaeaf1649",
+          "git_lf_sha256": "e8b19b192ab1e1e99a5d7fed285670c2cfc0f23877338efe68da56eeaeaf1649"
         },
         {
           "path": "references/graphql-schema-design.md",
           "bytes": 9005,
-          "sha256": "0f10cbe2f3d787be9de4ab8dcc88444ac36ab69786973666a229fdbffeb01638"
+          "sha256": "0f10cbe2f3d787be9de4ab8dcc88444ac36ab69786973666a229fdbffeb01638",
+          "git_lf_sha256": "0f10cbe2f3d787be9de4ab8dcc88444ac36ab69786973666a229fdbffeb01638"
         },
         {
           "path": "references/rest-best-practices.md",
           "bytes": 7571,
-          "sha256": "675fbafdd5a6d5ac2c17ab97e17c90aa0a10c2a5608860128a8be14764130fae"
+          "sha256": "675fbafdd5a6d5ac2c17ab97e17c90aa0a10c2a5608860128a8be14764130fae",
+          "git_lf_sha256": "675fbafdd5a6d5ac2c17ab97e17c90aa0a10c2a5608860128a8be14764130fae"
         }
       ]
     },
@@ -60,19 +67,23 @@
         {
           "path": "LICENSE",
           "bytes": 1088,
-          "sha256": "402666abc624142a13aaf2a6fbeb46bd03b9f9dd53f77704991244134fe8169a"
+          "sha256": "402666abc624142a13aaf2a6fbeb46bd03b9f9dd53f77704991244134fe8169a",
+          "git_lf_sha256": "f89abb55d9f073f38f1703e4518f0613c788c6174be7f13b8dfe48a1c076c746"
         },
         {
           "path": "SKILL.md",
           "bytes": 4483,
-          "sha256": "dba8e1287ae03591198ea0ea638bb9862ec3c7b5cbdeb1163368f3ebc9487cb6"
+          "sha256": "dba8e1287ae03591198ea0ea638bb9862ec3c7b5cbdeb1163368f3ebc9487cb6",
+          "git_lf_sha256": "dba8e1287ae03591198ea0ea638bb9862ec3c7b5cbdeb1163368f3ebc9487cb6"
         },
         {
           "path": "references/details.md",
           "bytes": 13033,
-          "sha256": "5c390fb29a98af4742c489495a76505c5da6bdcf2f336c652186855d1a0bab1a"
+          "sha256": "5c390fb29a98af4742c489495a76505c5da6bdcf2f336c652186855d1a0bab1a",
+          "git_lf_sha256": "5c390fb29a98af4742c489495a76505c5da6bdcf2f336c652186855d1a0bab1a"
         }
       ]
     }
-  ]
+  ],
+  "hash_policy": "sha256 and bytes describe original installation; git_lf_sha256 hashes UTF-8 text after CRLF-to-LF normalization for portable Git checkout verification"
 }
