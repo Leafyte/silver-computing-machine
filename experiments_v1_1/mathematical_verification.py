@@ -112,6 +112,21 @@ def verify_qubo_isomorphism(qubo: Qubo) -> Dict[str, Any]:
     }
 
 
+def _deterministic_route_cost_usd(route: Dict[str, Any]) -> float:
+    """Transport ($0.50/travel min) + driver labor ($0.25/duty min including service & wait)."""
+    travel = float(route["travel_cost"])
+    service_and_wait = sum(
+        max(0.0, float(st.get("service_start", st.get("arrival", 0.0))) - float(st.get("arrival", 0.0)))
+        + max(
+            0.0,
+            float(st.get("departure", st.get("service_end", st.get("service_start", 0.0))))
+            - float(st.get("service_start", st.get("arrival", 0.0))),
+        )
+        for st in route.get("stops", ())
+    )
+    return round(travel * 0.50 + (travel + service_and_wait) * 0.25, 4)
+
+
 def run_independent_mathematical_audit() -> Dict[str, Any]:
     """Audit mathematical properties across 4-var, 8-var, and 12-var dispatch QUBOs."""
     results: Dict[str, Any] = {}
@@ -165,7 +180,7 @@ def run_independent_mathematical_audit() -> Dict[str, Any]:
             "id": _route_id(r),
             "vehicle": r["vehicle_id"],
             "stops": r["order_ids"],
-            "cost": round(float(r["travel_cost"]) * 0.50 + float(r["travel_cost"]) * 0.25, 4),
+            "cost": _deterministic_route_cost_usd(r),
         }
         for r in r12_all
         if _route_id(r) in active12

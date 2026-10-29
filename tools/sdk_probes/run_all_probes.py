@@ -39,10 +39,11 @@ from probe_qpiai_quantum import probe_quantum
 
 
 def run_all() -> Dict[str, Any]:
+    # Probe ortools before highspy/qpiai_opt to prevent dylib symbol collision on macOS
     return {
+        "ortools": probe_ortools(),
         "qpiai_quantum": probe_quantum(),
         "qpiai_opt": probe_opt(),
-        "ortools": probe_ortools(),
     }
 
 

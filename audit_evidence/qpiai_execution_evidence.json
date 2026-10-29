@@ -1,0 +1,169 @@
+{
+  "environment": {
+    "python_version": "3.12.0",
+    "platform": "macOS-15.7.3-arm64-arm-64bit",
+    "qpiai_quantum_version": "0.7.5",
+    "qpiai_opt_version": null,
+    "cloud_api_key_configured": false,
+    "paid_cloud_or_qpu_calls": 0
+  },
+  "execution_modes_distinction": {
+    "custom_local_statevector": "backend/quantum_learning.py, backend/qaoa.py, experiments_v1_1/quantum_optimization.py (pure Python CPU amplitudes)",
+    "qpiai_sdk_local_simulator": "qpiai_quantum 0.7.5 StatevectorSimulator / QpiAI-QSV-Local (verified & executed below)",
+    "authenticated_cloud_simulator": "BLOCKED / NOT EXECUTED (no QPIAI_QCLOUD_API_KEY configured; unauthorized)",
+    "physical_qpu": "BLOCKED / NOT AUTHORIZED (owner prohibition on paid QPU jobs)",
+    "qpiai_opt_solver": "qpiai-opt not installed in .venv-api (0.0.9 circuit compiler previously verified offline; Client.solve requires QPIAI_OPT_API_KEY, BLOCKED)"
+  },
+  "vqc_2qubit_sdk_execution": {
+    "backend": "StatevectorSimulator (QpiAI-QSV-Local)",
+    "package_version": "0.7.5",
+    "features": [
+      0.35,
+      0.25
+    ],
+    "theta": [
+      1.119555,
+      0.768995
+    ],
+    "exact_statevector": [
+      {
+        "real": 0.5127852177,
+        "imag": 0.0
+      },
+      {
+        "real": 0.3263886525,
+        "imag": 0.0
+      },
+      {
+        "real": 0.7602425714,
+        "imag": 0.0
+      },
+      {
+        "real": 0.2292444123,
+        "imag": 0.0
+      }
+    ],
+    "exact_expectation_z0": 0.68183489384,
+    "statevector_runtime_seconds": 0.001145,
+    "shots": 1024,
+    "seed": 42,
+    "counts": {
+      "00": 278,
+      "01": 100,
+      "10": 593,
+      "11": 53
+    },
+    "empirical_z0_q0_rightmost": 0.701172,
+    "empirical_z0_q0_leftmost": -0.261719,
+    "sampling_runtime_seconds": 0.001424
+  },
+  "qaoa_solver_high_level_api_audit": {
+    "solver_class": "qpiai_quantum.algorithms.opt.solvers.qaoa.QAOASolver",
+    "package_version": "0.7.5",
+    "parametric_gates_in_p1_4var_standard_ansatz": 13,
+    "docstring_vs_code_discrepancy_error": "ValueError: initial_params has 2 parameters but ansatz requires 13 parameters",
+    "unauthenticated_circuit_run_blocker": "ValueError: Authentication required. Call QpiAIQuantumAuth.login(api_key) first.",
+    "status_without_api_key": "BLOCKED at Circuit.run (circuit.py:1083) requiring QpiAIQuantumAuth.login(api_key)"
+  },
+  "verified_sdk_local_optimization_tiny_4var": {
+    "optimizer": "qpiai_quantum.algorithms.utils.optimizers.gradient_free.cobyla_optimize",
+    "backend": "qpiai_quantum.simulator.StatevectorSimulator (credential-free local)",
+    "package_version": "0.7.5",
+    "qubits": 4,
+    "layers": 1,
+    "shots": 512,
+    "seed": 42,
+    "optimal_parameters": [
+      2.010568,
+      0.205612
+    ],
+    "optimal_ising_energy": 6.85298,
+    "circuit_evaluations": 50,
+    "optimizer_info": {
+      "success": false,
+      "nit": 41,
+      "nfev": 50,
+      "message": "Return from COBYLA because the objective function has been evaluated MAXFUN times."
+    },
+    "runtime_seconds": 0.113219,
+    "feasible_shots": 462,
+    "feasible_shot_probability": 0.902344,
+    "best_feasible_decoded": {
+      "count": 461,
+      "raw_sdk_bitstring": "0010",
+      "variable_order_bits": "0100",
+      "selected_route_ids": [
+        "r1"
+      ],
+      "feasible": true,
+      "business_cost": 3.0,
+      "qubo_energy": 3.0
+    },
+    "counts": {
+      "0000": 4,
+      "0001": 1,
+      "0010": 461,
+      "0011": 4,
+      "0100": 3,
+      "0110": 30,
+      "0111": 1,
+      "1000": 1,
+      "1010": 5,
+      "1011": 1,
+      "1110": 1
+    }
+  },
+  "warm_start_qaoa_8var_sdk_execution": {
+    "backend": "StatevectorSimulator (QpiAI-QSV-Local)",
+    "package_version": "0.7.5",
+    "qubits": 8,
+    "layers": 1,
+    "gamma": 0.008992,
+    "beta": 2.827433,
+    "shots": 512,
+    "seed": 42,
+    "bitstring_endianness_probe": {
+      "probe_probabilities": [
+        0.05,
+        0.25,
+        0.7,
+        0.95
+      ],
+      "observed_by_string_pos": [
+        0.9473,
+        0.6924,
+        0.2378,
+        0.0454
+      ],
+      "little_endian_q0_rightmost": true
+    },
+    "max_statevector_prob_diff_sdk_vs_custom": 6.661338147750939e-16,
+    "statevector_runtime_seconds": 0.007774,
+    "sampling_runtime_seconds": 0.006138,
+    "feasible_and_domain_valid_shots": 321,
+    "feasible_shot_probability": 0.626953,
+    "best_validated_plan": {
+      "raw_sdk_bitstring": "10000000",
+      "variable_bitstring": "00000001",
+      "count": 84,
+      "qubo_feasible": true,
+      "domain_valid": true,
+      "business_cost": 4.0,
+      "selected_route_ids": [
+        "V2:B>A"
+      ]
+    },
+    "top_10_counts": {
+      "00000000": 107,
+      "10000000": 84,
+      "01000000": 80,
+      "00000100": 76,
+      "00001000": 76,
+      "00010000": 13,
+      "00100000": 12,
+      "00000001": 10,
+      "01001000": 6,
+      "01000100": 4
+    }
+  }
+}
