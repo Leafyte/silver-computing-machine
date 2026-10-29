@@ -1,0 +1,54 @@
+{
+  "pipeline": "warm_lp_augmented_qaoa_p1_grid",
+  "qubits": 8,
+  "layers": 1,
+  "shots": 512,
+  "stages": {
+    "preprocessing_and_lp_relaxation": {
+      "cpu_seconds": 0.0068,
+      "fraction_of_total": 0.013,
+      "peak_memory_kb": 48.55
+    },
+    "classical_angle_optimization": {
+      "cpu_seconds": 0.5031,
+      "fraction_of_total": 0.959,
+      "iterations": 100
+    },
+    "final_statevector_evolution": {
+      "cpu_seconds": 0.0052,
+      "fraction_of_total": 0.01
+    },
+    "finite_shot_sampling": {
+      "cpu_seconds": 0.0017,
+      "fraction_of_total": 0.003
+    },
+    "independent_validation_and_decoding": {
+      "cpu_seconds": 0.008,
+      "fraction_of_total": 0.015
+    }
+  },
+  "total_cpu_seconds": 0.5248,
+  "total_wall_seconds": 0.5179,
+  "peak_memory_bytes": 49715,
+  "budget_overrun_analysis": {
+    "0.02s_deadline": {
+      "target": 0.02,
+      "actual_cpu": 0.0354,
+      "overrun": true,
+      "overrun_pct": 77.0
+    },
+    "0.05s_deadline": {
+      "target": 0.05,
+      "actual_cpu": 0.0624,
+      "overrun": true,
+      "overrun_pct": 24.8
+    },
+    "0.12s_deadline": {
+      "target": 0.12,
+      "actual_cpu": 0.1317,
+      "overrun": true,
+      "overrun_pct": 9.8
+    },
+    "scientific_finding": "CPU statevector simulation execution consistently overruns sub-second wall-clock deadlines; claims of meeting equal sub-second deadlines on local CPU are physically inaccurate."
+  }
+}
