@@ -33,6 +33,12 @@ current_dir = Path(__file__).resolve().parent
 if str(current_dir) not in sys.path:
     sys.path.insert(0, str(current_dir))
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv(Path(__file__).resolve().parent.parent.parent / ".env")
+except ImportError:
+    pass
+
 from probe_ortools import probe_ortools
 from probe_qpiai_opt import probe_opt
 from probe_qpiai_quantum import probe_quantum
