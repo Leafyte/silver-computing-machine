@@ -9,6 +9,7 @@ slot until it returns. In-flight jobs are failed explicitly during recovery.
 from __future__ import annotations
 
 import json
+import logging
 import os
 import sqlite3
 import threading
@@ -33,6 +34,9 @@ class JobCapacityError(RuntimeError):
     """The bounded in-memory worker queue is full."""
 
 
+logger = logging.getLogger(__name__)
+
+
 def _now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
@@ -47,7 +51,7 @@ class JobManager:
     """
 
     def __init__(self, db_path: str | Path | None = None, *, max_workers: int = 2,
-                 timeout_seconds: float = 30.0):
+                 timeout_seconds: float = 30.0, _solver_hook: Any = None):
         if max_workers < 1:
             raise ValueError("max_workers must be positive")
         if timeout_seconds <= 0:
@@ -57,15 +61,29 @@ class JobManager:
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
         self.max_workers = max_workers
         self.timeout_seconds = timeout_seconds
+        self._solver_hook = _solver_hook
         self._owner_token = str(uuid.uuid4())
         self._executor = ThreadPoolExecutor(max_workers=max_workers, thread_name_prefix="dispatch-job")
         self._futures: dict[str, Future[Any]] = {}
         self._cancelled: set[str] = set()
+        self._cancel_events: dict[str, threading.Event] = {}
         self._lock = threading.RLock()
         self._closed = False
         self._init_db()
         self._claim_runtime()
         self._recover_interrupted()
+
+    def cancel_event(self, job_id: str) -> threading.Event | None:
+        with self._lock:
+            return self._cancel_events.get(job_id)
+
+    def is_cancelled(self, job_id: str) -> bool:
+        with self._lock:
+            return job_id in self._cancelled
+
+    def future(self, job_id: str) -> Future[Any] | None:
+        with self._lock:
+            return self._futures.get(job_id)
 
     def _connect(self) -> sqlite3.Connection:
         connection = sqlite3.connect(self.db_path, timeout=10, check_same_thread=False)
@@ -141,9 +159,11 @@ class JobManager:
     def _recover_interrupted(self) -> None:
         # A process restart cannot safely resume an in-memory solver call.
         with self._connect() as con:
-            con.execute("""UPDATE jobs SET status='failed',
+            cur = con.execute("""UPDATE jobs SET status='failed',
                 error_json=?, completed_at=? WHERE status IN ('queued','running','cancel_requested')""",
                 (json.dumps({"code": "restart_interrupted", "message": "job interrupted by backend restart"}), _now()))
+            if cur.rowcount > 0:
+                logger.info("recovered interrupted jobs on startup: count=%d", cur.rowcount)
 
     def _active_count(self) -> int:
         # Timed-out/cancelled workers may still consume CPU. Keep them inside
@@ -203,6 +223,7 @@ class JobManager:
                      solver, json.dumps(settings), request_sha256, json.dumps(runtime)))
             future = self._executor.submit(runner, job_id, scenario, settings)
             self._futures[job_id] = future
+            self._cancel_events[job_id] = threading.Event()
             future.add_done_callback(lambda done, key=job_id: self._future_completed(key, done))
             return self.get(job_id)  # queued or already running/completed
 
@@ -212,12 +233,16 @@ class JobManager:
             if future.cancelled() and self._futures.get(job_id) is future:
                 self._futures.pop(job_id, None)
                 self._cancelled.discard(job_id)
+                self._cancel_events.pop(job_id, None)
             if self._closed and not self._futures:
                 self._release_runtime()
 
     def _set_state(self, job_id: str, status: str, *, result: Any = None,
                    error: dict[str, str] | None = None, started_at: str | None = None,
                    completed: bool = False) -> None:
+        err_code = error.get("code") if error else None
+        logger.info("job state transition: job_id=%s status=%s completed=%s error_code=%s",
+                    job_id, status, completed, err_code)
         updates = ["status=?", "result_json=?", "error_json=?"]
         values: list[Any] = [status, json.dumps(result) if result is not None else None,
                              json.dumps(error) if error is not None else None]
@@ -232,7 +257,8 @@ class JobManager:
             con.execute(f"UPDATE jobs SET {', '.join(updates)} WHERE id=?", values)
 
     def _run(self, job_id: str, scenario: dict[str, Any], _settings: dict[str, Any] | None = None) -> None:
-        self._run_solver(job_id, scenario, lambda: solve_exact(scenario), qaoa=False)
+        solve_fn = (lambda: self._solver_hook(job_id, scenario)) if self._solver_hook is not None else (lambda: solve_exact(scenario))
+        self._run_solver(job_id, scenario, solve_fn, qaoa=False)
 
     def _run_qaoa(self, job_id: str, scenario: dict[str, Any], settings: dict[str, Any]) -> None:
         self._run_solver(job_id, scenario,
@@ -247,15 +273,18 @@ class JobManager:
                 self._set_state(job_id, "cancelled", error={"code": "cancelled", "message": "job cancelled"}, completed=True)
                 self._futures.pop(job_id, None)
                 self._cancelled.discard(job_id)
+                self._cancel_events.pop(job_id, None)
                 return
             with self._connect() as con:
                 row = con.execute("SELECT deadline_epoch,status FROM jobs WHERE id=?", (job_id,)).fetchone()
             if row is None or row["status"] != "queued":
                 self._futures.pop(job_id, None)
+                self._cancel_events.pop(job_id, None)
                 return
             if time.time() >= row["deadline_epoch"]:
                 self._set_state(job_id, "timed_out", error={"code": "timeout", "message": "job exceeded its time limit"}, completed=True)
                 self._futures.pop(job_id, None)
+                self._cancel_events.pop(job_id, None)
                 return
             self._set_state(job_id, "running", started_at=_now())
         try:
@@ -278,6 +307,7 @@ class JobManager:
                 report = validate_plan(scenario, plan) if plan.get("status") == "feasible" else None
             with self._lock:
                 if job_id in self._cancelled:
+                    logger.info("late result discarded for cancelled job: job_id=%s", job_id)
                     self._set_state(job_id, "cancelled", error={"code": "cancelled", "message": "job cancelled; result discarded"}, completed=True)
                 else:
                     with self._connect() as con:
@@ -285,6 +315,7 @@ class JobManager:
                     if row is None or row["status"] in ("timed_out", "cancelled", "failed"):
                         return
                     if time.time() >= row["deadline_epoch"]:
+                        logger.info("late result discarded for timed out job: job_id=%s", job_id)
                         self._set_state(job_id, "timed_out", error={"code": "timeout", "message": "job exceeded its time limit; result discarded"}, completed=True)
                     elif (qaoa and output.get("status") == "infeasible" and
                           isinstance(plan, dict) and plan.get("status") == "infeasible"):
@@ -314,6 +345,7 @@ class JobManager:
             with self._lock:
                 self._futures.pop(job_id, None)
                 self._cancelled.discard(job_id)
+                self._cancel_events.pop(job_id, None)
                 if self._closed and not self._futures:
                     self._release_runtime()
 
@@ -350,22 +382,30 @@ class JobManager:
             if current["status"] in {"succeeded", "failed", "infeasible", "cancelled", "timed_out"}:
                 return current
             self._cancelled.add(job_id)
+            event = self._cancel_events.get(job_id)
+            if event is not None:
+                event.set()
             future = self._futures.get(job_id)
             cancelled_before_start = future.cancel() if future is not None else False
             self._set_state(job_id, "cancelled", error={"code": "cancelled", "message": "job cancelled; result will not be published"}, completed=True)
             if cancelled_before_start:
                 self._futures.pop(job_id, None)
                 self._cancelled.discard(job_id)
+                self._cancel_events.pop(job_id, None)
             return self.get(job_id)
 
     def close(self, *, wait: bool = False) -> None:
         with self._lock:
             self._closed = True
             for job_id, future in list(self._futures.items()):
+                event = self._cancel_events.get(job_id)
+                if event is not None:
+                    event.set()
                 if future.cancel():
                     self._set_state(job_id, "cancelled", error={"code": "cancelled", "message": "backend shutting down"}, completed=True)
                     self._futures.pop(job_id, None)
                     self._cancelled.discard(job_id)
+                    self._cancel_events.pop(job_id, None)
         self._executor.shutdown(wait=wait, cancel_futures=True)
         with self._lock:
             if not self._futures:
