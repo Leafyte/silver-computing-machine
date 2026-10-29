@@ -2,9 +2,9 @@
      DEBUGLEAF - QPIAI QUANTUM & OPT EXECUTION EVIDENCE REPORT
            Quant-A-Maze 3.0 Hackathon Technical Verification
 ==============================================================================
-Generated At (UTC):     2026-10-29T21:10:06.635781+00:00
+Generated At (UTC):     2026-10-29T21:17:33.373091+00:00
 Repository Root:        C:\Users\avkir\Downloads\silver-computing-machine-main\silver-computing-machine
-Git Commit SHA:         ed48af80bb739f5d3bf31295041bb05a0b241e1b
+Git Commit SHA:         23ada19e14b92dc53ffbc31f35ee749fd9d26fc9
 Git Active Branch:      main [Dirty (uncommitted changes present)]
 Host Environment:       Windows 11 (AMD64)
 Python Runtime:         3.12.10 (C:\Users\avkir\Downloads\silver-computing-machine-main\silver-computing-machine\.venv\Scripts\python.exe)
@@ -36,7 +36,7 @@ Simulation Shots:       1000
 Model Class:            sklearn.ensemble._hist_gradient_boosting.gradient_boosting.HistGradientBoostingRegressor
 Feature Schema:         india_eta_vqc4_synthetic_reference_v1 (59 features)
 Input Validation:       All 59 features finite float64; booleans & objects rejected
-Inference Latency:      5.35 ms for 3 batch rows
+Inference Latency:      4.38 ms for 3 batch rows
 Reference Row 0 Computed: 16.16603344 minutes
 Reference Row 0 Expected: 16.16603344 minutes
 Numerical Difference:   0.000000e+00 minutes
@@ -67,7 +67,7 @@ Circuit Architecture Contract (experiments_india_vqc4/circuit.py):
   Total Operations/Depth: 128 gate operations | depth 62
   Variational Angles:     60 angles across 5 blocks (RX/RY/RZ rotations)
   Execution Backend:      qpiai_quantum.simulator.StatevectorSimulator
-  Execution Wall-Time:    1006.76 ms
+  Execution Wall-Time:    1067.51 ms
   Pauli-Z Expectations:   <Z0>=+0.6634, <Z1>=+0.6609, <Z2>=+0.4457, <Z3>=+0.3220
   Readout Weights:        [-0.0717, -0.0208, -0.0367, -0.0619] | Bias: -0.0117 | Scale: 3.8891
   Predicted Residual:     -0.4248 minutes (-25.5 seconds)
@@ -78,7 +78,7 @@ Circuit Architecture Contract (experiments_india_vqc4/circuit.py):
   Total Operations/Depth: 144 gate operations | depth 66
   Variational Angles:     76 angles (60 block angles + 16 additional rotations)
   Execution Backend:      qpiai_quantum.simulator.StatevectorSimulator
-  Execution Wall-Time:    2.61 ms
+  Execution Wall-Time:    3.02 ms
   Pauli-Z Expectations:   <Z0>=+0.5110, <Z1>=+0.5906, <Z2>=+0.3303, <Z3>=+0.2533
   Readout Weights:        [-0.004, 0.0215, -0.1096, -0.1157] | Bias: +0.0029 | Scale: 3.8891
   Predicted Residual:     -0.2021 minutes (-12.1 seconds)
@@ -162,7 +162,7 @@ Warm-Start QAOA Configuration:
   - QAOA Parameters:      gamma=0.15, beta=0.35 (reps=1)
   - Synthesized Circuit:  3 qubits, depth 8, 21 operations
   - Sampling Budget:      1000 measurement shots on StatevectorSimulator
-  - Execution Wall-Time:  1.69 ms
+  - Execution Wall-Time:  1.74 ms
 
 --- Sampled Bitstring Distribution & Feasibility Analysis ---------------------
   Bitstring '000':  368 shots (36.8%) | Energy:   25.0 | PENALIZED [##############]
@@ -180,7 +180,50 @@ Sampled Objective Energy: 8.50 minutes
 Classical Optimality Gap: 0.0000 (Optimal route confirmed)
 
 ==============================================================================
-  SECTION 9: SDK INTEGRATION AND QCLOUD PROVENANCE BREAKDOWN
+  SECTION 9: LIVE FASTAPI DISPATCH -> QPIAI OPT EXECUTION TRACE
+==============================================================================
+HTTP Transaction Metadata:
+  - Request ID:           req_b4b5bfcad308
+  - Inbound Timestamp:    2026-10-29T21:17:34.736Z
+  - Target Endpoint:      POST /api/v1/scenarios/qaoa
+  - HTTP Response Status: 200 OK
+  - Round-Trip Duration:  183.58 ms
+  - Target Scenario ID:   dispatch_fixture_2v2o (Depot 'D', 2 Vehicles, 2 Delivery Orders)
+  - Input Fleet / Orders: 2 vehicles (V1, V2) | 2 orders (A, B)
+  - Candidate Routes:     8 candidate delivery routes generated
+  - Constraint Contracts: All orders covered exactly once (Pc=29.0)
+                          Vehicle capacity <= 2 (Pv=29.0)
+
+--- Console Audit Logs (Chronological Execution Trail) ------------------------
+[2026-10-29T21:17:34.736Z] [DEBUGLEAF API] Inbound POST /api/v1/scenarios/qaoa accepted (req_b4b5bfcad308)
+[2026-10-29T21:17:34.736Z] [DEBUGLEAF API] Scenario schema validated: 2 vehicles, 2 orders, capacity=2
+[2026-10-29T21:17:34.736Z] [DEBUGLEAF ROUTE] 8 feasible candidate route variables generated across fleet
+[2026-10-29T21:17:34.736Z] [DEBUGLEAF ETA] Order delivery time windows validated: A [0, 20m], B [0, 20m]
+[2026-10-29T21:17:34.736Z] [DEBUGLEAF QUBO] Constrained routing QUBO compiled (8 vars, 28 quad terms, offset=58.0)
+[2026-10-29T21:17:34.736Z] [DEBUGLEAF QUBO] Continuous LP relaxation warm-start vector computed
+[2026-10-29T21:17:34.736Z] [QPIAI OPT] Ingesting QUBO into QpiAI Opt Model ('DebugLeafRouteSelection')
+[2026-10-29T21:17:34.736Z] [QPIAI OPT] Compiled QpiAI Opt upper-triangular terms (34 interactions)
+[2026-10-29T21:17:34.736Z] [QPIAI OPT] Synthesizing QAOA Warm-Start circuit (8 qubits, depth=14, gamma=0.15, beta=0.35)
+[2026-10-29T21:17:34.736Z] [QPIAI OPT] Invoking QpiAI StatevectorSimulator (shots=128, seed=42, backend='QpiAI-QSV-Local')
+[2026-10-29T21:17:34.736Z] [QPIAI OPT] Quantum simulator sampling complete (128 shots)
+[2026-10-29T21:17:34.736Z] [DEBUGLEAF VALIDATOR] Decoding bitstring -> Candidate 'V2:B,A' selected
+[2026-10-29T21:17:34.736Z] [DEBUGLEAF VALIDATOR] Independent coverage & capacity validation: VALID (FEASIBLE)
+[2026-10-29T21:17:34.736Z] [DEBUGLEAF DISPATCH] Plan published: Vehicle V2 assigned 2 orders, travel=4.0m, lateness=0.0m
+[2026-10-29T21:17:34.736Z] [DEBUGLEAF API] Response 200 OK returned to client (183.58 ms)
+
+--- Dispatched Plan & Domain Validation Audit ---------------------------------
+  - Optimization Status:  success (Decision Origin: qaoa_raw_sample)
+  - Domain Validity:      True (Feasible: True)
+  - Assigned Vehicles:    1 vehicle (V2)
+  - Route Path:           Depot D -> Order B (arr 2m) -> Order A (arr 4m) -> Depot D (arr 6m)
+  - Travel Duration:      4.00 minutes
+  - SLA Delay Exposure:   0.00 minutes
+  - Business Objective:   4.00 cost units
+  - Exact Optimum Check:  Objective 4.00 == Brute-Force Lower Bound 4.00 (OPTIMAL)
+  - Execution Provenance: Local QpiAI StatevectorSimulator (zero cloud credits consumed)
+
+==============================================================================
+  SECTION 10: SDK INTEGRATION AND QCLOUD PROVENANCE BREAKDOWN
 ==============================================================================
 Component Isolation & Execution Modality Matrix:
 Platform Tier                    | Execution Mechanism      | Status
@@ -188,6 +231,7 @@ Platform Tier                    | Execution Mechanism      | Status
 QpiAI Quantum Local Simulator    | StatevectorSimulator     | EXECUTED (PASS)
 QpiAI Opt Model Construction     | opt_modeller & QUBO      | EXECUTED (PASS)
 QpiAI Opt QAOA Sampling          | WarmStart + QAOA Simulator | EXECUTED (PASS)
+FastAPI Async Dispatch API       | POST /api/v1/scenarios/qaoa | EXECUTED (PASS)
 QCloud Authenticated Handshake   | REST API Auth Credentials | VERIFIED (READY)
 Remote QCloud QSV Job Dispatch   | Deferred (Opt-In Policy) | NOT RUN (GOVERNED)
 Physical Indus-1 QPU Execution   | Requires QPU Reservation | NOT RUN (RESERVED)
@@ -204,7 +248,7 @@ Cloud Safety Governance Policy:
                            remote execution results are never falsified.
 
 ==============================================================================
-  SECTION 10: FINAL VERIFICATION SUMMARY
+  SECTION 11: FINAL VERIFICATION SUMMARY
 ==============================================================================
 Check ID | Technical Verification Step                    | Status
 ------------------------------------------------------------------------------
@@ -216,12 +260,13 @@ SEC-05   | Hybrid ETA Reference Parity & Policy           | PASS
 SEC-06   | Dispatch-Risk 2-Qubit VQC                      | PASS
 SEC-07   | QpiAI Opt QUBO Mathematical Formulation        | PASS
 SEC-08   | QAOA Warm-Start Sampling Execution             | PASS
-SEC-09   | SDK Layering & QCloud Provenance               | PASS
+SEC-09   | Live FastAPI Dispatch -> QpiAI Opt Trace       | PASS
+SEC-10   | SDK Layering & QCloud Provenance               | PASS
 ------------------------------------------------------------------------------
-Overall Evaluation Verdict:  [PASS] (9/9 checks passed)
-Executed Checks:             9
+Overall Evaluation Verdict:  [PASS] (10/10 checks passed)
+Executed Checks:             10
 Failed Checks:               0
-Total Wall-Clock Runtime:    2.15 seconds
+Total Wall-Clock Runtime:    2.69 seconds
 
 Technical Demonstration Limitations:
   1. Execution executes on exact local statevector simulation, matching the QpiAI Indus-1 QPU
