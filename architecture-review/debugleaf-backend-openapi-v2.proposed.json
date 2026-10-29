@@ -1,0 +1,4628 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "DebugLeaf Backend and Client API (proposal)",
+    "version": "2.0.0-proposed",
+    "description": "Consolidated static contract proposal for synthetic dispatch rehearsal and prepared-feature development inference. /api/v2 routes are not implemented; existing /api/v1 meanings remain unchanged. See DEBUGLEAF_BACKEND_ARCHITECTURE_REVIEW.md."
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:8000",
+      "description": "Loopback local demo; use trusted LAN only after configured authentication and network review."
+    }
+  ],
+  "tags": [
+    {
+      "name": "Pairing"
+    },
+    {
+      "name": "Driver"
+    },
+    {
+      "name": "Dispatcher"
+    },
+    {
+      "name": "Jobs"
+    },
+    {
+      "name": "Proposals"
+    },
+    {
+      "name": "Sync"
+    }
+  ],
+  "security": [
+    {
+      "DriverSession": []
+    }
+  ],
+  "paths": {
+    "/api/v2/dispatch/pairings/redeem": {
+      "post": {
+        "tags": [
+          "Pairing"
+        ],
+        "summary": "Redeem a one-time driver pairing code",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PairingRedeemRequest"
+              },
+              "examples": {
+                "redeem": {
+                  "$ref": "#/components/examples/PairingRedeem"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "New driver-scoped session",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Session"
+                },
+                "examples": {
+                  "paired": {
+                    "$ref": "#/components/examples/Session"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "422": {
+            "$ref": "#/components/responses/InvalidRequest"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          }
+        }
+      }
+    },
+    "/api/v2/dispatch/sessions/revoke": {
+      "post": {
+        "tags": [
+          "Pairing"
+        ],
+        "summary": "Revoke current driver session",
+        "responses": {
+          "204": {
+            "description": "Revoked; safe to repeat"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          }
+        }
+      }
+    },
+    "/api/v2/dispatch/driver/state": {
+      "get": {
+        "tags": [
+          "Driver"
+        ],
+        "summary": "Read this driver's canonical current manifest",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IfNoneMatch"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current owned state",
+            "headers": {
+              "ETag": {
+                "$ref": "#/components/headers/ETag"
+              },
+              "X-Dispatch-Revision": {
+                "$ref": "#/components/headers/Revision"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DriverState"
+                },
+                "examples": {
+                  "driverState": {
+                    "$ref": "#/components/examples/DriverState"
+                  }
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "State unchanged"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          }
+        }
+      }
+    },
+    "/api/v2/dispatch/driver/events/congestion": {
+      "post": {
+        "tags": [
+          "Driver"
+        ],
+        "summary": "Durably admit a driver congestion event; evaluation does not publish a route",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          },
+          {
+            "$ref": "#/components/parameters/IfMatch"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CongestionEventRequest"
+              },
+              "examples": {
+                "heavyCongestion": {
+                  "$ref": "#/components/examples/CongestionEvent"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Event is durably admitted",
+            "headers": {
+              "X-Dispatch-Revision": {
+                "$ref": "#/components/headers/Revision"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobAccepted"
+                },
+                "examples": {
+                  "accepted": {
+                    "$ref": "#/components/examples/JobAccepted"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "413": {
+            "$ref": "#/components/responses/TooLarge"
+          },
+          "422": {
+            "$ref": "#/components/responses/InvalidRequest"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          }
+        }
+      }
+    },
+    "/api/v2/dispatch/driver/route-evaluations": {
+      "post": {
+        "tags": [
+          "Driver"
+        ],
+        "summary": "Request a route evaluation for this driver's current assignment; cannot approve or publish",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          },
+          {
+            "$ref": "#/components/parameters/IfMatch"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RouteEvaluationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Evaluation job accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobAccepted"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/InvalidRequest"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          }
+        }
+      }
+    },
+    "/api/v2/dispatch/jobs/{jobId}": {
+      "get": {
+        "tags": [
+          "Jobs"
+        ],
+        "summary": "Read an owned job's durable state",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/JobId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Job status/result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Job"
+                },
+                "examples": {
+                  "proposalReady": {
+                    "$ref": "#/components/examples/JobProposalReady"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          }
+        }
+      }
+    },
+    "/api/v2/dispatch/proposals/{proposalId}": {
+      "get": {
+        "tags": [
+          "Proposals"
+        ],
+        "summary": "Read an authorized proposal",
+        "security": [
+          {
+            "DispatcherToken": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProposalId"
+          },
+          {
+            "$ref": "#/components/parameters/IfNoneMatch"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Proposal and independent validation",
+            "headers": {
+              "ETag": {
+                "$ref": "#/components/headers/ETag"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Proposal"
+                },
+                "examples": {
+                  "proposal": {
+                    "$ref": "#/components/examples/Proposal"
+                  }
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Proposal unchanged"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/api/v2/dispatch/proposals/{proposalId}/approval": {
+      "post": {
+        "tags": [
+          "Proposals"
+        ],
+        "summary": "Approve a still-current proposal; publishes only through the atomic controller transaction",
+        "security": [
+          {
+            "DispatcherToken": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProposalId"
+          },
+          {
+            "$ref": "#/components/parameters/IfMatch"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApprovalRequest"
+              },
+              "examples": {
+                "approval": {
+                  "$ref": "#/components/examples/Approval"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Committed new canonical route version",
+            "headers": {
+              "ETag": {
+                "$ref": "#/components/headers/ETag"
+              },
+              "X-Dispatch-Revision": {
+                "$ref": "#/components/headers/Revision"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApprovalResponse"
+                },
+                "examples": {
+                  "approved": {
+                    "$ref": "#/components/examples/ApprovalResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/InvalidRequest"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          }
+        }
+      }
+    },
+    "/api/v2/dispatch/dispatcher/snapshot": {
+      "get": {
+        "tags": [
+          "Dispatcher"
+        ],
+        "summary": "Read fleet snapshot and pending proposal/job summaries",
+        "security": [
+          {
+            "DispatcherToken": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IfNoneMatch"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current authorized fleet snapshot",
+            "headers": {
+              "ETag": {
+                "$ref": "#/components/headers/ETag"
+              },
+              "X-Dispatch-Revision": {
+                "$ref": "#/components/headers/Revision"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DispatcherSnapshot"
+                },
+                "examples": {
+                  "snapshot": {
+                    "$ref": "#/components/examples/DispatcherSnapshot"
+                  }
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Unchanged"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          }
+        }
+      }
+    },
+    "/api/v2/dispatch/changes": {
+      "get": {
+        "tags": [
+          "Sync"
+        ],
+        "summary": "Read durable changes after a monotonic cursor; poll at 1-2 seconds while foreground",
+        "security": [
+          {
+            "DriverSession": []
+          },
+          {
+            "DispatcherToken": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "after",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Last applied feed sequence. Not a timestamp."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Changes or reset snapshot",
+            "headers": {
+              "X-Dispatch-Revision": {
+                "$ref": "#/components/headers/Revision"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChangeFeed"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "410": {
+            "description": "Cursor expired; payload includes current authorized reset snapshot",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChangeFeed"
+                },
+                "examples": {
+                  "expiredCursor": {
+                    "$ref": "#/components/examples/ExpiredCursor"
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "$ref": "#/components/responses/InvalidRequest"
+          }
+        }
+      }
+    },
+    "/api/v2/dispatch/driver/acknowledgements": {
+      "post": {
+        "tags": [
+          "Driver"
+        ],
+        "summary": "Acknowledge own manifest revision; monotonic and idempotent",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AcknowledgementRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Acknowledged"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/InvalidRequest"
+          }
+        }
+      }
+    },
+    "/api/v2/eta/predictions": {
+      "post": {
+        "operationId": "predictPreparedEtaV2",
+        "summary": "Development prediction from a complete, versioned 59-feature prepared row",
+        "description": "Proposed only. This endpoint accepts prepared features and is not a raw-input preparation API. The present release fails the source audit integrity check and must remain unavailable until repaired and re-pinned. Never serve pre-pickup because actual pickup-time-derived values are required.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PreparedPredictionRequestV2"
+              },
+              "examples": {
+                "syntheticReleaseFixture": {
+                  "summary": "Synthetic fixture; not operational source data",
+                  "value": {
+                    "schema_version": "india_eta.prepared_prediction.request.v2",
+                    "request_id": "synthetic-release-reference-row-001",
+                    "prediction_as_of": "2026-10-30T01:00:00+05:30",
+                    "observation_stage": "post_pickup",
+                    "feature_contract": {
+                      "schema_id": "india_eta.prepared_gbdt_features",
+                      "schema_version": "1.0.0",
+                      "feature_schema_sha256": "5743a95aadb02b0e6d1869316ded2b4c9da5bde04cc1737e46be56d6b2a4dcc9"
+                    },
+                    "feature_provenance": {
+                      "source_kind": "synthetic_reference_fixture",
+                      "source_id": "india_eta_vqc4_cpu_release_v1/reference_fixture.json#rows/0",
+                      "availability_status": "synthetic_fixture_declared",
+                      "features": {
+                        "haversine_distance_km": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "haversine_distance_km",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "departure_hour": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "departure_hour",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "day_of_week": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "day_of_week",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "is_weekend": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "is_weekend",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "is_rush_hour": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "is_rush_hour",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "is_lunch_rush": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "is_lunch_rush",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "is_dinner_rush": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "is_dinner_rush",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "delivery_person_age_imp": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "delivery_person_age_imp",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "delivery_person_ratings_imp": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "delivery_person_ratings_imp",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "order_to_pickup_min_imp": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "order_to_pickup_min_imp",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "order_to_pickup_missing_flag": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "order_to_pickup_missing_flag",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "vehicle_condition": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "vehicle_condition",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "multiple_deliveries_imp": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "multiple_deliveries_imp",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "is_festival": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "is_festival",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "traffic_density_ordinal_imp": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "traffic_density_ordinal_imp",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "is_adverse_weather": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "is_adverse_weather",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "weather_clean_imp_Cloudy": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "weather_clean_imp_Cloudy",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "weather_clean_imp_Fog": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "weather_clean_imp_Fog",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "weather_clean_imp_Sandstorms": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "weather_clean_imp_Sandstorms",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "weather_clean_imp_Stormy": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "weather_clean_imp_Stormy",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "weather_clean_imp_Sunny": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "weather_clean_imp_Sunny",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "weather_clean_imp_Windy": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "weather_clean_imp_Windy",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "traffic_density_clean_High": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "traffic_density_clean_High",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "traffic_density_clean_Jam": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "traffic_density_clean_Jam",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "traffic_density_clean_Low": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "traffic_density_clean_Low",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "traffic_density_clean_Medium": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "traffic_density_clean_Medium",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "type_of_order_clean_Buffet": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "type_of_order_clean_Buffet",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "type_of_order_clean_Drinks": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "type_of_order_clean_Drinks",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "type_of_order_clean_Meal": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "type_of_order_clean_Meal",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "type_of_order_clean_Snack": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "type_of_order_clean_Snack",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "type_of_vehicle_clean_bicycle": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "type_of_vehicle_clean_bicycle",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "type_of_vehicle_clean_electric_scooter": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "type_of_vehicle_clean_electric_scooter",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "type_of_vehicle_clean_motorcycle": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "type_of_vehicle_clean_motorcycle",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "type_of_vehicle_clean_scooter": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "type_of_vehicle_clean_scooter",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "city_type_clean_imp_Metropolitian": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "city_type_clean_imp_Metropolitian",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "city_type_clean_imp_Semi-Urban": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "city_type_clean_imp_Semi-Urban",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "city_type_clean_imp_Urban": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "city_type_clean_imp_Urban",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "city_code_AGR": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "city_code_AGR",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "city_code_ALH": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "city_code_ALH",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "city_code_AURG": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "city_code_AURG",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "city_code_BANG": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "city_code_BANG",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "city_code_BHP": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "city_code_BHP",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "city_code_CHEN": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "city_code_CHEN",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "city_code_COIMB": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "city_code_COIMB",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "city_code_DEH": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "city_code_DEH",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "city_code_GOA": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "city_code_GOA",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "city_code_HYD": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "city_code_HYD",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "city_code_INDO": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "city_code_INDO",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "city_code_JAP": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "city_code_JAP",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "city_code_KNP": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "city_code_KNP",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "city_code_KOC": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "city_code_KOC",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "city_code_KOL": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "city_code_KOL",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "city_code_LUDH": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "city_code_LUDH",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "city_code_MUM": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "city_code_MUM",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "city_code_MYS": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "city_code_MYS",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "city_code_PUNE": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "city_code_PUNE",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "city_code_RANCHI": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "city_code_RANCHI",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "city_code_SUR": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "city_code_SUR",
+                          "availability_status": "available_in_synthetic_fixture"
+                        },
+                        "city_code_VAD": {
+                          "observed_at": "2026-10-30T00:59:00+05:30",
+                          "source_field": "city_code_VAD",
+                          "availability_status": "available_in_synthetic_fixture"
+                        }
+                      }
+                    },
+                    "prepared_features": {
+                      "haversine_distance_km": 2.4,
+                      "departure_hour": 12.0,
+                      "day_of_week": 2.0,
+                      "is_weekend": 0.0,
+                      "is_rush_hour": 0.0,
+                      "is_lunch_rush": 1.0,
+                      "is_dinner_rush": 0.0,
+                      "delivery_person_age_imp": 29.0,
+                      "delivery_person_ratings_imp": 4.8,
+                      "order_to_pickup_min_imp": 7.0,
+                      "order_to_pickup_missing_flag": 0.0,
+                      "vehicle_condition": 1.0,
+                      "multiple_deliveries_imp": 0.0,
+                      "is_festival": 0.0,
+                      "traffic_density_ordinal_imp": 0.0,
+                      "is_adverse_weather": 0.0,
+                      "weather_clean_imp_Cloudy": 0.0,
+                      "weather_clean_imp_Fog": 0.0,
+                      "weather_clean_imp_Sandstorms": 0.0,
+                      "weather_clean_imp_Stormy": 0.0,
+                      "weather_clean_imp_Sunny": 1.0,
+                      "weather_clean_imp_Windy": 0.0,
+                      "traffic_density_clean_High": 0.0,
+                      "traffic_density_clean_Jam": 0.0,
+                      "traffic_density_clean_Low": 1.0,
+                      "traffic_density_clean_Medium": 0.0,
+                      "type_of_order_clean_Buffet": 0.0,
+                      "type_of_order_clean_Drinks": 0.0,
+                      "type_of_order_clean_Meal": 0.0,
+                      "type_of_order_clean_Snack": 1.0,
+                      "type_of_vehicle_clean_bicycle": 0.0,
+                      "type_of_vehicle_clean_electric_scooter": 0.0,
+                      "type_of_vehicle_clean_motorcycle": 1.0,
+                      "type_of_vehicle_clean_scooter": 0.0,
+                      "city_type_clean_imp_Metropolitian": 0.0,
+                      "city_type_clean_imp_Semi-Urban": 0.0,
+                      "city_type_clean_imp_Urban": 1.0,
+                      "city_code_AGR": 0.0,
+                      "city_code_ALH": 0.0,
+                      "city_code_AURG": 0.0,
+                      "city_code_BANG": 0.0,
+                      "city_code_BHP": 0.0,
+                      "city_code_CHEN": 0.0,
+                      "city_code_COIMB": 0.0,
+                      "city_code_DEH": 0.0,
+                      "city_code_GOA": 0.0,
+                      "city_code_HYD": 0.0,
+                      "city_code_INDO": 0.0,
+                      "city_code_JAP": 0.0,
+                      "city_code_KNP": 0.0,
+                      "city_code_KOC": 0.0,
+                      "city_code_KOL": 0.0,
+                      "city_code_LUDH": 0.0,
+                      "city_code_MUM": 1.0,
+                      "city_code_MYS": 0.0,
+                      "city_code_PUNE": 0.0,
+                      "city_code_RANCHI": 0.0,
+                      "city_code_SUR": 0.0,
+                      "city_code_VAD": 0.0
+                    },
+                    "include_diagnostics": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Development prediction. Numeric values are saved synthetic fixture expectations, not re-executed in this audit.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PreparedPredictionResponseV2"
+                },
+                "examples": {
+                  "alphaZeroDiagnostic": {
+                    "value": {
+                      "schema_version": "india_eta.prepared_prediction.response.v2",
+                      "request_id": "synthetic-release-reference-row-001",
+                      "prediction_target": "delivery_duration_min",
+                      "duration_unit": "minute",
+                      "predicted_duration_minutes": 16.1660334406336,
+                      "prediction_as_of": "2026-10-30T01:00:00+05:30",
+                      "observation_stage": "post_pickup",
+                      "prediction_status": "development_prediction",
+                      "operational_policy": {
+                        "selected_model": "gbdt_only",
+                        "alpha": 0.0,
+                        "prediction_role": "development_only"
+                      },
+                      "uncertainty": {
+                        "status": "unavailable",
+                        "lower_minutes": null,
+                        "upper_minutes": null,
+                        "nominal_coverage": null,
+                        "method": null,
+                        "provenance": "No deployed prediction interval in this release."
+                      },
+                      "model": {
+                        "model_id": "india-eta-vqc4-cpu",
+                        "model_version": "1.0.0",
+                        "release_manifest_sha256": "1a0a2052b655a4306189ed0fe0d5f99be29b0379b0e322cf31aa514eb9200c5b",
+                        "feature_schema_sha256": "5743a95aadb02b0e6d1869316ded2b4c9da5bde04cc1737e46be56d6b2a4dcc9"
+                      },
+                      "feature_provenance": {
+                        "source_kind": "synthetic_reference_fixture",
+                        "source_id": "india_eta_vqc4_cpu_release_v1/reference_fixture.json#rows/0",
+                        "available_through": "2026-10-30T00:59:00+05:30",
+                        "availability_status": "synthetic_fixture_declared"
+                      },
+                      "diagnostics": {
+                        "requested": true,
+                        "not_for_dispatch": true,
+                        "baseline60_candidate_minutes": 15.74125548183092,
+                        "extended76_candidate_minutes": 15.963903680292267
+                      },
+                      "target_semantics": "dataset_delivery_duration_min; operational event start/end not independently verified"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid schema, missing/extra feature, non-finite value, future feature timestamp, unsupported stage, or schema mismatch.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "missingFeature": {
+                    "value": {
+                      "error": {
+                        "code": "invalid_feature_schema",
+                        "message": "Prepared feature set must exactly match the frozen 59-feature contract.",
+                        "details": [
+                          {
+                            "field": "prepared_features.traffic_density_ordinal_imp",
+                            "message": "required feature is missing"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Readiness, integrity, or dependency failure. Do not substitute synthetic v1 or a numerical fallback.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "modelIntegrityError": {
+                    "value": {
+                      "error": {
+                        "code": "model_integrity_error",
+                        "message": "Configured model release failed its integrity check."
+                      }
+                    }
+                  },
+                  "modelUnavailable": {
+                    "value": {
+                      "error": {
+                        "code": "model_unavailable",
+                        "message": "Configured model is not ready; no prediction was produced."
+                      }
+                    }
+                  },
+                  "dependencyMismatch": {
+                    "value": {
+                      "error": {
+                        "code": "model_dependency_mismatch",
+                        "message": "Configured model dependencies do not match the pinned release."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected inference runtime failure or non-finite output. No prediction or silent fallback.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "inferenceFailure": {
+                    "value": {
+                      "error": {
+                        "code": "inference_failure",
+                        "message": "Inference failed; no prediction was produced."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "LocalApiToken": []
+          }
+        ],
+        "x-debugleaf-allowed-roles": [
+          "researcher",
+          "dispatcher",
+          "admin"
+        ]
+      }
+    }
+  },
+  "components": {
+    "examples": {
+      "PairingRedeem": {
+        "value": {
+          "pairing_code": "D7KM-3QNX-9RWP"
+        }
+      },
+      "Session": {
+        "value": {
+          "access_token": "<opaque-token-returned-once>",
+          "token_type": "Bearer",
+          "expires_at": "2026-10-30T12:00:00Z",
+          "driver": {
+            "driver_id": "driver_1",
+            "vehicle_id": "vehicle_1",
+            "display_name": "Driver 1"
+          }
+        }
+      },
+      "DriverState": {
+        "value": {
+          "driver": {
+            "driver_id": "driver_1",
+            "vehicle_id": "vehicle_1",
+            "display_name": "Driver 1"
+          },
+          "plan_id": "demo-plan-1",
+          "plan_version": 1,
+          "manifest_revision": 1,
+          "dispatch_revision": 7,
+          "status": "active",
+          "ordered_stops": [
+            {
+              "stop_id": "order_1",
+              "sequence": 0,
+              "status": "pending",
+              "eta": null,
+              "service_duration_min": 3
+            }
+          ],
+          "route_geometry": null,
+          "duration_seconds": 720,
+          "distance_metres": 8400,
+          "updated_at": "2026-10-30T06:25:00Z",
+          "last_ack_manifest_revision": 0,
+          "source": "demo_synthetic"
+        }
+      },
+      "CongestionEvent": {
+        "value": {
+          "occurred_at": "2026-10-30T06:30:00Z",
+          "segment_id": "seg_demo_1",
+          "severity": "heavy",
+          "note": "Synthetic rehearsal event"
+        }
+      },
+      "JobAccepted": {
+        "value": {
+          "event_id": "evt-phone-a-001",
+          "job_id": "job-7bf390",
+          "status": "queued",
+          "dispatch_revision": 8,
+          "submitted_at": "2026-10-30T06:30:01Z"
+        }
+      },
+      "JobProposalReady": {
+        "value": {
+          "job_id": "job-7bf390",
+          "event_id": "evt-phone-a-001",
+          "status": "succeeded",
+          "submitted_at": "2026-10-30T06:30:01Z",
+          "updated_at": "2026-10-30T06:30:02Z",
+          "decision": {
+            "type": "PROPOSE_REPLAN",
+            "reason": "Candidate passed independent checks and benefit policy",
+            "proposal_id": "proposal-34e2"
+          },
+          "error": null
+        }
+      },
+      "Proposal": {
+        "value": {
+          "proposal_id": "proposal-34e2",
+          "event_id": "evt-phone-a-001",
+          "plan_id": "demo-plan-1",
+          "base_version": 1,
+          "model_version": "fixture-1",
+          "context_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "expires_at": "2026-10-30T06:45:00Z",
+          "status": "pending",
+          "candidate": {
+            "routes": [
+              {
+                "vehicle_id": "vehicle_1",
+                "order_ids": [
+                  "order_1"
+                ]
+              }
+            ]
+          },
+          "validation": {
+            "valid": true,
+            "feasible": true,
+            "errors": []
+          },
+          "provenance": {
+            "mode": "synthetic_scenario",
+            "execution_type": "local_classical"
+          }
+        }
+      },
+      "Approval": {
+        "value": {
+          "base_version": 1,
+          "event_id": "evt-phone-a-001",
+          "model_version": "fixture-1",
+          "context_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      },
+      "ApprovalResponse": {
+        "value": {
+          "plan_id": "demo-plan-1",
+          "version": 2,
+          "proposal_id": "proposal-34e2",
+          "status": "approved",
+          "dispatch_revision": 10,
+          "manifests_written": 2,
+          "validation": {
+            "valid": true,
+            "feasible": true,
+            "errors": []
+          }
+        }
+      },
+      "DispatcherSnapshot": {
+        "value": {
+          "dispatch_revision": 10,
+          "cursor": 10,
+          "server_time": "2026-10-30T06:31:00Z",
+          "drivers": [],
+          "pending_proposals": [],
+          "active_jobs": []
+        }
+      },
+      "Unauthorized": {
+        "value": {
+          "error": {
+            "code": "authentication_required",
+            "message": "Authentication required"
+          },
+          "request_id": "req-001"
+        }
+      },
+      "StaleConflict": {
+        "value": {
+          "error": {
+            "code": "stale_revision",
+            "message": "Dispatch state changed; refresh before retrying"
+          },
+          "request_id": "req-002"
+        }
+      },
+      "InvalidRequest": {
+        "value": {
+          "error": {
+            "code": "invalid_request",
+            "message": "Request validation failed",
+            "details": [
+              {
+                "field": "severity",
+                "message": "unsupported value"
+              }
+            ]
+          },
+          "request_id": "req-003"
+        }
+      },
+      "ExpiredCursor": {
+        "value": {
+          "reset_required": true,
+          "changes": [],
+          "snapshot": {
+            "route_geometry": null,
+            "source": "demo_synthetic",
+            "duration_seconds": 960.0,
+            "distance_metres": 8400.0,
+            "manifest_revision": 2,
+            "driver": {
+              "vehicle_id": "vehicle_1",
+              "display_name": "Driver 1",
+              "driver_id": "driver_1"
+            },
+            "plan_version": 2,
+            "status": "active",
+            "last_ack_manifest_revision": 1,
+            "plan_id": "demo-plan-1",
+            "ordered_stops": [
+              {
+                "eta": null,
+                "service_duration_min": 3.0,
+                "stop_id": "order_1",
+                "status": "pending",
+                "sequence": 0
+              }
+            ],
+            "dispatch_revision": 10,
+            "updated_at": "2026-10-30T06:31:00Z"
+          },
+          "cursor": 10,
+          "dispatch_revision": 10
+        }
+      }
+    },
+    "schemas": {
+      "ErrorEnvelope": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "error",
+          "request_id"
+        ],
+        "properties": {
+          "error": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "code",
+              "message"
+            ],
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              },
+              "details": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "field",
+                    "message"
+                  ],
+                  "properties": {
+                    "field": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "request_id": {
+            "type": "string"
+          }
+        }
+      },
+      "PairingRedeemRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "pairing_code"
+        ],
+        "properties": {
+          "pairing_code": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 32,
+            "writeOnly": true
+          }
+        }
+      },
+      "Session": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "access_token",
+          "token_type",
+          "expires_at",
+          "driver"
+        ],
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "writeOnly": true
+          },
+          "token_type": {
+            "const": "Bearer"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "driver": {
+            "$ref": "#/components/schemas/DriverIdentity"
+          }
+        }
+      },
+      "DriverIdentity": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "driver_id",
+          "vehicle_id",
+          "display_name"
+        ],
+        "properties": {
+          "driver_id": {
+            "type": "string"
+          },
+          "vehicle_id": {
+            "type": "string"
+          },
+          "display_name": {
+            "type": "string"
+          }
+        }
+      },
+      "Stop": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "stop_id",
+          "sequence",
+          "status"
+        ],
+        "properties": {
+          "stop_id": {
+            "type": "string"
+          },
+          "sequence": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "completed"
+            ]
+          },
+          "latitude": {
+            "type": "number",
+            "minimum": -90,
+            "maximum": 90
+          },
+          "longitude": {
+            "type": "number",
+            "minimum": -180,
+            "maximum": 180
+          },
+          "eta": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "service_duration_min": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0
+          }
+        }
+      },
+      "GeoJSONLineString": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "type",
+          "coordinates"
+        ],
+        "properties": {
+          "type": {
+            "const": "LineString"
+          },
+          "coordinates": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "type": "number",
+                  "minimum": -180,
+                  "maximum": 180
+                },
+                {
+                  "type": "number",
+                  "minimum": -90,
+                  "maximum": 90
+                }
+              ],
+              "minItems": 2,
+              "maxItems": 2
+            }
+          }
+        }
+      },
+      "DriverState": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "driver",
+          "plan_id",
+          "plan_version",
+          "manifest_revision",
+          "dispatch_revision",
+          "status",
+          "ordered_stops",
+          "updated_at",
+          "source"
+        ],
+        "properties": {
+          "driver": {
+            "$ref": "#/components/schemas/DriverIdentity"
+          },
+          "plan_id": {
+            "type": "string"
+          },
+          "plan_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "manifest_revision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "dispatch_revision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "revoked",
+              "alert"
+            ]
+          },
+          "ordered_stops": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Stop"
+            }
+          },
+          "route_geometry": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/GeoJSONLineString"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "duration_seconds": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "distance_metres": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "last_ack_manifest_revision": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "demo_synthetic",
+              "verified_provider",
+              "unavailable"
+            ]
+          }
+        }
+      },
+      "CongestionEventRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "occurred_at",
+          "segment_id",
+          "severity"
+        ],
+        "properties": {
+          "occurred_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "segment_id": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "moderate",
+              "heavy"
+            ]
+          },
+          "note": {
+            "type": "string",
+            "maxLength": 240
+          }
+        }
+      },
+      "RouteEvaluationRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "reason": {
+            "type": "string",
+            "enum": [
+              "manual_refresh",
+              "reported_issue"
+            ]
+          }
+        }
+      },
+      "JobAccepted": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "event_id",
+          "job_id",
+          "status",
+          "dispatch_revision",
+          "submitted_at"
+        ],
+        "properties": {
+          "event_id": {
+            "type": "string"
+          },
+          "job_id": {
+            "type": "string"
+          },
+          "status": {
+            "const": "queued"
+          },
+          "dispatch_revision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "submitted_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ValidationSummary": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "valid",
+          "feasible",
+          "errors"
+        ],
+        "properties": {
+          "valid": {
+            "type": "boolean"
+          },
+          "feasible": {
+            "type": "boolean"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "Decision": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "type",
+          "reason"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "KEEP",
+              "ALERT",
+              "PROPOSE_REPLAN"
+            ]
+          },
+          "reason": {
+            "type": "string"
+          },
+          "proposal_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "Job": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "job_id",
+          "event_id",
+          "status",
+          "submitted_at",
+          "updated_at"
+        ],
+        "properties": {
+          "job_id": {
+            "type": "string"
+          },
+          "event_id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "queued",
+              "running",
+              "succeeded",
+              "failed",
+              "timed_out",
+              "cancelled",
+              "restart_interrupted"
+            ]
+          },
+          "submitted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "decision": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Decision"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "error": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/SafeError"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "SafeError": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "Proposal": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "proposal_id",
+          "event_id",
+          "plan_id",
+          "base_version",
+          "model_version",
+          "context_hash",
+          "expires_at",
+          "status",
+          "candidate",
+          "validation",
+          "provenance"
+        ],
+        "properties": {
+          "proposal_id": {
+            "type": "string"
+          },
+          "event_id": {
+            "type": "string"
+          },
+          "plan_id": {
+            "type": "string"
+          },
+          "base_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "model_version": {
+            "type": "string"
+          },
+          "context_hash": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "approved",
+              "rejected",
+              "expired",
+              "superseded"
+            ]
+          },
+          "candidate": {
+            "type": "object"
+          },
+          "validation": {
+            "$ref": "#/components/schemas/ValidationSummary"
+          },
+          "provenance": {
+            "type": "object",
+            "additionalProperties": {
+              "type": [
+                "string",
+                "number",
+                "boolean",
+                "null"
+              ]
+            }
+          }
+        }
+      },
+      "ApprovalRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "base_version",
+          "event_id",
+          "model_version",
+          "context_hash"
+        ],
+        "properties": {
+          "base_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "event_id": {
+            "type": "string"
+          },
+          "model_version": {
+            "type": "string"
+          },
+          "context_hash": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      },
+      "ApprovalResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "plan_id",
+          "version",
+          "proposal_id",
+          "status",
+          "dispatch_revision",
+          "manifests_written",
+          "validation"
+        ],
+        "properties": {
+          "plan_id": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "proposal_id": {
+            "type": "string"
+          },
+          "status": {
+            "const": "approved"
+          },
+          "dispatch_revision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "manifests_written": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "validation": {
+            "$ref": "#/components/schemas/ValidationSummary"
+          }
+        }
+      },
+      "DispatcherSnapshot": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "dispatch_revision",
+          "cursor",
+          "server_time",
+          "drivers",
+          "pending_proposals",
+          "active_jobs"
+        ],
+        "properties": {
+          "dispatch_revision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "cursor": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "server_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "drivers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DriverState"
+            }
+          },
+          "pending_proposals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProposalSummary"
+            }
+          },
+          "active_jobs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/JobSummary"
+            }
+          }
+        }
+      },
+      "ProposalSummary": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "proposal_id",
+          "plan_id",
+          "base_version",
+          "expires_at",
+          "status"
+        ],
+        "properties": {
+          "proposal_id": {
+            "type": "string"
+          },
+          "plan_id": {
+            "type": "string"
+          },
+          "base_version": {
+            "type": "integer"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      },
+      "JobSummary": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "job_id",
+          "status"
+        ],
+        "properties": {
+          "job_id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "driver_id": {
+            "type": "string"
+          }
+        }
+      },
+      "ChangeFeed": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "cursor",
+          "dispatch_revision",
+          "reset_required",
+          "changes"
+        ],
+        "properties": {
+          "cursor": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "dispatch_revision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "reset_required": {
+            "type": "boolean"
+          },
+          "snapshot": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/DriverState"
+              },
+              {
+                "$ref": "#/components/schemas/DispatcherSnapshot"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "changes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true,
+              "required": [
+                "cursor",
+                "type",
+                "created_at"
+              ],
+              "properties": {
+                "cursor": {
+                  "type": "integer"
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "job_updated",
+                    "proposal_created",
+                    "route_published",
+                    "manifest_revoked",
+                    "acknowledgement_updated"
+                  ]
+                },
+                "created_at": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "resource_id": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "AcknowledgementRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "manifest_revision"
+        ],
+        "properties": {
+          "manifest_revision": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      },
+      "PreparedPredictionRequestV2": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema_version",
+          "request_id",
+          "prediction_as_of",
+          "observation_stage",
+          "feature_contract",
+          "feature_provenance",
+          "prepared_features"
+        ],
+        "properties": {
+          "schema_version": {
+            "const": "india_eta.prepared_prediction.request.v2"
+          },
+          "request_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/-]{0,127}$"
+          },
+          "prediction_as_of": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "observation_stage": {
+            "type": "string",
+            "enum": [
+              "post_pickup",
+              "historical_prepared"
+            ]
+          },
+          "feature_contract": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "schema_id",
+              "schema_version",
+              "feature_schema_sha256"
+            ],
+            "properties": {
+              "schema_id": {
+                "const": "india_eta.prepared_gbdt_features"
+              },
+              "schema_version": {
+                "const": "1.0.0"
+              },
+              "feature_schema_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              }
+            }
+          },
+          "feature_provenance": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "source_kind",
+              "source_id",
+              "availability_status",
+              "features"
+            ],
+            "properties": {
+              "source_kind": {
+                "type": "string",
+                "enum": [
+                  "synthetic_reference_fixture",
+                  "offline_prepared_artifact",
+                  "trusted_preparation_service"
+                ]
+              },
+              "source_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "availability_status": {
+                "type": "string",
+                "enum": [
+                  "synthetic_fixture_declared",
+                  "source_availability_verified"
+                ]
+              },
+              "features": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "haversine_distance_km",
+                  "departure_hour",
+                  "day_of_week",
+                  "is_weekend",
+                  "is_rush_hour",
+                  "is_lunch_rush",
+                  "is_dinner_rush",
+                  "delivery_person_age_imp",
+                  "delivery_person_ratings_imp",
+                  "order_to_pickup_min_imp",
+                  "order_to_pickup_missing_flag",
+                  "vehicle_condition",
+                  "multiple_deliveries_imp",
+                  "is_festival",
+                  "traffic_density_ordinal_imp",
+                  "is_adverse_weather",
+                  "weather_clean_imp_Cloudy",
+                  "weather_clean_imp_Fog",
+                  "weather_clean_imp_Sandstorms",
+                  "weather_clean_imp_Stormy",
+                  "weather_clean_imp_Sunny",
+                  "weather_clean_imp_Windy",
+                  "traffic_density_clean_High",
+                  "traffic_density_clean_Jam",
+                  "traffic_density_clean_Low",
+                  "traffic_density_clean_Medium",
+                  "type_of_order_clean_Buffet",
+                  "type_of_order_clean_Drinks",
+                  "type_of_order_clean_Meal",
+                  "type_of_order_clean_Snack",
+                  "type_of_vehicle_clean_bicycle",
+                  "type_of_vehicle_clean_electric_scooter",
+                  "type_of_vehicle_clean_motorcycle",
+                  "type_of_vehicle_clean_scooter",
+                  "city_type_clean_imp_Metropolitian",
+                  "city_type_clean_imp_Semi-Urban",
+                  "city_type_clean_imp_Urban",
+                  "city_code_AGR",
+                  "city_code_ALH",
+                  "city_code_AURG",
+                  "city_code_BANG",
+                  "city_code_BHP",
+                  "city_code_CHEN",
+                  "city_code_COIMB",
+                  "city_code_DEH",
+                  "city_code_GOA",
+                  "city_code_HYD",
+                  "city_code_INDO",
+                  "city_code_JAP",
+                  "city_code_KNP",
+                  "city_code_KOC",
+                  "city_code_KOL",
+                  "city_code_LUDH",
+                  "city_code_MUM",
+                  "city_code_MYS",
+                  "city_code_PUNE",
+                  "city_code_RANCHI",
+                  "city_code_SUR",
+                  "city_code_VAD"
+                ],
+                "properties": {
+                  "haversine_distance_km": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "departure_hour": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "day_of_week": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "is_weekend": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "is_rush_hour": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "is_lunch_rush": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "is_dinner_rush": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "delivery_person_age_imp": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "delivery_person_ratings_imp": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "order_to_pickup_min_imp": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "order_to_pickup_missing_flag": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "vehicle_condition": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "multiple_deliveries_imp": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "is_festival": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "traffic_density_ordinal_imp": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "is_adverse_weather": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "weather_clean_imp_Cloudy": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "weather_clean_imp_Fog": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "weather_clean_imp_Sandstorms": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "weather_clean_imp_Stormy": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "weather_clean_imp_Sunny": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "weather_clean_imp_Windy": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "traffic_density_clean_High": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "traffic_density_clean_Jam": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "traffic_density_clean_Low": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "traffic_density_clean_Medium": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "type_of_order_clean_Buffet": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "type_of_order_clean_Drinks": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "type_of_order_clean_Meal": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "type_of_order_clean_Snack": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "type_of_vehicle_clean_bicycle": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "type_of_vehicle_clean_electric_scooter": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "type_of_vehicle_clean_motorcycle": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "type_of_vehicle_clean_scooter": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "city_type_clean_imp_Metropolitian": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "city_type_clean_imp_Semi-Urban": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "city_type_clean_imp_Urban": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "city_code_AGR": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "city_code_ALH": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "city_code_AURG": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "city_code_BANG": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "city_code_BHP": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "city_code_CHEN": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "city_code_COIMB": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "city_code_DEH": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "city_code_GOA": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "city_code_HYD": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "city_code_INDO": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "city_code_JAP": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "city_code_KNP": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "city_code_KOC": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "city_code_KOL": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "city_code_LUDH": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "city_code_MUM": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "city_code_MYS": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "city_code_PUNE": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "city_code_RANCHI": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "city_code_SUR": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  },
+                  "city_code_VAD": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "observed_at",
+                      "source_field",
+                      "availability_status"
+                    ],
+                    "properties": {
+                      "observed_at": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "source_field": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "availability_status": {
+                        "type": "string",
+                        "enum": [
+                          "available_in_synthetic_fixture",
+                          "available_at_prediction_time"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "prepared_features": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "haversine_distance_km",
+              "departure_hour",
+              "day_of_week",
+              "is_weekend",
+              "is_rush_hour",
+              "is_lunch_rush",
+              "is_dinner_rush",
+              "delivery_person_age_imp",
+              "delivery_person_ratings_imp",
+              "order_to_pickup_min_imp",
+              "order_to_pickup_missing_flag",
+              "vehicle_condition",
+              "multiple_deliveries_imp",
+              "is_festival",
+              "traffic_density_ordinal_imp",
+              "is_adverse_weather",
+              "weather_clean_imp_Cloudy",
+              "weather_clean_imp_Fog",
+              "weather_clean_imp_Sandstorms",
+              "weather_clean_imp_Stormy",
+              "weather_clean_imp_Sunny",
+              "weather_clean_imp_Windy",
+              "traffic_density_clean_High",
+              "traffic_density_clean_Jam",
+              "traffic_density_clean_Low",
+              "traffic_density_clean_Medium",
+              "type_of_order_clean_Buffet",
+              "type_of_order_clean_Drinks",
+              "type_of_order_clean_Meal",
+              "type_of_order_clean_Snack",
+              "type_of_vehicle_clean_bicycle",
+              "type_of_vehicle_clean_electric_scooter",
+              "type_of_vehicle_clean_motorcycle",
+              "type_of_vehicle_clean_scooter",
+              "city_type_clean_imp_Metropolitian",
+              "city_type_clean_imp_Semi-Urban",
+              "city_type_clean_imp_Urban",
+              "city_code_AGR",
+              "city_code_ALH",
+              "city_code_AURG",
+              "city_code_BANG",
+              "city_code_BHP",
+              "city_code_CHEN",
+              "city_code_COIMB",
+              "city_code_DEH",
+              "city_code_GOA",
+              "city_code_HYD",
+              "city_code_INDO",
+              "city_code_JAP",
+              "city_code_KNP",
+              "city_code_KOC",
+              "city_code_KOL",
+              "city_code_LUDH",
+              "city_code_MUM",
+              "city_code_MYS",
+              "city_code_PUNE",
+              "city_code_RANCHI",
+              "city_code_SUR",
+              "city_code_VAD"
+            ],
+            "properties": {
+              "haversine_distance_km": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "departure_hour": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "day_of_week": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "is_weekend": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "is_rush_hour": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "is_lunch_rush": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "is_dinner_rush": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "delivery_person_age_imp": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "delivery_person_ratings_imp": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "order_to_pickup_min_imp": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "order_to_pickup_missing_flag": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "vehicle_condition": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "multiple_deliveries_imp": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "is_festival": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "traffic_density_ordinal_imp": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "is_adverse_weather": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "weather_clean_imp_Cloudy": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "weather_clean_imp_Fog": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "weather_clean_imp_Sandstorms": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "weather_clean_imp_Stormy": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "weather_clean_imp_Sunny": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "weather_clean_imp_Windy": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "traffic_density_clean_High": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "traffic_density_clean_Jam": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "traffic_density_clean_Low": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "traffic_density_clean_Medium": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "type_of_order_clean_Buffet": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "type_of_order_clean_Drinks": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "type_of_order_clean_Meal": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "type_of_order_clean_Snack": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "type_of_vehicle_clean_bicycle": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "type_of_vehicle_clean_electric_scooter": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "type_of_vehicle_clean_motorcycle": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "type_of_vehicle_clean_scooter": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "city_type_clean_imp_Metropolitian": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "city_type_clean_imp_Semi-Urban": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "city_type_clean_imp_Urban": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "city_code_AGR": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "city_code_ALH": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "city_code_AURG": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "city_code_BANG": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "city_code_BHP": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "city_code_CHEN": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "city_code_COIMB": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "city_code_DEH": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "city_code_GOA": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "city_code_HYD": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "city_code_INDO": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "city_code_JAP": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "city_code_KNP": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "city_code_KOC": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "city_code_KOL": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "city_code_LUDH": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "city_code_MUM": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "city_code_MYS": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "city_code_PUNE": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "city_code_RANCHI": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "city_code_SUR": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              },
+              "city_code_VAD": {
+                "type": "number",
+                "description": "Finite numeric value in the frozen ordered release schema."
+              }
+            }
+          },
+          "include_diagnostics": {
+            "type": "boolean",
+            "default": false,
+            "description": "If true, return named VQC candidate comparisons explicitly marked not_for_dispatch; never changes alpha=0 output."
+          }
+        }
+      },
+      "PreparedPredictionResponseV2": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "schema_version",
+          "request_id",
+          "prediction_target",
+          "duration_unit",
+          "predicted_duration_minutes",
+          "target_semantics",
+          "prediction_as_of",
+          "observation_stage",
+          "prediction_status",
+          "operational_policy",
+          "uncertainty",
+          "model",
+          "feature_provenance",
+          "diagnostics"
+        ],
+        "properties": {
+          "schema_version": {
+            "const": "india_eta.prepared_prediction.response.v2"
+          },
+          "request_id": {
+            "type": "string"
+          },
+          "prediction_target": {
+            "const": "delivery_duration_min"
+          },
+          "duration_unit": {
+            "const": "minute"
+          },
+          "predicted_duration_minutes": {
+            "type": "number"
+          },
+          "prediction_as_of": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "observation_stage": {
+            "type": "string",
+            "enum": [
+              "post_pickup",
+              "historical_prepared"
+            ]
+          },
+          "prediction_status": {
+            "type": "string",
+            "enum": [
+              "development_prediction",
+              "operationally_verified"
+            ]
+          },
+          "operational_policy": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "selected_model",
+              "alpha",
+              "prediction_role"
+            ],
+            "properties": {
+              "selected_model": {
+                "const": "gbdt_only"
+              },
+              "alpha": {
+                "const": 0.0
+              },
+              "prediction_role": {
+                "const": "development_only"
+              }
+            }
+          },
+          "uncertainty": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "status",
+              "lower_minutes",
+              "upper_minutes",
+              "nominal_coverage",
+              "method",
+              "provenance"
+            ],
+            "properties": {
+              "status": {
+                "type": "string",
+                "enum": [
+                  "source_derived",
+                  "calibrated",
+                  "unavailable"
+                ]
+              },
+              "lower_minutes": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "upper_minutes": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "nominal_coverage": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "method": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "provenance": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          },
+          "model": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "model_id",
+              "model_version",
+              "release_manifest_sha256",
+              "feature_schema_sha256"
+            ],
+            "properties": {
+              "model_id": {
+                "const": "india-eta-vqc4-cpu"
+              },
+              "model_version": {
+                "type": "string"
+              },
+              "release_manifest_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "feature_schema_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              }
+            }
+          },
+          "feature_provenance": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "source_kind",
+              "source_id",
+              "available_through",
+              "availability_status"
+            ],
+            "properties": {
+              "source_kind": {
+                "type": "string"
+              },
+              "source_id": {
+                "type": "string"
+              },
+              "available_through": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "availability_status": {
+                "type": "string"
+              }
+            }
+          },
+          "diagnostics": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "requested",
+              "not_for_dispatch",
+              "baseline60_candidate_minutes",
+              "extended76_candidate_minutes"
+            ],
+            "properties": {
+              "requested": {
+                "type": "boolean"
+              },
+              "not_for_dispatch": {
+                "const": true
+              },
+              "baseline60_candidate_minutes": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "extended76_candidate_minutes": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              }
+            }
+          },
+          "target_semantics": {
+            "const": "dataset_delivery_duration_min; operational event start/end not independently verified"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "error"
+        ],
+        "properties": {
+          "error": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "code",
+              "message"
+            ],
+            "properties": {
+              "code": {
+                "type": "string",
+                "enum": [
+                  "invalid_request",
+                  "invalid_feature_schema",
+                  "feature_schema_mismatch",
+                  "feature_observed_after_prediction_as_of",
+                  "unsupported_prediction_stage",
+                  "model_unavailable",
+                  "model_integrity_error",
+                  "model_dependency_mismatch",
+                  "inference_failure"
+                ]
+              },
+              "message": {
+                "type": "string",
+                "maxLength": 256
+              },
+              "details": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "field",
+                    "message"
+                  ],
+                  "properties": {
+                    "field": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "headers": {
+      "ETag": {
+        "description": "Strong quoted representation validator, e.g. \"dispatch-42\".",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "Revision": {
+        "description": "Monotonic canonical dispatch revision.",
+        "schema": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "parameters": {
+      "IfMatch": {
+        "name": "If-Match",
+        "in": "header",
+        "required": true,
+        "schema": {
+          "type": "string"
+        },
+        "description": "Strong ETag of canonical base dispatch revision."
+      },
+      "IfNoneMatch": {
+        "name": "If-None-Match",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "IdempotencyKey": {
+        "name": "Idempotency-Key",
+        "in": "header",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        }
+      },
+      "JobId": {
+        "name": "jobId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{1,64}$"
+        }
+      },
+      "ProposalId": {
+        "name": "proposalId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{1,64}$"
+        }
+      }
+    },
+    "responses": {
+      "Unauthorized": {
+        "description": "Missing, invalid, expired or revoked credentials",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorEnvelope"
+            },
+            "examples": {
+              "unauthorized": {
+                "$ref": "#/components/examples/Unauthorized"
+              }
+            }
+          }
+        }
+      },
+      "Forbidden": {
+        "description": "Authenticated principal lacks the required role or ownership",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorEnvelope"
+            }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "Missing or intentionally undisclosed unowned resource",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorEnvelope"
+            }
+          }
+        }
+      },
+      "Conflict": {
+        "description": "Stale version, idempotency mismatch, expired/not-pending proposal or competing approval",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorEnvelope"
+            },
+            "examples": {
+              "stale": {
+                "$ref": "#/components/examples/StaleConflict"
+              }
+            }
+          }
+        }
+      },
+      "InvalidRequest": {
+        "description": "Schema or semantic validation failure",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorEnvelope"
+            },
+            "examples": {
+              "invalid": {
+                "$ref": "#/components/examples/InvalidRequest"
+              }
+            }
+          }
+        }
+      },
+      "TooLarge": {
+        "description": "Request exceeds configured byte limit",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorEnvelope"
+            }
+          }
+        }
+      },
+      "RateLimited": {
+        "description": "Pairing or event admission rate/capacity bound; may include Retry-After",
+        "headers": {
+          "Retry-After": {
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorEnvelope"
+            }
+          }
+        }
+      },
+      "Unavailable": {
+        "description": "Storage/runtime unavailable or bounded job failed; last committed plan remains active",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorEnvelope"
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "DriverSession": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "opaque driver-scoped token",
+        "description": "Proposed session issued by pairing; server resolves immutable driver and vehicle ownership."
+      },
+      "DispatcherToken": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Server-configured dispatcher/admin token. Never provision to a phone."
+      },
+      "LocalApiToken": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "opaque configured API token",
+        "description": "Existing backend token-role middleware. Loopback-only when auth mode is explicitly disabled; never expose unauthenticated over LAN."
+      }
+    }
+  }
+}

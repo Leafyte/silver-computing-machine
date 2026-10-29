@@ -1,0 +1,228 @@
+{
+  "fixture_status": "proposed static examples; no live API request was executed",
+  "pairing_redeem_request": {
+    "pairing_code": "D7KM-3QNX-9RWP"
+  },
+  "pairing_redeem_response": {
+    "access_token": "<redacted-opaque-session-token>",
+    "token_type": "Bearer",
+    "expires_at": "2026-10-30T12:00:00Z",
+    "driver": {
+      "driver_id": "driver_1",
+      "vehicle_id": "vehicle_1",
+      "display_name": "Driver 1"
+    }
+  },
+  "driver_state_response": {
+    "driver": {
+      "driver_id": "driver_1",
+      "vehicle_id": "vehicle_1",
+      "display_name": "Driver 1"
+    },
+    "plan_id": "demo-plan-1",
+    "plan_version": 1,
+    "manifest_revision": 1,
+    "dispatch_revision": 7,
+    "status": "active",
+    "ordered_stops": [
+      {
+        "stop_id": "order_1",
+        "sequence": 0,
+        "status": "pending",
+        "eta": null,
+        "service_duration_min": 3.0
+      }
+    ],
+    "route_geometry": null,
+    "duration_seconds": 720.0,
+    "distance_metres": 8400.0,
+    "updated_at": "2026-10-30T06:25:00Z",
+    "last_ack_manifest_revision": 0,
+    "source": "demo_synthetic"
+  },
+  "driver_state_headers": {
+    "ETag": "\"dispatch-7\"",
+    "X-Dispatch-Revision": "7"
+  },
+  "congestion_event_request": {
+    "occurred_at": "2026-10-30T06:30:00Z",
+    "segment_id": "seg_demo_1",
+    "severity": "heavy",
+    "note": "Synthetic rehearsal event"
+  },
+  "congestion_event_headers": {
+    "Authorization": "Bearer <session-token-from-pairing>",
+    "Idempotency-Key": "evt-phone-a-001",
+    "If-Match": "\"dispatch-7\""
+  },
+  "job_accepted_202": {
+    "event_id": "evt-phone-a-001",
+    "job_id": "job-7bf390",
+    "status": "queued",
+    "dispatch_revision": 8,
+    "submitted_at": "2026-10-30T06:30:01Z"
+  },
+  "job_proposal_ready_200": {
+    "job_id": "job-7bf390",
+    "event_id": "evt-phone-a-001",
+    "status": "succeeded",
+    "submitted_at": "2026-10-30T06:30:01Z",
+    "updated_at": "2026-10-30T06:30:02Z",
+    "decision": {
+      "type": "PROPOSE_REPLAN",
+      "reason": "Candidate passed independent checks and benefit policy",
+      "proposal_id": "proposal-34e2"
+    },
+    "error": null
+  },
+  "proposal_200": {
+    "proposal_id": "proposal-34e2",
+    "event_id": "evt-phone-a-001",
+    "plan_id": "demo-plan-1",
+    "base_version": 1,
+    "model_version": "fixture-1",
+    "context_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "expires_at": "2026-10-30T06:45:00Z",
+    "status": "pending",
+    "candidate": {
+      "routes": [
+        {
+          "vehicle_id": "vehicle_1",
+          "order_ids": [
+            "order_1"
+          ]
+        }
+      ]
+    },
+    "validation": {
+      "valid": true,
+      "feasible": true,
+      "errors": []
+    },
+    "provenance": {
+      "mode": "synthetic_scenario",
+      "execution_type": "local_classical"
+    }
+  },
+  "approval_request": {
+    "base_version": 1,
+    "event_id": "evt-phone-a-001",
+    "model_version": "fixture-1",
+    "context_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "approval_success_200": {
+    "plan_id": "demo-plan-1",
+    "version": 2,
+    "proposal_id": "proposal-34e2",
+    "status": "approved",
+    "dispatch_revision": 10,
+    "manifests_written": 2,
+    "validation": {
+      "valid": true,
+      "feasible": true,
+      "errors": []
+    }
+  },
+  "dispatcher_snapshot_200": {
+    "dispatch_revision": 10,
+    "cursor": 10,
+    "server_time": "2026-10-30T06:31:00Z",
+    "drivers": [],
+    "pending_proposals": [],
+    "active_jobs": []
+  },
+  "change_feed_200": {
+    "cursor": 10,
+    "dispatch_revision": 10,
+    "reset_required": false,
+    "snapshot": null,
+    "changes": [
+      {
+        "cursor": 9,
+        "type": "proposal_created",
+        "created_at": "2026-10-30T06:30:02Z",
+        "resource_id": "proposal-34e2"
+      },
+      {
+        "cursor": 10,
+        "type": "route_published",
+        "created_at": "2026-10-30T06:31:00Z",
+        "resource_id": "demo-plan-1"
+      }
+    ]
+  },
+  "expired_cursor_410": {
+    "cursor": 10,
+    "dispatch_revision": 10,
+    "reset_required": true,
+    "snapshot": {
+      "route_geometry": null,
+      "source": "demo_synthetic",
+      "duration_seconds": 960.0,
+      "distance_metres": 8400.0,
+      "manifest_revision": 2,
+      "driver": {
+        "vehicle_id": "vehicle_1",
+        "display_name": "Driver 1",
+        "driver_id": "driver_1"
+      },
+      "plan_version": 2,
+      "status": "active",
+      "last_ack_manifest_revision": 1,
+      "plan_id": "demo-plan-1",
+      "ordered_stops": [
+        {
+          "eta": null,
+          "service_duration_min": 3.0,
+          "stop_id": "order_1",
+          "status": "pending",
+          "sequence": 0
+        }
+      ],
+      "dispatch_revision": 10,
+      "updated_at": "2026-10-30T06:31:00Z"
+    },
+    "changes": []
+  },
+  "unauthorized_401": {
+    "error": {
+      "code": "authentication_required",
+      "message": "Authentication required"
+    },
+    "request_id": "req-001"
+  },
+  "stale_revision_409": {
+    "error": {
+      "code": "stale_revision",
+      "message": "Dispatch state changed; refresh before retrying"
+    },
+    "request_id": "req-002"
+  },
+  "invalid_request_422": {
+    "error": {
+      "code": "invalid_request",
+      "message": "Request validation failed",
+      "details": [
+        {
+          "field": "severity",
+          "message": "unsupported value"
+        }
+      ]
+    },
+    "request_id": "req-003"
+  },
+  "rate_limited_429": {
+    "error": {
+      "code": "rate_limited",
+      "message": "Request rate limit reached"
+    },
+    "request_id": "req-004"
+  },
+  "service_unavailable_503": {
+    "error": {
+      "code": "storage_unavailable",
+      "message": "Dispatch operation could not complete"
+    },
+    "request_id": "req-005"
+  }
+}

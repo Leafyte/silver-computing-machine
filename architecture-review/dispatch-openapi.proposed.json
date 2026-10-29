@@ -1,0 +1,1812 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "DebugLeaf Mobile Dispatch API (proposal)",
+    "version": "2.0.0-proposed",
+    "description": "Static backend-to-client contract proposal only. No /api/v2/dispatch route is implemented in the audited checkout. Existing /api/v1 and /api/v1/eta behavior remains unchanged."
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:8000",
+      "description": "Local demo; use a trusted LAN address only for device rehearsal."
+    }
+  ],
+  "tags": [
+    {
+      "name": "Pairing"
+    },
+    {
+      "name": "Driver"
+    },
+    {
+      "name": "Dispatcher"
+    },
+    {
+      "name": "Jobs"
+    },
+    {
+      "name": "Proposals"
+    },
+    {
+      "name": "Sync"
+    }
+  ],
+  "security": [
+    {
+      "DriverSession": []
+    }
+  ],
+  "paths": {
+    "/api/v2/dispatch/pairings/redeem": {
+      "post": {
+        "tags": [
+          "Pairing"
+        ],
+        "summary": "Redeem a one-time driver pairing code",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PairingRedeemRequest"
+              },
+              "examples": {
+                "redeem": {
+                  "$ref": "#/components/examples/PairingRedeem"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "New driver-scoped session",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Session"
+                },
+                "examples": {
+                  "paired": {
+                    "$ref": "#/components/examples/Session"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "422": {
+            "$ref": "#/components/responses/InvalidRequest"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          }
+        }
+      }
+    },
+    "/api/v2/dispatch/sessions/revoke": {
+      "post": {
+        "tags": [
+          "Pairing"
+        ],
+        "summary": "Revoke current driver session",
+        "responses": {
+          "204": {
+            "description": "Revoked; safe to repeat"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          }
+        }
+      }
+    },
+    "/api/v2/dispatch/driver/state": {
+      "get": {
+        "tags": [
+          "Driver"
+        ],
+        "summary": "Read this driver's canonical current manifest",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IfNoneMatch"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current owned state",
+            "headers": {
+              "ETag": {
+                "$ref": "#/components/headers/ETag"
+              },
+              "X-Dispatch-Revision": {
+                "$ref": "#/components/headers/Revision"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DriverState"
+                },
+                "examples": {
+                  "driverState": {
+                    "$ref": "#/components/examples/DriverState"
+                  }
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "State unchanged"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          }
+        }
+      }
+    },
+    "/api/v2/dispatch/driver/events/congestion": {
+      "post": {
+        "tags": [
+          "Driver"
+        ],
+        "summary": "Durably admit a driver congestion event; evaluation does not publish a route",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          },
+          {
+            "$ref": "#/components/parameters/IfMatch"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CongestionEventRequest"
+              },
+              "examples": {
+                "heavyCongestion": {
+                  "$ref": "#/components/examples/CongestionEvent"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Event is durably admitted",
+            "headers": {
+              "X-Dispatch-Revision": {
+                "$ref": "#/components/headers/Revision"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobAccepted"
+                },
+                "examples": {
+                  "accepted": {
+                    "$ref": "#/components/examples/JobAccepted"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "413": {
+            "$ref": "#/components/responses/TooLarge"
+          },
+          "422": {
+            "$ref": "#/components/responses/InvalidRequest"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          }
+        }
+      }
+    },
+    "/api/v2/dispatch/driver/route-evaluations": {
+      "post": {
+        "tags": [
+          "Driver"
+        ],
+        "summary": "Request a route evaluation for this driver's current assignment; cannot approve or publish",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          },
+          {
+            "$ref": "#/components/parameters/IfMatch"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RouteEvaluationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Evaluation job accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobAccepted"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/InvalidRequest"
+          },
+          "429": {
+            "$ref": "#/components/responses/RateLimited"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          }
+        }
+      }
+    },
+    "/api/v2/dispatch/jobs/{jobId}": {
+      "get": {
+        "tags": [
+          "Jobs"
+        ],
+        "summary": "Read an owned job's durable state",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/JobId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Job status/result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Job"
+                },
+                "examples": {
+                  "proposalReady": {
+                    "$ref": "#/components/examples/JobProposalReady"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          }
+        }
+      }
+    },
+    "/api/v2/dispatch/proposals/{proposalId}": {
+      "get": {
+        "tags": [
+          "Proposals"
+        ],
+        "summary": "Read an authorized proposal",
+        "security": [
+          {
+            "DispatcherToken": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProposalId"
+          },
+          {
+            "$ref": "#/components/parameters/IfNoneMatch"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Proposal and independent validation",
+            "headers": {
+              "ETag": {
+                "$ref": "#/components/headers/ETag"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Proposal"
+                },
+                "examples": {
+                  "proposal": {
+                    "$ref": "#/components/examples/Proposal"
+                  }
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Proposal unchanged"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/api/v2/dispatch/proposals/{proposalId}/approval": {
+      "post": {
+        "tags": [
+          "Proposals"
+        ],
+        "summary": "Approve a still-current proposal; publishes only through the atomic controller transaction",
+        "security": [
+          {
+            "DispatcherToken": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ProposalId"
+          },
+          {
+            "$ref": "#/components/parameters/IfMatch"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApprovalRequest"
+              },
+              "examples": {
+                "approval": {
+                  "$ref": "#/components/examples/Approval"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Committed new canonical route version",
+            "headers": {
+              "ETag": {
+                "$ref": "#/components/headers/ETag"
+              },
+              "X-Dispatch-Revision": {
+                "$ref": "#/components/headers/Revision"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApprovalResponse"
+                },
+                "examples": {
+                  "approved": {
+                    "$ref": "#/components/examples/ApprovalResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/InvalidRequest"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          }
+        }
+      }
+    },
+    "/api/v2/dispatch/dispatcher/snapshot": {
+      "get": {
+        "tags": [
+          "Dispatcher"
+        ],
+        "summary": "Read fleet snapshot and pending proposal/job summaries",
+        "security": [
+          {
+            "DispatcherToken": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IfNoneMatch"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current authorized fleet snapshot",
+            "headers": {
+              "ETag": {
+                "$ref": "#/components/headers/ETag"
+              },
+              "X-Dispatch-Revision": {
+                "$ref": "#/components/headers/Revision"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DispatcherSnapshot"
+                },
+                "examples": {
+                  "snapshot": {
+                    "$ref": "#/components/examples/DispatcherSnapshot"
+                  }
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Unchanged"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "503": {
+            "$ref": "#/components/responses/Unavailable"
+          }
+        }
+      }
+    },
+    "/api/v2/dispatch/changes": {
+      "get": {
+        "tags": [
+          "Sync"
+        ],
+        "summary": "Read durable changes after a monotonic cursor; poll at 1-2 seconds while foreground",
+        "security": [
+          {
+            "DriverSession": []
+          },
+          {
+            "DispatcherToken": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "after",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Last applied feed sequence. Not a timestamp."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Changes or reset snapshot",
+            "headers": {
+              "X-Dispatch-Revision": {
+                "$ref": "#/components/headers/Revision"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChangeFeed"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "410": {
+            "description": "Cursor expired; payload includes current authorized reset snapshot",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChangeFeed"
+                },
+                "examples": {
+                  "expiredCursor": {
+                    "$ref": "#/components/examples/ExpiredCursor"
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "$ref": "#/components/responses/InvalidRequest"
+          }
+        }
+      }
+    },
+    "/api/v2/dispatch/driver/acknowledgements": {
+      "post": {
+        "tags": [
+          "Driver"
+        ],
+        "summary": "Acknowledge own manifest revision; monotonic and idempotent",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AcknowledgementRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Acknowledged"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/InvalidRequest"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "DriverSession": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "opaque driver-scoped token",
+        "description": "Proposed session issued by pairing; server resolves immutable driver and vehicle ownership."
+      },
+      "DispatcherToken": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Server-configured dispatcher/admin token. Never provision to a phone."
+      }
+    },
+    "parameters": {
+      "IfMatch": {
+        "name": "If-Match",
+        "in": "header",
+        "required": true,
+        "schema": {
+          "type": "string"
+        },
+        "description": "Strong ETag of canonical base dispatch revision."
+      },
+      "IfNoneMatch": {
+        "name": "If-None-Match",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "IdempotencyKey": {
+        "name": "Idempotency-Key",
+        "in": "header",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        }
+      },
+      "JobId": {
+        "name": "jobId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{1,64}$"
+        }
+      },
+      "ProposalId": {
+        "name": "proposalId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{1,64}$"
+        }
+      }
+    },
+    "headers": {
+      "ETag": {
+        "description": "Strong quoted representation validator, e.g. \"dispatch-42\".",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "Revision": {
+        "description": "Monotonic canonical dispatch revision.",
+        "schema": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "responses": {
+      "Unauthorized": {
+        "description": "Missing, invalid, expired or revoked credentials",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorEnvelope"
+            },
+            "examples": {
+              "unauthorized": {
+                "$ref": "#/components/examples/Unauthorized"
+              }
+            }
+          }
+        }
+      },
+      "Forbidden": {
+        "description": "Authenticated principal lacks the required role or ownership",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorEnvelope"
+            }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "Missing or intentionally undisclosed unowned resource",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorEnvelope"
+            }
+          }
+        }
+      },
+      "Conflict": {
+        "description": "Stale version, idempotency mismatch, expired/not-pending proposal or competing approval",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorEnvelope"
+            },
+            "examples": {
+              "stale": {
+                "$ref": "#/components/examples/StaleConflict"
+              }
+            }
+          }
+        }
+      },
+      "InvalidRequest": {
+        "description": "Schema or semantic validation failure",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorEnvelope"
+            },
+            "examples": {
+              "invalid": {
+                "$ref": "#/components/examples/InvalidRequest"
+              }
+            }
+          }
+        }
+      },
+      "TooLarge": {
+        "description": "Request exceeds configured byte limit",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorEnvelope"
+            }
+          }
+        }
+      },
+      "RateLimited": {
+        "description": "Pairing or event admission rate/capacity bound; may include Retry-After",
+        "headers": {
+          "Retry-After": {
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorEnvelope"
+            }
+          }
+        }
+      },
+      "Unavailable": {
+        "description": "Storage/runtime unavailable or bounded job failed; last committed plan remains active",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorEnvelope"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "ErrorEnvelope": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "error",
+          "request_id"
+        ],
+        "properties": {
+          "error": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "code",
+              "message"
+            ],
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              },
+              "details": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "field",
+                    "message"
+                  ],
+                  "properties": {
+                    "field": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "request_id": {
+            "type": "string"
+          }
+        }
+      },
+      "PairingRedeemRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "pairing_code"
+        ],
+        "properties": {
+          "pairing_code": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 32,
+            "writeOnly": true
+          }
+        }
+      },
+      "Session": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "access_token",
+          "token_type",
+          "expires_at",
+          "driver"
+        ],
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "writeOnly": true
+          },
+          "token_type": {
+            "const": "Bearer"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "driver": {
+            "$ref": "#/components/schemas/DriverIdentity"
+          }
+        }
+      },
+      "DriverIdentity": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "driver_id",
+          "vehicle_id",
+          "display_name"
+        ],
+        "properties": {
+          "driver_id": {
+            "type": "string"
+          },
+          "vehicle_id": {
+            "type": "string"
+          },
+          "display_name": {
+            "type": "string"
+          }
+        }
+      },
+      "Stop": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "stop_id",
+          "sequence",
+          "status"
+        ],
+        "properties": {
+          "stop_id": {
+            "type": "string"
+          },
+          "sequence": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "completed"
+            ]
+          },
+          "latitude": {
+            "type": "number",
+            "minimum": -90,
+            "maximum": 90
+          },
+          "longitude": {
+            "type": "number",
+            "minimum": -180,
+            "maximum": 180
+          },
+          "eta": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "service_duration_min": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0
+          }
+        }
+      },
+      "GeoJSONLineString": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "type",
+          "coordinates"
+        ],
+        "properties": {
+          "type": {
+            "const": "LineString"
+          },
+          "coordinates": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "prefixItems": [
+                {
+                  "type": "number",
+                  "minimum": -180,
+                  "maximum": 180
+                },
+                {
+                  "type": "number",
+                  "minimum": -90,
+                  "maximum": 90
+                }
+              ],
+              "minItems": 2,
+              "maxItems": 2
+            }
+          }
+        }
+      },
+      "DriverState": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "driver",
+          "plan_id",
+          "plan_version",
+          "manifest_revision",
+          "dispatch_revision",
+          "status",
+          "ordered_stops",
+          "updated_at",
+          "source"
+        ],
+        "properties": {
+          "driver": {
+            "$ref": "#/components/schemas/DriverIdentity"
+          },
+          "plan_id": {
+            "type": "string"
+          },
+          "plan_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "manifest_revision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "dispatch_revision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "revoked",
+              "alert"
+            ]
+          },
+          "ordered_stops": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Stop"
+            }
+          },
+          "route_geometry": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/GeoJSONLineString"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "duration_seconds": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "distance_metres": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "last_ack_manifest_revision": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "demo_synthetic",
+              "verified_provider",
+              "unavailable"
+            ]
+          }
+        }
+      },
+      "CongestionEventRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "occurred_at",
+          "segment_id",
+          "severity"
+        ],
+        "properties": {
+          "occurred_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "segment_id": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "moderate",
+              "heavy"
+            ]
+          },
+          "note": {
+            "type": "string",
+            "maxLength": 240
+          }
+        }
+      },
+      "RouteEvaluationRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "reason": {
+            "type": "string",
+            "enum": [
+              "manual_refresh",
+              "reported_issue"
+            ]
+          }
+        }
+      },
+      "JobAccepted": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "event_id",
+          "job_id",
+          "status",
+          "dispatch_revision",
+          "submitted_at"
+        ],
+        "properties": {
+          "event_id": {
+            "type": "string"
+          },
+          "job_id": {
+            "type": "string"
+          },
+          "status": {
+            "const": "queued"
+          },
+          "dispatch_revision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "submitted_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ValidationSummary": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "valid",
+          "feasible",
+          "errors"
+        ],
+        "properties": {
+          "valid": {
+            "type": "boolean"
+          },
+          "feasible": {
+            "type": "boolean"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "Decision": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "type",
+          "reason"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "KEEP",
+              "ALERT",
+              "PROPOSE_REPLAN"
+            ]
+          },
+          "reason": {
+            "type": "string"
+          },
+          "proposal_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "Job": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "job_id",
+          "event_id",
+          "status",
+          "submitted_at",
+          "updated_at"
+        ],
+        "properties": {
+          "job_id": {
+            "type": "string"
+          },
+          "event_id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "queued",
+              "running",
+              "succeeded",
+              "failed",
+              "timed_out",
+              "cancelled",
+              "restart_interrupted"
+            ]
+          },
+          "submitted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "decision": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Decision"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "error": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/SafeError"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "SafeError": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "Proposal": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "proposal_id",
+          "event_id",
+          "plan_id",
+          "base_version",
+          "model_version",
+          "context_hash",
+          "expires_at",
+          "status",
+          "candidate",
+          "validation",
+          "provenance"
+        ],
+        "properties": {
+          "proposal_id": {
+            "type": "string"
+          },
+          "event_id": {
+            "type": "string"
+          },
+          "plan_id": {
+            "type": "string"
+          },
+          "base_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "model_version": {
+            "type": "string"
+          },
+          "context_hash": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "approved",
+              "rejected",
+              "expired",
+              "superseded"
+            ]
+          },
+          "candidate": {
+            "type": "object"
+          },
+          "validation": {
+            "$ref": "#/components/schemas/ValidationSummary"
+          },
+          "provenance": {
+            "type": "object",
+            "additionalProperties": {
+              "type": [
+                "string",
+                "number",
+                "boolean",
+                "null"
+              ]
+            }
+          }
+        }
+      },
+      "ApprovalRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "base_version",
+          "event_id",
+          "model_version",
+          "context_hash"
+        ],
+        "properties": {
+          "base_version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "event_id": {
+            "type": "string"
+          },
+          "model_version": {
+            "type": "string"
+          },
+          "context_hash": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      },
+      "ApprovalResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "plan_id",
+          "version",
+          "proposal_id",
+          "status",
+          "dispatch_revision",
+          "manifests_written",
+          "validation"
+        ],
+        "properties": {
+          "plan_id": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "proposal_id": {
+            "type": "string"
+          },
+          "status": {
+            "const": "approved"
+          },
+          "dispatch_revision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "manifests_written": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "validation": {
+            "$ref": "#/components/schemas/ValidationSummary"
+          }
+        }
+      },
+      "DispatcherSnapshot": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "dispatch_revision",
+          "cursor",
+          "server_time",
+          "drivers",
+          "pending_proposals",
+          "active_jobs"
+        ],
+        "properties": {
+          "dispatch_revision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "cursor": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "server_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "drivers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DriverState"
+            }
+          },
+          "pending_proposals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProposalSummary"
+            }
+          },
+          "active_jobs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/JobSummary"
+            }
+          }
+        }
+      },
+      "ProposalSummary": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "proposal_id",
+          "plan_id",
+          "base_version",
+          "expires_at",
+          "status"
+        ],
+        "properties": {
+          "proposal_id": {
+            "type": "string"
+          },
+          "plan_id": {
+            "type": "string"
+          },
+          "base_version": {
+            "type": "integer"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      },
+      "JobSummary": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "job_id",
+          "status"
+        ],
+        "properties": {
+          "job_id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "driver_id": {
+            "type": "string"
+          }
+        }
+      },
+      "ChangeFeed": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "cursor",
+          "dispatch_revision",
+          "reset_required",
+          "changes"
+        ],
+        "properties": {
+          "cursor": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "dispatch_revision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "reset_required": {
+            "type": "boolean"
+          },
+          "snapshot": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/DriverState"
+              },
+              {
+                "$ref": "#/components/schemas/DispatcherSnapshot"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "changes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true,
+              "required": [
+                "cursor",
+                "type",
+                "created_at"
+              ],
+              "properties": {
+                "cursor": {
+                  "type": "integer"
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "job_updated",
+                    "proposal_created",
+                    "route_published",
+                    "manifest_revoked",
+                    "acknowledgement_updated"
+                  ]
+                },
+                "created_at": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "resource_id": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "AcknowledgementRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "manifest_revision"
+        ],
+        "properties": {
+          "manifest_revision": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      }
+    },
+    "examples": {
+      "PairingRedeem": {
+        "value": {
+          "pairing_code": "D7KM-3QNX-9RWP"
+        }
+      },
+      "Session": {
+        "value": {
+          "access_token": "<opaque-token-returned-once>",
+          "token_type": "Bearer",
+          "expires_at": "2026-10-30T12:00:00Z",
+          "driver": {
+            "driver_id": "driver_1",
+            "vehicle_id": "vehicle_1",
+            "display_name": "Driver 1"
+          }
+        }
+      },
+      "DriverState": {
+        "value": {
+          "driver": {
+            "driver_id": "driver_1",
+            "vehicle_id": "vehicle_1",
+            "display_name": "Driver 1"
+          },
+          "plan_id": "demo-plan-1",
+          "plan_version": 1,
+          "manifest_revision": 1,
+          "dispatch_revision": 7,
+          "status": "active",
+          "ordered_stops": [
+            {
+              "stop_id": "order_1",
+              "sequence": 0,
+              "status": "pending",
+              "eta": null,
+              "service_duration_min": 3
+            }
+          ],
+          "route_geometry": null,
+          "duration_seconds": 720,
+          "distance_metres": 8400,
+          "updated_at": "2026-10-30T06:25:00Z",
+          "last_ack_manifest_revision": 0,
+          "source": "demo_synthetic"
+        }
+      },
+      "CongestionEvent": {
+        "value": {
+          "occurred_at": "2026-10-30T06:30:00Z",
+          "segment_id": "seg_demo_1",
+          "severity": "heavy",
+          "note": "Synthetic rehearsal event"
+        }
+      },
+      "JobAccepted": {
+        "value": {
+          "event_id": "evt-phone-a-001",
+          "job_id": "job-7bf390",
+          "status": "queued",
+          "dispatch_revision": 8,
+          "submitted_at": "2026-10-30T06:30:01Z"
+        }
+      },
+      "JobProposalReady": {
+        "value": {
+          "job_id": "job-7bf390",
+          "event_id": "evt-phone-a-001",
+          "status": "succeeded",
+          "submitted_at": "2026-10-30T06:30:01Z",
+          "updated_at": "2026-10-30T06:30:02Z",
+          "decision": {
+            "type": "PROPOSE_REPLAN",
+            "reason": "Candidate passed independent checks and benefit policy",
+            "proposal_id": "proposal-34e2"
+          },
+          "error": null
+        }
+      },
+      "Proposal": {
+        "value": {
+          "proposal_id": "proposal-34e2",
+          "event_id": "evt-phone-a-001",
+          "plan_id": "demo-plan-1",
+          "base_version": 1,
+          "model_version": "fixture-1",
+          "context_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "expires_at": "2026-10-30T06:45:00Z",
+          "status": "pending",
+          "candidate": {
+            "routes": [
+              {
+                "vehicle_id": "vehicle_1",
+                "order_ids": [
+                  "order_1"
+                ]
+              }
+            ]
+          },
+          "validation": {
+            "valid": true,
+            "feasible": true,
+            "errors": []
+          },
+          "provenance": {
+            "mode": "synthetic_scenario",
+            "execution_type": "local_classical"
+          }
+        }
+      },
+      "Approval": {
+        "value": {
+          "base_version": 1,
+          "event_id": "evt-phone-a-001",
+          "model_version": "fixture-1",
+          "context_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        }
+      },
+      "ApprovalResponse": {
+        "value": {
+          "plan_id": "demo-plan-1",
+          "version": 2,
+          "proposal_id": "proposal-34e2",
+          "status": "approved",
+          "dispatch_revision": 10,
+          "manifests_written": 2,
+          "validation": {
+            "valid": true,
+            "feasible": true,
+            "errors": []
+          }
+        }
+      },
+      "DispatcherSnapshot": {
+        "value": {
+          "dispatch_revision": 10,
+          "cursor": 10,
+          "server_time": "2026-10-30T06:31:00Z",
+          "drivers": [],
+          "pending_proposals": [],
+          "active_jobs": []
+        }
+      },
+      "Unauthorized": {
+        "value": {
+          "error": {
+            "code": "authentication_required",
+            "message": "Authentication required"
+          },
+          "request_id": "req-001"
+        }
+      },
+      "StaleConflict": {
+        "value": {
+          "error": {
+            "code": "stale_revision",
+            "message": "Dispatch state changed; refresh before retrying"
+          },
+          "request_id": "req-002"
+        }
+      },
+      "InvalidRequest": {
+        "value": {
+          "error": {
+            "code": "invalid_request",
+            "message": "Request validation failed",
+            "details": [
+              {
+                "field": "severity",
+                "message": "unsupported value"
+              }
+            ]
+          },
+          "request_id": "req-003"
+        }
+      },
+      "ExpiredCursor": {
+        "value": {
+          "reset_required": true,
+          "changes": [],
+          "snapshot": {
+            "route_geometry": null,
+            "source": "demo_synthetic",
+            "duration_seconds": 960.0,
+            "distance_metres": 8400.0,
+            "manifest_revision": 2,
+            "driver": {
+              "vehicle_id": "vehicle_1",
+              "display_name": "Driver 1",
+              "driver_id": "driver_1"
+            },
+            "plan_version": 2,
+            "status": "active",
+            "last_ack_manifest_revision": 1,
+            "plan_id": "demo-plan-1",
+            "ordered_stops": [
+              {
+                "eta": null,
+                "service_duration_min": 3.0,
+                "stop_id": "order_1",
+                "status": "pending",
+                "sequence": 0
+              }
+            ],
+            "dispatch_revision": 10,
+            "updated_at": "2026-10-30T06:31:00Z"
+          },
+          "cursor": 10,
+          "dispatch_revision": 10
+        }
+      }
+    }
+  }
+}
