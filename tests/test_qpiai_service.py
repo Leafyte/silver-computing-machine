@@ -44,3 +44,4 @@ def test_qpiai_service_diagnostics():
     assert "opt" in diag
     assert diag["quantum"]["configured"] is True
     assert diag["opt"]["configured"] is True
+
