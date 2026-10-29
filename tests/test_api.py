@@ -747,16 +747,26 @@ def test_qaoa_job_timeout_and_cancellation_suppress_late_results(tmp_path, scena
 
 def test_cancel_endpoint_transitions_job_to_cancelled(client, scenario, monkeypatch):
     import backend.jobs as jobs
+    from threading import Event
 
     original = jobs.solve_exact
-    def slow_solve(value):
-        time.sleep(0.15)
+    worker_started = Event()
+    release_worker = Event()
+
+    def sync_solve(value):
+        worker_started.set()
+        release_worker.wait(timeout=3.0)
         return original(value)
-    monkeypatch.setattr(jobs, "solve_exact", slow_solve)
-    submitted = client.post("/api/v1/jobs", json=scenario).json()
-    response = client.post(f"/api/v1/jobs/{submitted['id']}/cancel")
-    assert response.status_code == 200
-    assert response.json()["status"] == "cancelled"
+
+    monkeypatch.setattr(jobs, "solve_exact", sync_solve)
+    try:
+        submitted = client.post("/api/v1/jobs", json=scenario).json()
+        assert worker_started.wait(timeout=3.0)
+        response = client.post(f"/api/v1/jobs/{submitted['id']}/cancel")
+        assert response.status_code == 200
+        assert response.json()["status"] == "cancelled"
+    finally:
+        release_worker.set()
 
 
 def test_job_timeout_is_persisted_and_late_result_not_published(tmp_path, scenario, monkeypatch):
