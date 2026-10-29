@@ -1,0 +1,18 @@
+{
+  "depot": "D",
+  "vehicles": [
+    {"id": "V1", "capacity": 3},
+    {"id": "V2", "capacity": 2}
+  ],
+  "orders": [
+    {"id": "A", "demand": 2, "window": [0, 5], "service": 1, "penalty": 4},
+    {"id": "B", "demand": 1, "window": [0, 4], "service": 1, "penalty": 2},
+    {"id": "C", "demand": 2, "window": [0, 20], "service": 1, "penalty": 1}
+  ],
+  "travel": {
+    "D": {"D": 0, "A": 2, "B": 1, "C": 3},
+    "A": {"D": 2, "A": 0, "B": 1, "C": 2},
+    "B": {"D": 1, "A": 1, "B": 0, "C": 2},
+    "C": {"D": 3, "A": 2, "B": 2, "C": 0}
+  }
+}

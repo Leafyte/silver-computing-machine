@@ -36,18 +36,18 @@
   "evidence_label": "synthetic deterministic data; exact local statevector; no QCloud/QPU call",
   "gradient_check": {
     "absolute_errors": [
-      5.3041904202189016e-11,
-      2.0046880822022217e-11
+      5.304195971334025e-11,
+      2.0046908577597833e-11
     ],
     "analytic_parameter_shift_chain_rule": [
-      0.47049030843762557,
-      0.06262905620563933
+      0.4704903084376255,
+      0.06262905620563936
     ],
     "centered_finite_difference_h_1e-5": [
       0.4704903084906675,
       0.06262905618559245
     ],
-    "max_absolute_error": 5.3041904202189016e-11,
+    "max_absolute_error": 5.304195971334025e-11,
     "tolerance_absolute": 2e-07,
     "training_examples": 8
   },
@@ -61,8 +61,8 @@
   },
   "runtime": {
     "execution": "local CPU exact statevector; no vendor SDK invocation",
-    "platform": "Windows-11-10.0.26200-SP0",
-    "python": "3.12.10"
+    "platform": "macOS-15.7.3-arm64-arm-64bit",
+    "python": "3.12.0"
   },
   "synthetic_oracle_test_cost": 2.4583333333333335,
   "test_metrics": {
@@ -75,7 +75,7 @@
     },
     "decision_focused_vqc": {
       "accuracy": 0.8333333333333334,
-      "brier": 0.1182644161504945,
+      "brier": 0.11826441615049453,
       "mean_dispatch_cost": 3.2664157454450997,
       "n": 12,
       "regret_vs_synthetic_oracle": 0.8080824121117662
@@ -112,14 +112,14 @@
     "decision_final_loss": 3.3474901903798724,
     "decision_initial_loss": 3.6765290721968036,
     "decision_theta": [
-      -0.14849368074277014,
+      -0.14849368074277008,
       -1.1949503697726787
     ],
     "learning_rate": 0.08,
     "predictive_final_bce": 0.42433871533347894,
     "predictive_initial_bce": 0.5637840528315239,
     "predictive_theta": [
-      -0.29809275202349,
+      -0.29809275202349006,
       -1.090385975397132
     ],
     "steps": 120
@@ -139,7 +139,7 @@
     },
     "predictive_only_vqc": {
       "accuracy": 0.75,
-      "brier": 0.14435647435585597,
+      "brier": 0.144356474355856,
       "mean_dispatch_cost": 3.1859122495483874,
       "n": 12
     }

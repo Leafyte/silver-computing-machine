@@ -5,9 +5,11 @@ from __future__ import annotations
 from typing import Any
 from threading import BoundedSemaphore
 from datetime import datetime, timezone
+import os
 
 # pyrefly: ignore[missing-import]
 from fastapi import Body, FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 from math import isfinite
@@ -124,6 +126,18 @@ def create_app(job_manager: JobManager | None = None, *, auth_config: AuthConfig
     from .india_eta.body_limit import EtaBodyLimit
     app.add_middleware(EtaBodyLimit)
     app.add_middleware(TokenAuthMiddleware, config=auth)
+    cors_origins = [origin.strip() for origin in os.environ.get(
+        "DEBUGLEAF_CORS_ORIGINS",
+        "http://localhost:5173,http://127.0.0.1:5173,http://localhost:4173,http://127.0.0.1:4173",
+    ).split(",") if origin.strip()]
+    # CORS is outermost so preflight OPTIONS requests are not rejected by token auth.
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=cors_origins,
+        allow_credentials=False,
+        allow_methods=["GET", "POST", "DELETE", "OPTIONS"],
+        allow_headers=["Authorization", "Content-Type"],
+    )
     app.state.job_manager = manager
     compute_slots = BoundedSemaphore(2)
 
@@ -149,8 +163,12 @@ def create_app(job_manager: JobManager | None = None, *, auth_config: AuthConfig
             "code": "capacity_reached", "message": "local compute capacity reached"}})
 
     @app.get("/api/v1/health")
-    def health() -> dict[str, str]:
-        return {"status": "ok", "api_version": "v1"}
+    def health() -> dict[str, Any]:
+        try:
+            capacity = jobs().capacity()
+        except Exception:
+            capacity = None
+        return {"status": "ok", "api_version": "v1", "capacity": capacity}
 
     @app.post("/api/v1/scenarios/validate")
     def scenario_validate(payload: Any = Body(...)) -> Any:
@@ -555,6 +573,17 @@ def create_app(job_manager: JobManager | None = None, *, auth_config: AuthConfig
                 "code": "job_submission_failed", "message": "QAOA job could not be submitted"}})
         return job
 
+    @app.get("/api/v1/jobs")
+    def list_jobs(limit: int = 50) -> Any:
+        if not 1 <= limit <= 100:
+            return JSONResponse(status_code=422, content={"error": {
+                "code": "invalid_limit", "message": "limit must be between 1 and 100"}})
+        try:
+            return jobs().list(limit=limit)
+        except Exception:
+            return JSONResponse(status_code=503, content={"error": {
+                "code": "job_history_unavailable", "message": "dispatch job history is unavailable"}})
+
     @app.get("/api/v1/jobs/{job_id}")
     def get_job(job_id: str) -> Any:
         job = jobs().get(job_id)
@@ -581,6 +610,8 @@ def create_app(job_manager: JobManager | None = None, *, auth_config: AuthConfig
                                         registry=eta_registry, uncertainty_registry=eta_uncertainty_registry,
                                         controller=eta_controller,
                                         job_manager=eta_job_manager))
+    from .driver_api import create_driver_router
+    app.include_router(create_driver_router(app, auth))
     return app
 
 

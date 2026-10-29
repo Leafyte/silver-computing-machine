@@ -1,6 +1,6 @@
 # DebugLeaf / Q-VANTIS
 
-DebugLeaf is a research prototype for the Quant-A-Maze 3.0 QML-01 challenge: delay-risk-aware fleet dispatch for contract logistics. The active problem statement and rubric are extracted from the official source under `sources/`; the older team-submitted challenge PDF is historical context.
+ArQ is a research prototype for the Quant-A-Maze 3.0 QML-01 challenge: delay-risk-aware fleet dispatch for contract logistics. The active problem statement and rubric are extracted from the official source under `sources/`; the older team-submitted challenge PDF is historical context.
 
 ## Current stage
 

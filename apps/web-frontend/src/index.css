@@ -1,0 +1,206 @@
+@import "tailwindcss";
+@import "maplibre-gl/dist/maplibre-gl.css";
+@import "@fontsource-variable/inter";
+
+:root {
+  --arq-canvas: #F5F3ED;
+  --arq-canvas-subtle: #EFECE4;
+  --arq-paper: #EEEAE2;
+  --arq-surface: #FFFFFF;
+  --arq-glass: rgba(255, 255, 255, 0.88);
+  --arq-glass-strong: rgba(255, 255, 255, 0.96);
+  --arq-glass-border: rgba(255, 255, 255, 0.9);
+  --arq-glass-border-outer: rgba(21, 33, 29, 0.06);
+
+  --arq-ink-primary: #141F1A;
+  --arq-ink-secondary: #4D5C54;
+  --arq-ink-tertiary: #7D8D85;
+
+  --arq-graphite: #141F1A;
+  --arq-forest: #1E5A44;
+  --arq-forest-light: #267357;
+  --arq-mint: #A8DBC9;
+  --arq-mint-subtle: #E8F5EE;
+  --arq-sage: #DCE5DF;
+  --arq-sage-subtle: #F1F6F3;
+  --arq-amber: #D97706;
+  --arq-amber-subtle: #FEF3C7;
+  --arq-red: #DC2626;
+  --arq-red-subtle: #FEE2E2;
+  --arq-accent-red: #E53925;
+
+  --route-1: #2563EB;
+  --route-2: #0F8B8D;
+  --route-3: #D97706;
+  --route-4: #8E3BD1;
+  --route-5: #DC2626;
+  --route-6: #1E5A44;
+
+  --serif: Georgia, Cambria, "Times New Roman", serif;
+  --sans: 'Inter Variable', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+  font-family: var(--sans);
+  color-scheme: light;
+  color: var(--arq-ink-primary);
+  background-color: var(--arq-canvas);
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--arq-canvas);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Subtle Editorial Soft-Light Paper Noise Texture (from saved fieldnotes reference) */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  opacity: 0.16;
+  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+}
+
+/* Button, Input & Select Accessibility */
+button, input, select {
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+}
+
+button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible {
+  outline: 2px solid var(--arq-forest);
+  outline-offset: 2px;
+}
+
+/* Interactive micro-interaction press feel */
+.interactive-tap {
+  transition: transform 120ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 120ms ease;
+}
+.interactive-tap:active {
+  transform: scale(0.975);
+}
+
+/* Glass & Card Material Design (Atlas Dashboard Style) */
+.glass-panel {
+  background: var(--arq-glass);
+  border: 1px solid var(--arq-glass-border-outer);
+  backdrop-filter: blur(14px) saturate(130%);
+  -webkit-backdrop-filter: blur(14px) saturate(130%);
+  box-shadow: 0 1px 2px rgba(20, 31, 26, 0.02), 0 4px 16px rgba(20, 31, 26, 0.03);
+}
+
+.glass-panel-strong {
+  background: #FFFFFF;
+  border: 1px solid rgba(21, 33, 29, 0.06);
+  box-shadow: 0 1px 3px rgba(20, 31, 26, 0.02), 0 8px 24px rgba(20, 31, 26, 0.04);
+}
+
+.glass-pill {
+  background: #FFFFFF;
+  border: 1px solid rgba(21, 33, 29, 0.06);
+  box-shadow: 0 1px 2px rgba(20, 31, 26, 0.03);
+}
+
+/* High-contrast Fieldnotes Metric Card */
+.fieldnote-card {
+  background: var(--arq-surface);
+  border: 1px solid rgba(21, 33, 29, 0.12);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+/* Tabular Numerals for Logistics Precision */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Accessibility & Fallbacks */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass-panel,
+  .glass-panel-strong,
+  .glass-pill {
+    background: #FFFFFF !important;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  body::after {
+    display: none;
+  }
+  .glass-panel,
+  .glass-panel-strong,
+  .glass-pill {
+    background: #FFFFFF !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Custom Scrollbar for high-density tables */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(21, 33, 29, 0.15);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(21, 33, 29, 0.25);
+}
+
+/* Map canvas full wrapper */
+.maplibregl-map {
+  font-family: inherit;
+}
+
+/* Editorial Typography & Fieldnotes Styling */
+.font-serif-editorial {
+  font-family: var(--serif);
+}
+
+.font-sans-display {
+  font-family: var(--sans);
+}
+
+.font-mono-code {
+  font-family: var(--mono);
+}
+
+.fieldnote-stamp {
+  border-left: 5px solid var(--arq-accent-red);
+}
+
+.fieldnote-stamp-forest {
+  border-left: 5px solid var(--arq-forest);
+}
+
+.fieldnote-kicker {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--arq-ink-secondary);
+}

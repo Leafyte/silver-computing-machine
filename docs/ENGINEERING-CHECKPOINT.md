@@ -17,7 +17,7 @@ The complete bounded run is .runtime/run1/20261029T083317Z_run1_v2_full/. It tra
 - Synthetic classification: test Brier scores were 0.1959 predictive VQC, 0.1850 decision VQC, 0.2250 logistic, and 0.0349 Newton GBDT. The Newton GBDT led on these synthetic rows; no operational or real-traffic claim is made.
 - Pipeline wall time before test evaluation: 1,832.8 seconds. Predictive VQC fit 337.1 seconds; selected decision VQC fit 171.4 seconds. Actual ablation/nonselected update counters were not persisted. No measured cache speedup is claimed.
 
-See [RUN1_SOLOMON_DABIA_REPORT.md](../RUN1_SOLOMON_DABIA_REPORT.md) for metrics by source/size, same-replay SCU regret, route-overlay limits, refinement cycles, reproduction details, and artifact hashes.
+See [RUN1_SOLOMON_DABIA_REPORT.md](reports/RUN1_SOLOMON_DABIA_REPORT.md) for metrics by source/size, same-replay SCU regret, route-overlay limits, refinement cycles, reproduction details, and artifact hashes.
 
 ## Verification commands
 

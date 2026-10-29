@@ -52,14 +52,15 @@ class AuthConfig:
         return cls.from_mapping(mode, tokens)
 
 
-# Route policy is intentionally based on implemented API routes. No driver
-# endpoints are present, so no driver identity can be authorized.
+# Route policy is intentionally based on implemented API routes. Driver routes
+# use separate opaque, vehicle-scoped session tokens in backend.driver_api.
 _COMMON_RESEARCHER = {
     ("GET", "/api/v1/health"),
     ("POST", "/api/v1/scenarios/validate"), ("POST", "/api/v1/scenarios/routes"),
     ("POST", "/api/v1/scenarios/plan"), ("POST", "/api/v1/scenarios/qaoa"),
     ("POST", "/api/v1/scenarios/vqc-plan"), ("POST", "/api/v1/risk/evaluate"),
     ("POST", "/api/v1/plans/validate"), ("POST", "/api/v1/jobs"),
+    ("GET", "/api/v1/jobs"),
     ("POST", "/api/v1/scenarios/submit"), ("POST", "/api/v1/jobs/qaoa"),
 }
 
@@ -136,6 +137,10 @@ def _eta_route_allowed(role: str, method: str, path: str) -> bool:
 def authorize_request(config: AuthConfig, method: str, path: str,
                      authorization: bytes) -> tuple[int, str, str, bool] | None:
     """Return a safe denial tuple, or None when the request may proceed."""
+    # Driver routes validate their separate, vehicle-scoped session token in
+    # backend.driver_api. The public pairing endpoint is one-time and bounded.
+    if path.startswith("/api/v1/driver/"):
+        return None
     if config.mode == "local" and config.ready:
         return None
     if not config.ready:

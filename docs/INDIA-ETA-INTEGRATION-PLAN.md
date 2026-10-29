@@ -4,7 +4,7 @@
 
 ## Scope and ownership
 
-Deliver the classical-first versioned ETA adapter, uncertainty/SLA translation, source/domain checks, bounded event-to-proposal workflow, backend contracts, versioned examples and `INDIA_ETA_INTEGRATION_REPORT.md`. Start against labeled fixtures without waiting for Codex 1. Preserve current backend behavior and existing optimization mathematics.
+Deliver the classical-first versioned ETA adapter, uncertainty/SLA translation, source/domain checks, bounded event-to-proposal workflow, backend contracts, versioned examples and `reports/INDIA_ETA_INTEGRATION_REPORT.md`. Start against labeled fixtures without waiting for Codex 1. Preserve current backend behavior and existing optimization mathematics.
 
 Planning branch: `codex/india-eta-integration-plan`, fast-forwarded from `origin/main` at `ccf2d42`. Reviewed API skills were committed as `bca392c` and pushed before plan authoring. Another agent subsequently switched the shared checkout to `feat/ui`; planning finished in `.runtime/india-eta-planning`, a separate worktree on the planning branch. Future Luna implementation should create `codex/india-eta-integration` from the published planning commit in an isolated worktree. Never copy the current dirty checkout wholesale.
 

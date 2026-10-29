@@ -278,22 +278,22 @@
     ],
     "decision_final_soft_plan_loss": 17.4906174361391,
     "decision_gradient_analytic": [
-      0.0617138646044787,
-      0.041222354789690885
+      0.06171386460447869,
+      0.04122235478969084
     ],
     "decision_gradient_finite_difference_h_1e-5": [
       0.061713864685231094,
       0.04122235477410641
     ],
-    "decision_gradient_max_abs_error": 8.075239088523034e-11,
+    "decision_gradient_max_abs_error": 8.075240476301815e-11,
     "decision_initial_soft_plan_loss": 17.69514758208195,
     "decision_theta": [
-      0.010870626027273955,
-      0.008402191590498037
+      0.010870626027273953,
+      0.008402191590498029
     ],
     "gradient_check_train_scenarios": 2,
     "predictive_theta": [
-      -0.19680019909353688,
+      -0.19680019909353685,
       -0.5886843431521851
     ],
     "route_rows": 100,
@@ -312,8 +312,8 @@
   },
   "runtime": {
     "execution": "local CPU exact statevector; validator recomputes selected plans",
-    "platform": "Windows-11-10.0.26300-SP0",
-    "python": "3.12.14"
+    "platform": "macOS-15.7.3-arm64-arm-64bit",
+    "python": "3.12.0"
   },
   "scenario_design": {
     "common_test_scenarios_for_all_models": [
@@ -2136,7 +2136,7 @@
     "predictive_only_vqc": {
       "coverage_rate": 1.0,
       "feasibility_rate": 1.0,
-      "mean_model_estimated_exposure": 1.7361511361251216,
+      "mean_model_estimated_exposure": 1.7361511361251218,
       "mean_regret_vs_exact_reference": 0.0,
       "mean_validator_lateness_exposure": 2.5999999999999996,
       "mean_validator_objective": 26.599999999999998,
@@ -2765,7 +2765,7 @@
     ],
     "decision_focused_vqc": [
       {
-        "estimated_exposure": 1.3590727877686428,
+        "estimated_exposure": 1.3590727877686426,
         "estimated_plan_cost": 36.359072787768646,
         "multiplier": 3.5,
         "raw_plan": {
@@ -2842,13 +2842,13 @@
             "validator_realized_objective": 21.0
           },
           {
-            "estimated_exposure": 0.7778867719014944,
+            "estimated_exposure": 0.7778867719014942,
             "feature_values": [
               0.7,
               0.25
             ],
             "one_minute_exposure_scale": 4.0,
-            "risk_probability": 0.1944716929753736,
+            "risk_probability": 0.19447169297537356,
             "route_id": "V2:A",
             "travel_cost_input": 14.0,
             "validator_realized_exposure": 8.0,
@@ -3383,7 +3383,7 @@
     ],
     "predictive_only_vqc": [
       {
-        "estimated_exposure": 2.3915933065356842,
+        "estimated_exposure": 2.391593306535684,
         "estimated_plan_cost": 37.39159330653568,
         "multiplier": 3.5,
         "raw_plan": {
@@ -3460,13 +3460,13 @@
             "validator_realized_objective": 21.0
           },
           {
-            "estimated_exposure": 1.1756356663226393,
+            "estimated_exposure": 1.175635666322639,
             "feature_values": [
               0.7,
               0.25
             ],
             "one_minute_exposure_scale": 4.0,
-            "risk_probability": 0.2939089165806598,
+            "risk_probability": 0.29390891658065976,
             "route_id": "V2:A",
             "travel_cost_input": 14.0,
             "validator_realized_exposure": 8.0,
@@ -3537,7 +3537,7 @@
         }
       },
       {
-        "estimated_exposure": 1.9845972902033124,
+        "estimated_exposure": 1.9845972902033129,
         "estimated_plan_cost": 29.98459729020331,
         "multiplier": 2.8,
         "raw_plan": {
@@ -3614,13 +3614,13 @@
             "validator_realized_objective": 16.799999999999997
           },
           {
-            "estimated_exposure": 0.9100196980332377,
+            "estimated_exposure": 0.9100196980332379,
             "feature_values": [
               0.5599999999999999,
               0.25
             ],
             "one_minute_exposure_scale": 4.0,
-            "risk_probability": 0.22750492450830942,
+            "risk_probability": 0.22750492450830948,
             "route_id": "V2:A",
             "travel_cost_input": 11.2,
             "validator_realized_exposure": 2.3999999999999986,
@@ -3691,7 +3691,7 @@
         }
       },
       {
-        "estimated_exposure": 1.617598273816987,
+        "estimated_exposure": 1.6175982738169874,
         "estimated_plan_cost": 24.617598273816988,
         "multiplier": 2.3,
         "raw_plan": {
@@ -3768,13 +3768,13 @@
             "validator_realized_objective": 13.8
           },
           {
-            "estimated_exposure": 0.7505639075957982,
+            "estimated_exposure": 0.7505639075957984,
             "feature_values": [
               0.45999999999999996,
               0.25
             ],
             "one_minute_exposure_scale": 4.0,
-            "risk_probability": 0.18764097689894954,
+            "risk_probability": 0.1876409768989496,
             "route_id": "V2:A",
             "travel_cost_input": 9.2,
             "validator_realized_exposure": 0.0,
@@ -3845,7 +3845,7 @@
         }
       },
       {
-        "estimated_exposure": 0.9508156739445027,
+        "estimated_exposure": 0.9508156739445028,
         "estimated_plan_cost": 10.950815673944504,
         "multiplier": 1.0,
         "raw_plan": {
@@ -3909,13 +3909,13 @@
         "scenario_id": "traffic-15",
         "selected_routes": [
           {
-            "estimated_exposure": 0.43224619090765126,
+            "estimated_exposure": 0.4322461909076513,
             "feature_values": [
               0.3,
               0.25
             ],
             "one_minute_exposure_scale": 3.0,
-            "risk_probability": 0.14408206363588374,
+            "risk_probability": 0.14408206363588377,
             "route_id": "V1:B>C",
             "travel_cost_input": 6.0,
             "validator_realized_exposure": 0.0,

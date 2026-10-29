@@ -171,6 +171,13 @@ class JobManager:
         # already terminal from the API's perspective.
         return sum(not future.done() for future in self._futures.values())
 
+    def capacity(self) -> dict[str, int]:
+        """Return bounded worker capacity without exposing runtime internals."""
+        with self._lock:
+            active = self._active_count()
+        return {"max_slots": self.max_workers, "active_slots": active,
+                "available_slots": max(0, self.max_workers - active)}
+
     def submit(self, scenario: dict[str, Any]) -> dict[str, Any]:
         return self._submit(scenario, settings={"timeout_seconds": self.timeout_seconds,
                                                "max_workers": self.max_workers,
@@ -365,6 +372,7 @@ class JobManager:
                          _now(), job_id, time.time()))
                     row = con.execute("SELECT * FROM jobs WHERE id=?", (job_id,)).fetchone()
         return {"id": row["id"], "status": row["status"],
+                "scenario": json.loads(row["scenario_json"]),
                 "result": json.loads(row["result_json"]) if row["result_json"] else None,
                 "error": json.loads(row["error_json"]) if row["error_json"] else None,
                 "submitted_at": row["submitted_at"], "started_at": row["started_at"],
@@ -373,6 +381,15 @@ class JobManager:
                              "settings": json.loads(row["settings_json"]) if row["settings_json"] else None,
                              "request_sha256": row["request_sha256"],
                              "runtime": json.loads(row["runtime_json"]) if row["runtime_json"] else None}}
+
+    def list(self, *, limit: int = 50) -> list[dict[str, Any]]:
+        """Return the newest durable jobs with their bounded request/result records."""
+        if isinstance(limit, bool) or not isinstance(limit, int) or not 1 <= limit <= 100:
+            raise ValueError("limit must be an integer from 1 to 100")
+        with self._connect() as con:
+            rows = con.execute("SELECT id FROM jobs ORDER BY submitted_at DESC, id DESC LIMIT ?",
+                               (limit,)).fetchall()
+        return [job for row in rows if (job := self.get(row["id"])) is not None]
 
     def cancel(self, job_id: str) -> dict[str, Any] | None:
         with self._lock:

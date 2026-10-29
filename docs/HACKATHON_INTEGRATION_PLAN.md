@@ -22,7 +22,7 @@ These findings apply to the local checkout, not the separate frontend repository
 | ETA event lifecycle | `backend/india_eta/api.py`: events, polling, cancellation, proposals, approval, manifests | Connect driver actions through a narrow server adapter |
 | Approval safety | Controller/store document version/context/expiry checks, independent validation, atomic publication, revoked manifests | Reuse application services; test races and automatic policy through the same checks |
 | Driver identity | `backend/auth.py` has dispatcher, researcher, admin; explicitly no driver endpoints or ownership | Add per-device scoped driver sessions and ownership checks |
-| Phone application | Local `frontend/` uses React/Vite/Leaflet; API client has old scenario endpoints and no authorization header | Inspect actual separate repo; add session, ETA/driver clients, mobile screens |
+| Phone application | Historical plan noted the legacy root `frontend/`; current clients are maintained under `apps/web-frontend/` and `apps/mobile-app/` with dispatch and driver-session API integration |
 | Hosting | Local Vite configuration binds loopback and proxies `/api`; backend has no CORS middleware | Build frontend; serve same origin through local HTTPS gateway |
 | Road geometry | No verified provider-to-driver routing integration established by this audit | Versioned route catalog and valid GeoJSON; provider adapter later |
 | Congestion | Existing event types are `eta_update`, `delay`, `vehicle_status`, `route_change` | Translate congestion into a supported event; add impact location, severity, TTL and deduplication |
@@ -273,7 +273,7 @@ Implement verified live vehicle-state ingestion and remaining-state projection; 
 
 ## Evidence and external references
 
-Local evidence: `silver-computing-machine/backend/api.py`, `backend/auth.py`, `backend/india_eta/{api,controller,source_adapter}.py`, `backend/qpiai_service.py`, `docs/INDIA-ETA-CONTRACTS.md`, `docs/INDIA-ETA-CONTROLLER.md`, `docs/INDIA_ETA_FEATURE_AVAILABILITY_AUDIT.md`, `bootstrap/SDK-EVIDENCE.md`, `frontend/src/api/{client,endpoints}.ts`, `frontend/vite.config.ts`; `trainingv3/RUN2_INDIA_QML_FINAL_TRAINING_REPORT.md`. Reported historical test results were not rerun during this planning task.
+Local evidence: `silver-computing-machine/backend/api.py`, `backend/auth.py`, `backend/india_eta/{api,controller,source_adapter}.py`, `backend/qpiai_service.py`, `docs/INDIA-ETA-CONTRACTS.md`, `docs/INDIA-ETA-CONTROLLER.md`, `docs/INDIA_ETA_FEATURE_AVAILABILITY_AUDIT.md`, `bootstrap/SDK-EVIDENCE.md`, and current clients under `apps/web-frontend/` and `apps/mobile-app/`. `trainingv3/` and the legacy root `frontend/` references are historical plan context; their current evidence is preserved elsewhere in the project. Reported historical test results were not rerun during this planning task.
 
 Official references checked 30 October 2026:
 
