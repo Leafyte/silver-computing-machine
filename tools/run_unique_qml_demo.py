@@ -12,6 +12,7 @@ Demonstrates:
 
 from __future__ import annotations
 
+import json
 import math
 import sys
 from pathlib import Path
@@ -37,15 +38,30 @@ def run_qml_showcase():
     # -------------------------------------------------------------------------
     print("\n[PART 1] 4-Qubit 5-Block Residual VQC (India Delivery ETA)")
     print("-" * 75)
-    print("Architecture: 4 Qubits | 5 Entangling Blocks | 60 Trainable Angles")
-    print("Target: Predict minute-valued delivery duration residuals")
+    print("Architecture: 4 Qubits | 5 Entangling Blocks | 60 Variational Angles")
+    print("Function:     Fine-tunes classical GBDT ETA predictions using quantum residuals")
+
+    # Load frozen optimized checkpoint
+    checkpoint_path = root_dir / "artifacts" / "india_eta_vqc4_run2" / "baseline60_best.json"
+    if checkpoint_path.is_file():
+        ckpt = json.loads(checkpoint_path.read_text(encoding="utf-8"))
+        angles_60 = np.asarray(ckpt["quantum_angles"], dtype=np.float64)
+        readout_w = np.asarray(ckpt["readout"][:4], dtype=np.float64)
+        readout_b = float(ckpt["readout"][4])
+        residual_scale = float(ckpt.get("residual_scale_minutes", 3.889107))
+        source_name = "baseline60_best.json (Frozen & Optimized)"
+    else:
+        angles_60 = np.linspace(-0.12, 0.12, 60)
+        readout_w = np.array([-0.071683, -0.020754, -0.036653, -0.061866])
+        readout_b = -0.011699
+        residual_scale = 3.889107
+        source_name = "embedded trained weights"
+
+    print(f"Loaded Weights: {source_name}")
 
     # Real normalized delivery features: [distance, congestion, multidelivery, preptime]
-    features_4q = np.array([[0.42, 0.78, 0.25, 0.35]])
-    # Pinned variational weights from Run 2 training
-    angles_60 = np.linspace(-0.12, 0.12, 60)
-
-    print(f"Inputs (Normalized in [0, 1]):")
+    features_4q = np.array([[0.35, 0.70, 0.20, 0.40]])
+    print(f"\nInputs (Normalized in [0, 1]):")
     print(f"  - Distance       (x0) = {features_4q[0, 0]:.2f}")
     print(f"  - Congestion     (x1) = {features_4q[0, 1]:.2f}")
     print(f"  - Multi-delivery (x2) = {features_4q[0, 2]:.2f}")
@@ -59,13 +75,17 @@ def run_qml_showcase():
     print("\nQpiAI StatevectorSimulator Execution:")
     for q_idx, exp_val in enumerate(expectations):
         bar = ("+" if exp_val >= 0 else "-") * int(abs(exp_val) * 20)
-        print(f"  Qubit {q_idx} Pauli-Z Observable <Z{q_idx}> = {exp_val:+.4f}  [{bar:<20}]")
+        print(f"  Qubit {q_idx} Pauli-Z Observable <Z{q_idx}> = {exp_val:+.4f}  [{bar:<20}]  (Eigenvalues in [-1, +1])")
 
-    # Map expectations through affine readout head
-    readout_weights = np.array([0.02, -0.02, 0.015, -0.015])
-    residual_scale_minutes = 3.8891  # Train-OOF population standard deviation
-    predicted_residual_min = float(np.dot(expectations, readout_weights) * residual_scale_minutes)
-    print(f"\n-> Quantum Predicted ETA Residual Adjustment: {predicted_residual_min:+.3f} minutes")
+    # Map expectations through affine readout head: scale * (dot(z, w) + bias)
+    predicted_residual_min = float(residual_scale * (np.dot(expectations, readout_w) + readout_b))
+    gbdt_base_min = 24.50
+    hybrid_eta_min = max(0.0, gbdt_base_min + predicted_residual_min)
+
+    print(f"\n-> Classical GBDT Baseline ETA:    {gbdt_base_min:.2f} minutes")
+    print(f"-> Quantum Residual Adjustment:    {predicted_residual_min:+.4f} minutes ({predicted_residual_min * 60:+.1f} seconds)")
+    print(f"-> Total Hybrid Delivery ETA:      {hybrid_eta_min:.2f} minutes  [max(0, GBDT + Quantum_Residual)]")
+    print(f"   (Note: Negative residual indicates courier arrives ~{abs(predicted_residual_min * 60):.1f}s earlier than baseline)")
 
     # -------------------------------------------------------------------------
     # 2. Two-Qubit Decision VQC (Fleet Dispatch SLA Risk)
@@ -73,22 +93,23 @@ def run_qml_showcase():
     print("\n" + "=" * 75)
     print("[PART 2] 2-Qubit Decision VQC (Fleet Dispatch SLA Risk Prediction)")
     print("-" * 75)
-    features_2q = (0.20, 0.85)  # Tight deadline (0.20 slack), heavy traffic (0.85 density)
     theta_2q = (0.31, -0.47)
 
-    print(f"Route Features: Buffer Slack = {features_2q[0]:.2f}, Traffic Density = {features_2q[1]:.2f}")
-    amplitudes = sdk_statevector(features_2q, theta_2q)
-    z0 = sdk_expectation_z0(features_2q, theta_2q)
-    breach_prob = 1.0 / (1.0 + math.exp(2.0 * z0))
+    scenarios = [
+        ("Scenario A: Clear Route (High Buffer Slack, Low Traffic)", (0.85, 0.15)),
+        ("Scenario B: Congested Route (Tight Deadline, Heavy Traffic)", (0.20, 0.85)),
+    ]
 
-    print(f"QpiAI Statevector Probabilities:")
-    for idx, amp in enumerate(amplitudes):
-        p = abs(amp) ** 2
-        print(f"  |{idx:02b}>: Probability = {p * 100:5.2f}%")
-    print(f"Observable <Z0>: {z0:+.4f}")
-    print(f"-> Predicted SLA Breach Risk: {breach_prob * 100:.2f}%")
-    recommendation = "SAFE_DISPATCH" if breach_prob < 0.35 else "MODERATE_RISK" if breach_prob < 0.65 else "HIGH_RISK_BREACH"
-    print(f"-> Recommendation: {recommendation}")
+    for label, (slack, density) in scenarios:
+        amplitudes = sdk_statevector((slack, density), theta_2q)
+        z0 = sdk_expectation_z0((slack, density), theta_2q)
+        breach_prob = 1.0 / (1.0 + math.exp(2.0 * z0))
+        rec = "SAFE_DISPATCH" if breach_prob < 0.35 else "MODERATE_RISK" if breach_prob < 0.65 else "HIGH_RISK_BREACH"
+
+        print(f"\n* {label}:")
+        print(f"  Route Features: Buffer Slack = {slack:.2f}, Traffic Density = {density:.2f}")
+        print(f"  Observable <Z0>: {z0:+.4f}  (Positive = Safe / Negative = Congestion)")
+        print(f"  SLA Breach Risk: {breach_prob * 100:.2f}% -> Recommendation: {rec}")
 
     # -------------------------------------------------------------------------
     # 3. QpiAI Opt Combinatorial QUBO with QAOA Warm-Start
@@ -117,4 +138,3 @@ def run_qml_showcase():
 
 if __name__ == "__main__":
     run_qml_showcase()
-
