@@ -1,0 +1,123 @@
+{
+  "schema_version": "run2-india-portable-inference-v1",
+  "target_unit": "minutes",
+  "gbdt_feature_order": [
+    "haversine_distance_km",
+    "departure_hour",
+    "day_of_week",
+    "is_weekend",
+    "is_rush_hour",
+    "is_lunch_rush",
+    "is_dinner_rush",
+    "delivery_person_age_imp",
+    "delivery_person_ratings_imp",
+    "order_to_pickup_min_imp",
+    "order_to_pickup_missing_flag",
+    "vehicle_condition",
+    "multiple_deliveries_imp",
+    "is_festival",
+    "traffic_density_ordinal_imp",
+    "is_adverse_weather",
+    "weather_clean_imp_Cloudy",
+    "weather_clean_imp_Fog",
+    "weather_clean_imp_Sandstorms",
+    "weather_clean_imp_Stormy",
+    "weather_clean_imp_Sunny",
+    "weather_clean_imp_Windy",
+    "traffic_density_clean_High",
+    "traffic_density_clean_Jam",
+    "traffic_density_clean_Low",
+    "traffic_density_clean_Medium",
+    "type_of_order_clean_Buffet",
+    "type_of_order_clean_Drinks",
+    "type_of_order_clean_Meal",
+    "type_of_order_clean_Snack",
+    "type_of_vehicle_clean_bicycle",
+    "type_of_vehicle_clean_electric_scooter",
+    "type_of_vehicle_clean_motorcycle",
+    "type_of_vehicle_clean_scooter",
+    "city_type_clean_imp_Metropolitian",
+    "city_type_clean_imp_Semi-Urban",
+    "city_type_clean_imp_Urban",
+    "city_code_AGR",
+    "city_code_ALH",
+    "city_code_AURG",
+    "city_code_BANG",
+    "city_code_BHP",
+    "city_code_CHEN",
+    "city_code_COIMB",
+    "city_code_DEH",
+    "city_code_GOA",
+    "city_code_HYD",
+    "city_code_INDO",
+    "city_code_JAP",
+    "city_code_KNP",
+    "city_code_KOC",
+    "city_code_KOL",
+    "city_code_LUDH",
+    "city_code_MUM",
+    "city_code_MYS",
+    "city_code_PUNE",
+    "city_code_RANCHI",
+    "city_code_SUR",
+    "city_code_VAD"
+  ],
+  "q_feature_order": [
+    "vqc_x0_distance",
+    "vqc_x1_congestion"
+  ],
+  "q_feature_scaler_file": "quantum_feature_scaler.json",
+  "operational_alpha": 0.0,
+  "selected_candidate_architecture": "reupload",
+  "validation_selected_quantum_candidate": {
+    "architecture": "reupload",
+    "alpha": 0.9015612265845507,
+    "gate_feature": "vqc_x1_congestion",
+    "gate_operator": "<=",
+    "gate_threshold": 0.5499999999999999
+  },
+  "files": {
+    "recovered_gbdt": {
+      "path": "recovered_eta_gbdt.joblib",
+      "sha256": "da709331715ad3fd312e8708f17d0c86a135bec4e1bfaa1d185545db766c351a"
+    },
+    "quantum_candidates": {
+      "one_block": {
+        "path": "quantum_one_block.npz",
+        "sha256": "023a94860617ba86db2b6905bd04028639a831e33e6611713276d701423ed317"
+      },
+      "reupload": {
+        "path": "quantum_reupload.npz",
+        "sha256": "423aa60e2b2d1c129ce756665b83714957c3fd7cc348bbb34640ac4c429a6382"
+      }
+    },
+    "quantum_feature_scaler": {
+      "path": "quantum_feature_scaler.json",
+      "sha256": "c6701f1a1b8137b510e6ba783d298d0e198aca89a3180961eadab41ebdb8ceda"
+    },
+    "feature_schema": {
+      "path": "feature_schema.json",
+      "sha256": "a32f3c4491347be51c10a70d00d5bcc24dbb1d1db11a9a0105e40d809e8bed51"
+    },
+    "preprocessing_artifacts": {
+      "path": "preprocessing_artifacts.json",
+      "sha256": "df20646f12b77cb9fb03bf831b3373e5f8c9f69d6e5f0c92c35bbd46c682f351"
+    },
+    "loader": {
+      "path": "inference.py",
+      "sha256": "bd66e225e036f37694be6ec2e99a1e757205ed4c83d6a1dcfb65e2c5e49e3d86"
+    },
+    "quantum_module": {
+      "path": "experiments_india_qml/quantum.py",
+      "sha256": "6e0c6160bc7d5cc718e1f87bd826bbd2826a10e16b54edd602bb310059ffc8e5"
+    }
+  },
+  "runtime": {
+    "python": "3.12",
+    "numpy": "1.26.4",
+    "pandas": "2.2.3",
+    "scikit_learn": "1.4.2",
+    "joblib": "1.4.2"
+  },
+  "input_contract": "Supply the transformed GBDT features in gbdt_feature_order and the two [0,1] Q features in q_feature_order. The bundle does not include the source dataset."
+}

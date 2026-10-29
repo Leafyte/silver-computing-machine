@@ -1,0 +1,123 @@
+{
+  "captured_at_utc": "2026-10-29T13:06:30.002091+00:00",
+  "evidence_type": "deterministic numerical fixtures; not India ETA holdout metrics or training evidence",
+  "models": {
+    "one_block": {
+      "batch_32": {
+        "examples": 32,
+        "max_abs_expectation_error": 0.0,
+        "passed_1e-12": true
+      },
+      "circuit": {
+        "feature_order": [
+          "distance_km",
+          "congestion"
+        ],
+        "gates_in_execution_order": [
+          "RY(pi*x0) q0",
+          "RY(pi*x1) q1",
+          "CX(q0,q1)",
+          "RY(theta0) q0",
+          "RY(theta1) q1",
+          "CX(q1,q0)"
+        ],
+        "observable_readout": "bias + w0*<Z(q0)> + w1*<Z(q1)>",
+        "parameter_count": 5,
+        "parameter_shift": "(f(theta+pi/2)-f(theta-pi/2))/2 per RY angle",
+        "qubits": 2,
+        "readout_parameters": [
+          "w0",
+          "w1",
+          "bias"
+        ],
+        "statevector_indexing": "little-endian; q0 is least-significant bit; index=2*q1+q0"
+      },
+      "gradient_check": {
+        "analytic_gradient": [
+          -0.003912862055825618,
+          -0.0555395287228038,
+          -0.463813147708623,
+          -0.0961219167788069,
+          -1.391762789449601
+        ],
+        "examples": 32,
+        "finite_difference_gradient": [
+          -0.003912862056587585,
+          -0.05553952872050515,
+          -0.4638131477108231,
+          -0.09612191678165515,
+          -1.391762789448858
+        ],
+        "max_absolute_error": 2.8482494141002235e-12,
+        "max_relative_error": 1.9473389745471109e-10,
+        "passed_abs_1e-5": true,
+        "step": 1e-05
+      },
+      "qpiai_local_rows": 8,
+      "qpiai_max_abs_expectation_error": 2.220446049250313e-16
+    },
+    "reupload": {
+      "batch_32": {
+        "examples": 32,
+        "max_abs_expectation_error": 0.0,
+        "passed_1e-12": true
+      },
+      "circuit": {
+        "feature_order": [
+          "distance_km",
+          "congestion"
+        ],
+        "gates_in_execution_order": [
+          "RY(pi*x0) q0",
+          "RY(pi*x1) q1",
+          "RY(theta0) q0",
+          "RY(theta1) q1",
+          "CX(q0,q1)",
+          "RY(pi*x0) q0",
+          "RY(pi*x1) q1",
+          "RY(theta2) q0",
+          "RY(theta3) q1",
+          "CX(q1,q0)"
+        ],
+        "observable_readout": "bias + w0*<Z(q0)> + w1*<Z(q1)>",
+        "parameter_count": 7,
+        "parameter_shift": "(f(theta+pi/2)-f(theta-pi/2))/2 per RY angle",
+        "qubits": 2,
+        "readout_parameters": [
+          "w0",
+          "w1",
+          "bias"
+        ],
+        "statevector_indexing": "little-endian; q0 is least-significant bit; index=2*q1+q0"
+      },
+      "gradient_check": {
+        "analytic_gradient": [
+          0.011641990235149741,
+          -0.0009652447537097319,
+          0.033888875358459664,
+          -0.01811594129037306,
+          0.11740499251945105,
+          1.0105809944168256,
+          -1.3628346960319773
+        ],
+        "examples": 32,
+        "finite_difference_gradient": [
+          0.01164199023850898,
+          -0.0009652447507946248,
+          0.033888875361487436,
+          -0.018115941302632166,
+          0.11740499251677859,
+          1.010580994420529,
+          -1.3628346960281588
+        ],
+        "max_absolute_error": 1.2259106924039642e-11,
+        "max_relative_error": 3.020070364461833e-09,
+        "passed_abs_1e-5": true,
+        "step": 1e-05
+      },
+      "qpiai_local_rows": 8,
+      "qpiai_max_abs_expectation_error": 7.771561172376096e-16
+    }
+  },
+  "qpiai_quantum_version": "0.3.0"
+}

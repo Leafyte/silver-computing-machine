@@ -1,0 +1,11 @@
+{
+  "format": "india_eta_vqc4_test_evaluation_start_v1",
+  "metrics_sha256": "4df304c84d9b6c44448204f9324d433fa6f283f28b1701695e9455c1e1dc4579",
+  "predictions_sha256": "b7a5e2794057ec8ff1769ab51f174bcc6c9ffc76520bc916a2bf4c0c4821c139",
+  "pretest_freeze_sha256": "6dd053da6e85d8afa04de023a6695a5f9ad37bd6614b63b5edb4d0a38a40b5a3",
+  "qualification": "previously exposed test partition; retrospective only",
+  "release_archive_sha256": "18d5d4859e53d3d59063e60cdcdd45cb6eff6757bba6474f024cdde91aa06b80",
+  "started_utc": "2026-10-29T14:57:06.907558+00:00",
+  "status": "COMPLETED_NO_SELECTION",
+  "test_target_read": true
+}

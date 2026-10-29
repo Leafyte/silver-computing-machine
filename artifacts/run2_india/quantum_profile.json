@@ -1,0 +1,402 @@
+{
+  "captured_note": "CPU kernel profile only; no optimizer updates or model selection. Each timed kernel is warmed once; 256 repeats per batch. This is not India ETA training throughput.",
+  "fixture": {
+    "label": "deterministic synthetic throughput fixture only; not India ETA data, not a trained model, no efficacy metric",
+    "rows": 512,
+    "features": [
+      "synthetic_x0_scaled",
+      "synthetic_x1_scaled"
+    ],
+    "target_usage": "synthetic minutes-shaped values exercise only the MSE gradient kernel",
+    "seed_formula": "x0=((i*37)%509)/508; x1=((i*73+19)%509)/508; y=8*sin(2.3*x0-1.1*x1)+1.75*cos(4.1*x1)"
+  },
+  "host": {
+    "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+    "logical_cpu_count": 32,
+    "wall_clock": "perf_counter",
+    "cpu_clock": "process_time; aggregate process CPU time"
+  },
+  "architectures": {
+    "one_block": {
+      "parameter_count": 5,
+      "numerical_correctness_32": {
+        "examples": 32,
+        "max_abs_expectation_error": 0.0,
+        "passed_1e-12": true
+      },
+      "gradient_check_32": {
+        "examples": 32,
+        "step": 1e-05,
+        "analytic_gradient": [
+          -0.05504150057425388,
+          -0.10255886839183007,
+          -0.07497310827831279,
+          -0.02724971245968852,
+          -0.6179070226004223
+        ],
+        "finite_difference_gradient": [
+          -0.05504150057678014,
+          -0.10255886839227733,
+          -0.07497310828274983,
+          -0.027249712458710103,
+          -0.6179070226042249
+        ],
+        "max_absolute_error": 4.4370479512778616e-12,
+        "max_relative_error": 5.918185937475342e-11,
+        "passed_abs_1e-5": true
+      },
+      "qpiai_local_statevector_parity_8": {
+        "max_abs_expectation_error": 2.220446049250313e-16,
+        "execution": "QpiAI Quantum local StatevectorSimulator"
+      },
+      "cpu_forward_profile": {
+        "profile_type": "forward_throughput",
+        "architecture": "one_block",
+        "real_feature_rows": 512,
+        "circuit": {
+          "qubits": 2,
+          "statevector_indexing": "little-endian; q0 is least-significant bit; index=2*q1+q0",
+          "feature_order": [
+            "synthetic_x0_scaled",
+            "synthetic_x1_scaled"
+          ],
+          "gates_in_execution_order": [
+            "RY(pi*x0) q0",
+            "RY(pi*x1) q1",
+            "CX(q0,q1)",
+            "RY(theta0) q0",
+            "RY(theta1) q1",
+            "CX(q1,q0)"
+          ],
+          "observable_readout": "bias + w0*<Z(q0)> + w1*<Z(q1)>",
+          "readout_parameters": [
+            "w0",
+            "w1",
+            "bias"
+          ],
+          "parameter_count": 5,
+          "parameter_shift": "(f(theta+pi/2)-f(theta-pi/2))/2 per RY angle"
+        },
+        "results": [
+          {
+            "batch_size": 128,
+            "repeats": 256,
+            "examples_evaluated": 32768,
+            "circuit_batches": 256,
+            "circuit_example_evaluations": 32768,
+            "wall_seconds": 0.03933540009893477,
+            "cpu_seconds": 0.890625,
+            "examples_per_second": 833040.9737179051,
+            "backend": "NumPy batched statevector / CPU",
+            "cuda": "unavailable; PyTorch is not installed in the profiled runtime",
+            "vram_bytes": null
+          },
+          {
+            "batch_size": 256,
+            "repeats": 256,
+            "examples_evaluated": 65536,
+            "circuit_batches": 256,
+            "circuit_example_evaluations": 65536,
+            "wall_seconds": 0.043567399960011244,
+            "cpu_seconds": 1.375,
+            "examples_per_second": 1504244.0003340307,
+            "backend": "NumPy batched statevector / CPU",
+            "cuda": "unavailable; PyTorch is not installed in the profiled runtime",
+            "vram_bytes": null
+          },
+          {
+            "batch_size": 512,
+            "repeats": 256,
+            "examples_evaluated": 131072,
+            "circuit_batches": 256,
+            "circuit_example_evaluations": 131072,
+            "wall_seconds": 0.0475982001516968,
+            "cpu_seconds": 0.46875,
+            "examples_per_second": 2753717.5687792785,
+            "backend": "NumPy batched statevector / CPU",
+            "cuda": "unavailable; PyTorch is not installed in the profiled runtime",
+            "vram_bytes": null
+          }
+        ]
+      },
+      "cpu_forward_and_gradient_profile": {
+        "profile_type": "MSE_plus_parameter_shift_gradient_kernel",
+        "evidence_label": "deterministic synthetic throughput fixture only; not India ETA data, not a trained model, no efficacy metric",
+        "architecture": "one_block",
+        "parameter_count": 5,
+        "real_feature_rows_supplied": 512,
+        "optimizer_updates": 0,
+        "fit_performed": false,
+        "circuit": {
+          "qubits": 2,
+          "statevector_indexing": "little-endian; q0 is least-significant bit; index=2*q1+q0",
+          "feature_order": [
+            "synthetic_x0_scaled",
+            "synthetic_x1_scaled"
+          ],
+          "gates_in_execution_order": [
+            "RY(pi*x0) q0",
+            "RY(pi*x1) q1",
+            "CX(q0,q1)",
+            "RY(theta0) q0",
+            "RY(theta1) q1",
+            "CX(q1,q0)"
+          ],
+          "observable_readout": "bias + w0*<Z(q0)> + w1*<Z(q1)>",
+          "readout_parameters": [
+            "w0",
+            "w1",
+            "bias"
+          ],
+          "parameter_count": 5,
+          "parameter_shift": "(f(theta+pi/2)-f(theta-pi/2))/2 per RY angle"
+        },
+        "results": [
+          {
+            "batch_size": 128,
+            "gradient_steps": 256,
+            "examples_per_gradient_step": 128,
+            "training_examples_processed": 32768,
+            "circuit_batches": 1280,
+            "circuit_example_evaluations": 163840,
+            "wall_seconds": 0.15909330011345446,
+            "cpu_seconds": 0.15625,
+            "examples_per_second": 205967.19017477232,
+            "backend": "NumPy batched statevector / CPU",
+            "cuda_supported_by_profiled_runtime": false,
+            "vram_bytes": null
+          },
+          {
+            "batch_size": 256,
+            "gradient_steps": 256,
+            "examples_per_gradient_step": 256,
+            "training_examples_processed": 65536,
+            "circuit_batches": 1280,
+            "circuit_example_evaluations": 327680,
+            "wall_seconds": 0.19194980012252927,
+            "cpu_seconds": 0.203125,
+            "examples_per_second": 341422.6008996401,
+            "backend": "NumPy batched statevector / CPU",
+            "cuda_supported_by_profiled_runtime": false,
+            "vram_bytes": null
+          },
+          {
+            "batch_size": 512,
+            "gradient_steps": 256,
+            "examples_per_gradient_step": 512,
+            "training_examples_processed": 131072,
+            "circuit_batches": 1280,
+            "circuit_example_evaluations": 655360,
+            "wall_seconds": 0.21791610005311668,
+            "cpu_seconds": 0.21875,
+            "examples_per_second": 601479.1929924013,
+            "backend": "NumPy batched statevector / CPU",
+            "cuda_supported_by_profiled_runtime": false,
+            "vram_bytes": null
+          }
+        ]
+      }
+    },
+    "reupload": {
+      "parameter_count": 7,
+      "numerical_correctness_32": {
+        "examples": 32,
+        "max_abs_expectation_error": 0.0,
+        "passed_1e-12": true
+      },
+      "gradient_check_32": {
+        "examples": 32,
+        "step": 1e-05,
+        "analytic_gradient": [
+          0.03346129630986071,
+          -0.01039996977092285,
+          0.12184985539043253,
+          -0.08462206189916135,
+          0.01568429140940856,
+          0.25699146240323884,
+          -0.48892367057374114
+        ],
+        "finite_difference_gradient": [
+          0.033461296311543265,
+          -0.010399969771479611,
+          0.12184985538898906,
+          -0.08462206189940868,
+          0.015684291410078544,
+          0.25699146240232285,
+          -0.4889236705718502
+        ],
+        "max_absolute_error": 1.8909318555415666e-12,
+        "max_relative_error": 5.353488967487849e-11,
+        "passed_abs_1e-5": true
+      },
+      "qpiai_local_statevector_parity_8": {
+        "max_abs_expectation_error": 3.3306690738754696e-16,
+        "execution": "QpiAI Quantum local StatevectorSimulator"
+      },
+      "cpu_forward_profile": {
+        "profile_type": "forward_throughput",
+        "architecture": "reupload",
+        "real_feature_rows": 512,
+        "circuit": {
+          "qubits": 2,
+          "statevector_indexing": "little-endian; q0 is least-significant bit; index=2*q1+q0",
+          "feature_order": [
+            "synthetic_x0_scaled",
+            "synthetic_x1_scaled"
+          ],
+          "gates_in_execution_order": [
+            "RY(pi*x0) q0",
+            "RY(pi*x1) q1",
+            "RY(theta0) q0",
+            "RY(theta1) q1",
+            "CX(q0,q1)",
+            "RY(pi*x0) q0",
+            "RY(pi*x1) q1",
+            "RY(theta2) q0",
+            "RY(theta3) q1",
+            "CX(q1,q0)"
+          ],
+          "observable_readout": "bias + w0*<Z(q0)> + w1*<Z(q1)>",
+          "readout_parameters": [
+            "w0",
+            "w1",
+            "bias"
+          ],
+          "parameter_count": 7,
+          "parameter_shift": "(f(theta+pi/2)-f(theta-pi/2))/2 per RY angle"
+        },
+        "results": [
+          {
+            "batch_size": 128,
+            "repeats": 256,
+            "examples_evaluated": 32768,
+            "circuit_batches": 256,
+            "circuit_example_evaluations": 32768,
+            "wall_seconds": 0.06575419986620545,
+            "cpu_seconds": 1.53125,
+            "examples_per_second": 498340.7914121878,
+            "backend": "NumPy batched statevector / CPU",
+            "cuda": "unavailable; PyTorch is not installed in the profiled runtime",
+            "vram_bytes": null
+          },
+          {
+            "batch_size": 256,
+            "repeats": 256,
+            "examples_evaluated": 65536,
+            "circuit_batches": 256,
+            "circuit_example_evaluations": 65536,
+            "wall_seconds": 0.06144810002297163,
+            "cpu_seconds": 0.875,
+            "examples_per_second": 1066526.0598049436,
+            "backend": "NumPy batched statevector / CPU",
+            "cuda": "unavailable; PyTorch is not installed in the profiled runtime",
+            "vram_bytes": null
+          },
+          {
+            "batch_size": 512,
+            "repeats": 256,
+            "examples_evaluated": 131072,
+            "circuit_batches": 256,
+            "circuit_example_evaluations": 131072,
+            "wall_seconds": 0.07715000002644956,
+            "cpu_seconds": 0.078125,
+            "examples_per_second": 1698924.1731051744,
+            "backend": "NumPy batched statevector / CPU",
+            "cuda": "unavailable; PyTorch is not installed in the profiled runtime",
+            "vram_bytes": null
+          }
+        ]
+      },
+      "cpu_forward_and_gradient_profile": {
+        "profile_type": "MSE_plus_parameter_shift_gradient_kernel",
+        "evidence_label": "deterministic synthetic throughput fixture only; not India ETA data, not a trained model, no efficacy metric",
+        "architecture": "reupload",
+        "parameter_count": 7,
+        "real_feature_rows_supplied": 512,
+        "optimizer_updates": 0,
+        "fit_performed": false,
+        "circuit": {
+          "qubits": 2,
+          "statevector_indexing": "little-endian; q0 is least-significant bit; index=2*q1+q0",
+          "feature_order": [
+            "synthetic_x0_scaled",
+            "synthetic_x1_scaled"
+          ],
+          "gates_in_execution_order": [
+            "RY(pi*x0) q0",
+            "RY(pi*x1) q1",
+            "RY(theta0) q0",
+            "RY(theta1) q1",
+            "CX(q0,q1)",
+            "RY(pi*x0) q0",
+            "RY(pi*x1) q1",
+            "RY(theta2) q0",
+            "RY(theta3) q1",
+            "CX(q1,q0)"
+          ],
+          "observable_readout": "bias + w0*<Z(q0)> + w1*<Z(q1)>",
+          "readout_parameters": [
+            "w0",
+            "w1",
+            "bias"
+          ],
+          "parameter_count": 7,
+          "parameter_shift": "(f(theta+pi/2)-f(theta-pi/2))/2 per RY angle"
+        },
+        "results": [
+          {
+            "batch_size": 128,
+            "gradient_steps": 256,
+            "examples_per_gradient_step": 128,
+            "training_examples_processed": 32768,
+            "circuit_batches": 2304,
+            "circuit_example_evaluations": 294912,
+            "wall_seconds": 0.4752277999650687,
+            "cpu_seconds": 0.484375,
+            "examples_per_second": 68952.1951418006,
+            "backend": "NumPy batched statevector / CPU",
+            "cuda_supported_by_profiled_runtime": false,
+            "vram_bytes": null
+          },
+          {
+            "batch_size": 256,
+            "gradient_steps": 256,
+            "examples_per_gradient_step": 256,
+            "training_examples_processed": 65536,
+            "circuit_batches": 2304,
+            "circuit_example_evaluations": 589824,
+            "wall_seconds": 0.5265950001776218,
+            "cpu_seconds": 0.515625,
+            "examples_per_second": 124452.37797148575,
+            "backend": "NumPy batched statevector / CPU",
+            "cuda_supported_by_profiled_runtime": false,
+            "vram_bytes": null
+          },
+          {
+            "batch_size": 512,
+            "gradient_steps": 256,
+            "examples_per_gradient_step": 512,
+            "training_examples_processed": 131072,
+            "circuit_batches": 2304,
+            "circuit_example_evaluations": 1179648,
+            "wall_seconds": 0.8156806998886168,
+            "cpu_seconds": 0.828125,
+            "examples_per_second": 160690.32897051284,
+            "backend": "NumPy batched statevector / CPU",
+            "cuda_supported_by_profiled_runtime": false,
+            "vram_bytes": null
+          }
+        ]
+      }
+    }
+  },
+  "cuda_capability": {
+    "nvidia_gpu_visible": true,
+    "pytorch_available": false,
+    "numba_version": "0.68.1",
+    "numba_cuda_available": false,
+    "cuda_kernel_executed": false,
+    "reason": "profiled Python runtime exposes no usable CUDA execution backend"
+  },
+  "validation_units_regression_note": "Validation RMSE compares predicted residual minutes directly to observed residual minutes; observed residuals are not rescaled a second time."
+}

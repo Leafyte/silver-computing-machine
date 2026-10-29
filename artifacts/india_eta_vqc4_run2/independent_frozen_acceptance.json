@@ -1,0 +1,358 @@
+{
+  "actual_checkpoint_qpiai_parity": {
+    "baseline60": {
+      "backend": "local QpiAI StatevectorSimulator; shots=1 exact statevector; no cloud/QPU",
+      "max_abs_residual_minutes_error": 2.7755575615628914e-16,
+      "max_abs_z_error": 6.661338147750939e-16,
+      "rows": 8
+    },
+    "extended76": {
+      "backend": "local QpiAI StatevectorSimulator; shots=1 exact statevector; no cloud/QPU",
+      "max_abs_residual_minutes_error": 1.6653345369377348e-16,
+      "max_abs_z_error": 6.661338147750939e-16,
+      "rows": 8
+    }
+  },
+  "actual_checkpoint_torch_parity": {
+    "baseline60": {
+      "device": "CPU",
+      "max_abs_residual_minutes_error": 1.7054961086448994e-07,
+      "rows": 8,
+      "runtime": "2.14.1+cu130"
+    },
+    "extended76": {
+      "device": "CPU",
+      "max_abs_residual_minutes_error": 3.554140027839381e-07,
+      "rows": 8,
+      "runtime": "2.14.1+cu130"
+    }
+  },
+  "calibration_metrics_recomputed_after_choice": {
+    "baseline60": {
+      "mae_min": 3.0764369391918387,
+      "median_absolute_error_min": 2.653338366567004,
+      "rmse_min": 3.849746853266552
+    },
+    "extended76": {
+      "mae_min": 3.078506991621733,
+      "median_absolute_error_min": 2.6669313112627133,
+      "rmse_min": 3.846651255457078
+    },
+    "gbdt_only": {
+      "mae_min": 3.077069476689172,
+      "median_absolute_error_min": 2.643647408825128,
+      "rmse_min": 3.847571202618295
+    },
+    "ridge_control": {
+      "mae_min": 3.077200240848379,
+      "median_absolute_error_min": 2.6542998332358856,
+      "rmse_min": 3.8473705650594465
+    }
+  },
+  "checkpoint_hashes": {
+    "baseline60": "6a6458d42ac9561845bd606543f9017f997a01ae31b4afa75a4f554d0d30cffe",
+    "extended76": "002626418344b9650a24da3ca02309acc743d9fc57a166899941c1f0d216ec14"
+  },
+  "code_hashes": {
+    "circuit.py": "801468f544e25ae913c26e1f2131cf5f88b384b8495172da62be9051d5a96ba0",
+    "train.py": "88e0506c94d86c6650270599f4133488b6e2c5059a307bd34859a2c0aee56154"
+  },
+  "deterministic_resource_reproduction": {
+    "calibration_or_test_read": false,
+    "checkpoint_hashes_bitwise_equal_to_frozen_run": true,
+    "cpu_process_seconds": {
+      "baseline60": 242.015625,
+      "extended76": 372.96875,
+      "total": 615.078125
+    },
+    "extension_gradient_l2_min_mean_max": [
+      0.07001087814569473,
+      0.24117383471015713,
+      0.6375585198402405
+    ],
+    "forward_calls": 4194,
+    "forward_input_rows": 606888,
+    "optimizer_updates": 4176,
+    "path": "artifacts/india_eta_vqc4_run2_repro_metrics/reproduction_metrics.json",
+    "sha256": "d4b040187601229b9c472a0fbe990613b79242d6781959964297ea01ca0bd2bd",
+    "statevector_amplitude_elements": 9710208,
+    "wall_seconds": {
+      "baseline60": 30.24630229966715,
+      "extended76": 46.65995969995856,
+      "total": 77.10607420001179
+    },
+    "windows_peak_working_set_bytes": 860368896
+  },
+  "fitted_weight_jacobian": {
+    "all_extension_angles_add_local_rank": true,
+    "all_extension_angles_sensitive": true,
+    "baseline_local_rank": 60,
+    "baseline_singular_values": [
+      6.067549588999463,
+      5.244704395666743,
+      4.873287917165247,
+      4.772611397457475,
+      4.415944414664425,
+      4.298373803105413,
+      4.2005660719882965,
+      3.841887851727977,
+      3.8035234580000385,
+      3.618915865287266,
+      3.475181866002135,
+      3.411349014900215,
+      3.3042994658265386,
+      3.217517055904029,
+      3.1587189485821647,
+      3.019442441032365,
+      2.944294204165496,
+      2.895756726847338,
+      2.8007002770905274,
+      2.664626184151687,
+      2.6481439559381306,
+      2.5803031113863923,
+      2.5527949734880893,
+      2.4578621266321674,
+      2.302856719247318,
+      2.2655343188837263,
+      2.2045321309118457,
+      2.111107088312382,
+      2.0677607227475843,
+      1.9777780230770543,
+      1.9315826847891744,
+      1.8812571395323603,
+      1.8462807626509463,
+      1.8187107492004515,
+      1.7453777145150629,
+      1.7348952796779575,
+      1.6785090851405409,
+      1.642581335188862,
+      1.6244350456523475,
+      1.5502383644135933,
+      1.489645319007054,
+      1.4066732819395353,
+      1.371337682763431,
+      1.3136997996528732,
+      1.2498631928655546,
+      1.190821699873943,
+      1.14613477608831,
+      1.0961888811638332,
+      1.080775706084587,
+      1.0407945696836147,
+      1.006220384657796,
+      0.9541321687157851,
+      0.9379557347408759,
+      0.8792779607666662,
+      0.846811524407325,
+      0.8331904411872463,
+      0.7766824331417048,
+      0.7528056308896698,
+      0.6289301735719841,
+      0.6048956583873125
+    ],
+    "extended_local_rank": 76,
+    "extended_singular_values": [
+      6.183396459339979,
+      5.514144147932035,
+      5.364545572293997,
+      5.058423970350868,
+      4.8515320762506065,
+      4.711279707000126,
+      4.621896613037064,
+      4.287355923737208,
+      4.044885608269176,
+      4.017402660274791,
+      3.9100292270524215,
+      3.738951701136875,
+      3.637775501048766,
+      3.4914630541175176,
+      3.4583400887117763,
+      3.3568336667725265,
+      3.3509078596331427,
+      3.234781117993194,
+      3.224894684911815,
+      3.0175714502673308,
+      2.8906896740228247,
+      2.7851654547111777,
+      2.7460082800222927,
+      2.692752280646338,
+      2.565470106191218,
+      2.5251058915081526,
+      2.495036081116274,
+      2.4712767405966094,
+      2.4082282648781703,
+      2.311823567206904,
+      2.308425996006992,
+      2.2424842445068287,
+      2.2108609174840512,
+      2.178862016621907,
+      2.1217308161057797,
+      2.097829237131189,
+      1.988587641737835,
+      1.9698213587955729,
+      1.9325585120468316,
+      1.8547130467485522,
+      1.8333007237065635,
+      1.7681150145873248,
+      1.7500578408376848,
+      1.6863171816924203,
+      1.6572823002325139,
+      1.5963567331125785,
+      1.5605773956078985,
+      1.5374689146376772,
+      1.470522554131665,
+      1.4105382371684156,
+      1.3610525924890038,
+      1.346571937718683,
+      1.3025576257832725,
+      1.2803437943338027,
+      1.2288768457599808,
+      1.1637641981060374,
+      1.1179271314766202,
+      1.084714199441202,
+      1.0634677288861942,
+      1.0510124604109843,
+      1.0089088709434804,
+      0.9773860414853563,
+      0.9019884812400153,
+      0.8641057956755898,
+      0.8272697307172892,
+      0.8094305906776001,
+      0.7754651807226819,
+      0.722299070427671,
+      0.6864205329878383,
+      0.6525110961841949,
+      0.6378849363444677,
+      0.6020071062867139,
+      0.5638700861673497,
+      0.465172656413978,
+      0.3659507321987553,
+      0.2625927922159231
+    ],
+    "extension_angle_count": 16,
+    "extension_gradient_l2_by_angle": [
+      2.205725811706754,
+      2.4786871274087128,
+      2.5554687156326423,
+      2.323246748897188,
+      2.371540892299671,
+      2.904335455320067,
+      3.004527458741671,
+      2.5869701755926173,
+      2.484778027839245,
+      2.793278465786331,
+      2.6925856990493315,
+      2.670278610195188,
+      2.732654688046756,
+      2.29796961843414,
+      2.3412636983652484,
+      2.4730906390315996
+    ],
+    "extension_incremental_l2_by_angle": [
+      1.3362747914716406,
+      1.7692047446702825,
+      1.687694178507219,
+      1.7481486180797834,
+      1.0191662285543388,
+      2.016424129144073,
+      1.584931039946873,
+      1.8872104206178433,
+      1.21696769615952,
+      2.075501445724436,
+      1.622232722831058,
+      1.9735146786850521,
+      1.1531677712182082,
+      1.7780722343757154,
+      1.3150672405192052,
+      1.7286643725400803
+    ],
+    "finite_difference_step_radians": 1e-05,
+    "input_rows": 64,
+    "method": "centered finite differences of four batched Z expectations over diverse rows; no labels used",
+    "observable_count": 4,
+    "rank_increment": 16,
+    "relative_rank_tolerance": 1e-08,
+    "variant_baseline": "baseline60",
+    "variant_extension": "extended76"
+  },
+  "format": "india_eta_vqc4_independent_frozen_acceptance_v1",
+  "input_feature_contract": {
+    "feature_order": [
+      "vqc_x0_distance",
+      "vqc_x1_congestion",
+      "vqc_x2_multidelivery",
+      "vqc_x3_preptime"
+    ],
+    "raw_59_to_4_cross_source_formula_join": "not accepted in this audit; fastparquet filters returned all split rows, so no test labels were requested and the cross-source check was dropped",
+    "selection_and_validation_rows_are_finite_and_in_0_1": true,
+    "stable_record_key_unique_in_validation": true
+  },
+  "prior_test_exposure_disclosure": "The original test partition was previously accessed and scored in the prior RUN2 two-qubit workflow; any new 4Q score is retrospective, not a pristine holdout result.",
+  "raw_role_file_sha256": "c13704aa421e4d05138640c60c73dc734afece75610c1aaf43b2c884524640ef",
+  "residual_scale_minutes": 3.889107305742781,
+  "retrospective_test_protocol_sha256": "65c443c77f08714aadd88e5eeb7a5f6404ef0c5b4f1621033e5e9322db7adf5f",
+  "roles": {
+    "calibration_rows": 1865,
+    "courier_group_disjoint": true,
+    "fusion_calibration_couriers": 58,
+    "model_selection_couriers": 117,
+    "role_map_independently_recomputed": true,
+    "selection_rows": 4124
+  },
+  "run_manifest_sha256": "d12f2ba6f62b1bc760954e7e6de60f1027a871f3ef234768b36c571426e000f3",
+  "selected_alpha": 0.0,
+  "selection_choice": "alpha0_gbdt_only",
+  "selection_metrics_recomputed": {
+    "baseline60": {
+      "mae_min": 3.1702072209585737,
+      "median_absolute_error_min": 2.7790780882758384,
+      "rmse_min": 3.9328099592823405
+    },
+    "extended76": {
+      "mae_min": 3.171809379360695,
+      "median_absolute_error_min": 2.759695088041674,
+      "rmse_min": 3.933179045841373
+    },
+    "gbdt_only": {
+      "mae_min": 3.1725834746282136,
+      "median_absolute_error_min": 2.7939225849262996,
+      "rmse_min": 3.9320943971729907
+    },
+    "ridge_control": {
+      "mae_min": 3.172206895053659,
+      "median_absolute_error_min": 2.796162762952937,
+      "rmse_min": 3.9319029662576477
+    }
+  },
+  "source_hashes": {
+    "gbdt_checkpoint": "f1f94fbcc932f3519aaafcff7dc99d65b7951c0240730e54c320259152bbebdf",
+    "oof_predictions": "78a5461c89387e8630421008b92dfffcc84864e9e25bea7476eefa2c8d48032f",
+    "ridge_control": "5203fe9844a9721cfed1f26411a32bb0ebd872cafa8f64e661c73c2afc8189e2",
+    "validation_predictions": "3d9485c513e6a997516baea1a4a6c497c6021240f9cbf64d524037e9e8753f1a",
+    "validation_role_assignment": "631dbb800d8759858ccbed05345d95549940782fa8c81390e9a4affeb0ba6425"
+  },
+  "status": "PASS_DEVELOPMENT_CHECKS_TEST_TARGETS_NOT_ACCESSED_FEATURE_ACCESS_INCIDENT",
+  "test_partition_feature_materialization_incident": {
+    "occurred": true,
+    "reason": "fastparquet pandas filters silently returned every partition during a feature-only cross-source check",
+    "target_or_synthetic_label_columns_requested_or_read": false,
+    "test_feature_rows_materialized": 5941,
+    "test_features_used_for_model_selection_or_metrics": false
+  },
+  "test_target_columns_requested_or_read_by_this_audit": false,
+  "training": {
+    "baseline60": {
+      "best_epoch": 3,
+      "best_logged_selection_mae_min": 3.1702072182866066,
+      "epochs_completed": 8,
+      "optimizer_updates": 1856,
+      "sum_epoch_seconds": 30.11389819975011
+    },
+    "extended76": {
+      "best_epoch": 5,
+      "best_logged_selection_mae_min": 3.171809376687596,
+      "epochs_completed": 10,
+      "optimizer_updates": 2320,
+      "sum_epoch_seconds": 46.49448449979536
+    }
+  }
+}

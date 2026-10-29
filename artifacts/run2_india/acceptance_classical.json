@@ -1,0 +1,114 @@
+{
+  "input_parquet_sha256": {
+    "indian_delivery_clean.parquet": "9034d24389c7162f0ea0e275e5b4cc9ec16f04bba75c0f239dbcef8535a1f7c1",
+    "indian_delivery_gbdt.parquet": "bd03b47c3d3e23050329cefc69d752aad607031cacdb9696151d237e3534a627",
+    "indian_delivery_vqc.parquet": "a633677472e6e0e874c2797a66eb7b011e3a307285553f8fa00c6ee664df4b4e"
+  },
+  "limitations": [
+    "release and quantum-model acceptance remain pending",
+    "test evaluation remains embargoed until all model weights and fusion policy are frozen"
+  ],
+  "oof": {
+    "passed": true,
+    "rows": 29592,
+    "unique_ids": 29592
+  },
+  "oof_metrics_minutes_recomputed": {
+    "mae_min": 3.1139222108496725,
+    "mean_error_min": -0.0013879748203401239,
+    "median_absolute_error_min": 2.698218878675167,
+    "n": 29592,
+    "rmse_min": 3.889107555200862
+  },
+  "reloaded_model_validation_prediction_max_abs_error_minutes": 0.0,
+  "scope": "classical checkpoint, source provenance, OOF, validation roles, and pretest prediction reload only",
+  "source_commit": "7ffb99e85e01f775772783c472c9d24f39f9d868",
+  "source_commit_csv_blob_sha256": "4baa699e1c09d286f06790010a8c0b284ed3376cbde7e346e19d0ded16a240e3",
+  "source_courier_groups": {
+    "test": 176,
+    "train": 819,
+    "val": 175
+  },
+  "source_partition_counts": {
+    "test": 5941,
+    "train": 29592,
+    "val": 5989
+  },
+  "source_provenance": {
+    "canonical_lf_sha256": "4baa699e1c09d286f06790010a8c0b284ed3376cbde7e346e19d0ded16a240e3",
+    "conversion": "CRLF worktree bytes normalize exactly to committed LF blob",
+    "core_autocrlf": "true",
+    "expected_sha256": "4baa699e1c09d286f06790010a8c0b284ed3376cbde7e346e19d0ded16a240e3",
+    "git_blob_sha256": "4baa699e1c09d286f06790010a8c0b284ed3376cbde7e346e19d0ded16a240e3",
+    "git_eol": "i/lf    w/crlf  attr/                 \tdata/train.csv",
+    "passed": true,
+    "path": "C:\\Users\\avkir\\Downloads\\silver-computing-machine-main\\trainingv3\\data\\train.csv",
+    "working_copy_sha256": "d293b6fc7157aef30fb34301216a3432ec895d407ce2ea9edddf942b416cdde1",
+    "worktree_clean": true
+  },
+  "status": "PASS",
+  "test_targets_read": false,
+  "validation_metrics_minutes_recomputed": {
+    "all_validation_descriptive": {
+      "mae_min": 3.1428400105847487,
+      "mean_error_min": 0.053642597606743336,
+      "median_absolute_error_min": 2.742486943251812,
+      "n": 5989,
+      "rmse_min": 3.905969622745767
+    },
+    "fusion_calibration": {
+      "mae_min": 3.077069476689172,
+      "mean_error_min": 0.10330675795706269,
+      "median_absolute_error_min": 2.643647408825128,
+      "n": 1865,
+      "rmse_min": 3.847571202618295
+    },
+    "model_selection": {
+      "mae_min": 3.1725834746282136,
+      "mean_error_min": 0.03118293246286711,
+      "median_absolute_error_min": 2.7939225849262996,
+      "n": 4124,
+      "rmse_min": 3.9320943971729907
+    }
+  },
+  "validation_role_assignment": {
+    "algorithm": "deduplicate validation courier_id; sort by (SHA256(b'india-eta-val-role-v1|20261029|' + courier_id UTF-8) digest bytes, courier_id); first floor(N/3) groups fusion_calibration, remainder model_selection",
+    "couriers": {
+      "fusion_calibration": 58,
+      "model_selection": 117
+    },
+    "passed": true,
+    "records": 5989,
+    "sha256": "631dbb800d8759858ccbed05345d95549940782fa8c81390e9a4affeb0ba6425"
+  },
+  "verified_model_and_prediction_files": [
+    {
+      "path": "artifacts\\india_eta_recovery\\oof_predictions.parquet",
+      "sha256": "78a5461c89387e8630421008b92dfffcc84864e9e25bea7476eefa2c8d48032f"
+    },
+    {
+      "path": "artifacts\\india_eta_recovery\\validation_predictions.parquet",
+      "sha256": "3d9485c513e6a997516baea1a4a6c497c6021240f9cbf64d524037e9e8753f1a"
+    },
+    {
+      "path": "artifacts\\india_eta_recovery\\oof_fold_manifest.json",
+      "sha256": "f8d283f3bd854984ee4406fc339786399ce94246b6815765fc63f5c00c0609d7"
+    },
+    {
+      "path": "artifacts\\india_eta_recovery\\validation_role_assignment.json",
+      "sha256": "c13704aa421e4d05138640c60c73dc734afece75610c1aaf43b2c884524640ef"
+    },
+    {
+      "path": "artifacts\\india_eta_recovery\\gbdt\\india_eta_hgb_regressor.joblib",
+      "sha256": "f1f94fbcc932f3519aaafcff7dc99d65b7951c0240730e54c320259152bbebdf"
+    },
+    {
+      "path": "artifacts\\india_eta_recovery\\gbdt\\feature_schema.json",
+      "sha256": "a3b013ec731e5b6767f45a6c6a5d87c99cdffefe8a06976a02f46c97a966c7d5"
+    },
+    {
+      "path": "artifacts\\india_eta_recovery\\gbdt\\preprocessing_artifacts.json",
+      "sha256": "df20646f12b77cb9fb03bf831b3373e5f8c9f69d6e5f0c92c35bbd46c682f351"
+    }
+  ]
+}

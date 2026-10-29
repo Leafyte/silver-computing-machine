@@ -1,0 +1,187 @@
+{
+  "captured_at_utc": "2026-10-29T13:46:00Z",
+  "run_id": "luna_hgbr_recovery_20261029T131809Z_v5",
+  "evidence_type": "independent pre-test acceptance; validation metrics recomputed from saved validation-only predictions; no test outcomes read",
+  "acceptance_status": "PASS: independent recompute of single completed evaluation outputs; no inference/fit/selection rerun",
+  "target": {
+    "name": "delivery_duration_min",
+    "unit": "minutes",
+    "classical_fit_partition": "original train only"
+  },
+  "test_partition_read_or_used_by_v5": false,
+  "counts": {
+    "train_oof_rows": 29592,
+    "validation_rows": 5989,
+    "development_rows": 35581,
+    "crossfit_folds": 5,
+    "validation_roles": {
+      "early_stop_rows": 3117,
+      "fusion_selection_rows": 2872
+    },
+    "quantum_invocation_rows_full_validation": 3188,
+    "quantum_invocation_rate_full_validation": 0.532309233594924
+  },
+  "sha256": {
+    "recovered_manifest": "e2652a09b34f6d5f4cec3fc02209decc7ac4b81caf0431e9482efc5a44dde844",
+    "crossfit_manifest": "a8f78e41c9159620f7d4d96096ff8d41ef3b2060b989c712d663ff392cc37b8e",
+    "development_predictions": "ffd4e22a736e1290644409d891cb01949b0efea7f93ece72a19133bd7532b4ee",
+    "recovered_gbdt_checkpoint": "da709331715ad3fd312e8708f17d0c86a135bec4e1bfaa1d185545db766c351a",
+    "quantum_one_block": "023a94860617ba86db2b6905bd04028639a831e33e6611713276d701423ed317",
+    "quantum_reupload": "423aa60e2b2d1c129ce756665b83714957c3fd7cc348bbb34640ac4c429a6382",
+    "residual_selection": "ddc4d9a23cc62e739e8eb7708dea13fc65f25882ac6da77d7a670c0ebe5fe7cf",
+    "validation_predictions": "5c10b2b7e853d20ce6b5e0436cc7ccc088dedfdb37d0a833131997d3f4b4d79b",
+    "validation_role_protocol": "2c4a763497ca040e8fec85da945226dae371431058415f5e302c00fa692120ea",
+    "qpiai_parity": "8b1c5aac28889b398a03f3369b5b8efaa76957ca6be820b6881469c728fc11a9",
+    "quantum_feature_scaler": "c6701f1a1b8137b510e6ba783d298d0e198aca89a3180961eadab41ebdb8ceda",
+    "parent_split_manifest": "10bee51eebac51bf68813a35a42b06adeb2e30588accdc582bbe9b0d8136c1bb",
+    "frozen_pretest_release_manifest": "e8c8f679761018036f1ebe3eff3251ea44572fab7c766057625b7302b53ff189",
+    "post_evaluation_release_manifest": "cf0d6d0fc1758369b053dedf88938844e123ca347b102570efe736ae6fa665da",
+    "final_test_predictions": "ee92ecaa747db935e4a9349ac9337f65b4a6f1991b252fd737945310c2e19a85",
+    "final_test_metrics_record": "e54d0154538b25aaed474b26e6b39866ac26043e366aed404d560537bb0d70e1",
+    "prior_attempt_evidence": "68dd69b08eaef2e9a067d9c92249458b4d2030a3750d0f0f3eb75642f00757bc",
+    "retry_attempt_sentinel": "a3fd85d13ff447c9e2431e9c63d71d0419a4238cb8f608024dc79f471b552f68"
+  },
+  "candidate_selection": {
+    "architecture": "reupload",
+    "alpha_calibration_only": 0.9015612265845507,
+    "gate_feature": "vqc_x1_congestion",
+    "gate_operator": "<=",
+    "gate_threshold": 0.5499999999999999,
+    "calibration_invocation_rate": 0.5243732590529248,
+    "validation_invocation_rate": 0.532309233594924,
+    "validation_invocation_rows": 3188,
+    "selection_roles": {
+      "architecture": "qml_earlystop_architecture",
+      "alpha_and_gate": "fusion_alpha_gate_calibration"
+    }
+  },
+  "independent_validation_metrics_minutes": {
+    "gbdt_baseline": {
+      "mae_minutes": 3.2339901712327395,
+      "rmse_minutes": 4.030158301555487,
+      "median_absolute_error_minutes": 2.829631051707395
+    },
+    "selected_reupload_candidate": {
+      "mae_minutes": 3.235003997178331,
+      "rmse_minutes": 4.030347357806406,
+      "median_absolute_error_minutes": 2.8240386821198875
+    },
+    "ridge_control": {
+      "mae_minutes": 3.2344761381036626,
+      "rmse_minutes": 4.029849328672584,
+      "median_absolute_error_minutes": 2.8301447899203964
+    }
+  },
+  "full_validation_metrics_use": "reporting only; not used to retune selection",
+  "operational_recommendation": "Keep the selected quantum candidate for the one-time comparison; freeze deployed alpha=0 fallback because full-validation MAE and RMSE do not beat GBDT. Verify this separation in the pre-test release manifest before evaluation.",
+  "qpiai_local_statevector": {
+    "status": "passed",
+    "sdk": "qpiai-quantum",
+    "version": "0.3.0",
+    "backend": "local StatevectorSimulator; no cloud/QPU",
+    "checkpoint_sha256": "423aa60e2b2d1c129ce756665b83714957c3fd7cc348bbb34640ac4c429a6382",
+    "examples": 8,
+    "expectation_max_abs_error": 2.636779683484747e-16,
+    "residual_minutes_max_abs_error": 8.326672684688674e-17
+  },
+  "checks": {
+    "classical_checkpoint_hash_target_and_validation_reload": "passed",
+    "OOF_rows_groups_folds_residuals_and_row_hashes": "passed",
+    "fold_local_preprocessing_recomputed_from_target_free_original_train": "passed",
+    "train_only_shared_QML_scaler": "passed",
+    "validation_roles_disjoint_and_frozen_before_fit": "passed",
+    "QML_candidate_checkpoint_reload_and_earlystop_RMSE_in_minutes": "passed",
+    "alpha_gate_calibration_metrics_recomputed_on_fusion_role": "passed",
+    "pre_quantum_gate_call_count_and_alpha_zero_fallback": "passed",
+    "independent_full_validation_metric_recompute": "passed",
+    "QpiAI_trained_checkpoint_local_statevector_parity": "passed",
+    "sealed_test_metric_or_prediction_read": "not performed; held",
+    "pretest_release_manifest_hash_and_candidate_vs_operational_fallback": "passed"
+  },
+  "test_runs": {
+    "task_local_sklearn_parquet_numpy126_guard_enabled": "22 passed, 4 skipped (QpiAI NumPy 2 capability gates)",
+    "original_numpy254_qpiai030_guard_disabled": "22 passed, 4 skipped (2 sklearn reloads; post-evaluation manifest gate; sealed-test recompute guard)"
+  },
+  "sealed_test": "one completed evaluation; independent recomputation passed using saved predictions only. No new inference, fitting, or selection was performed by acceptance.",
+  "frozen_pretest_release": {
+    "freeze_state": "frozen_before_test",
+    "freeze_timestamp_utc": "2026-10-29T13:40:38.212385+00:00",
+    "selection_partition": "val",
+    "model_selection_source": "validation",
+    "operational_alpha": 0.0,
+    "operational_gate_enabled": false,
+    "candidate_architecture": "reupload",
+    "candidate_alpha": 0.9015612265845507,
+    "candidate_gate_feature": "vqc_x1_congestion",
+    "candidate_gate_operator": "<=",
+    "candidate_gate_threshold": 0.5499999999999999,
+    "test_evaluation_timestamp_utc": null,
+    "test_metrics": null,
+    "test_predictions_path": null
+  },
+  "test_attempt_history": {
+    "attempts": 2,
+    "complete_evaluations": 1,
+    "attempt_1": {
+      "status": "aborted_before_metrics_persisted",
+      "target_bearing_test_data_read": true,
+      "metrics_or_predictions_persisted": false,
+      "test_outcomes_inspected_or_used_for_selection": false,
+      "failure": {
+        "type": "KeyError",
+        "message": "'reupload'",
+        "location": "experiments_india_qml/portable_release_v5.py: residuals[selected_arch]",
+        "cause": "bookkeeping alias used architecture name, while residual map keys are prefixed with quantum_"
+      },
+      "recovery": "code-only mapping correction; no fitting, parameter selection, or frozen artifact change"
+    },
+    "attempt_2": {
+      "status": "completed",
+      "attempt_number": 2,
+      "resumed_failed_attempt": true,
+      "same_pretest_manifest_sha256": "e8c8f679761018036f1ebe3eff3251ea44572fab7c766057625b7302b53ff189"
+    }
+  },
+  "independent_test_recompute": {
+    "status": "passed",
+    "test_rows": 5941,
+    "unique_test_ids": 5941,
+    "unique_test_couriers": 176,
+    "quantum_invocations": {
+      "one_block": 0,
+      "reupload": 3243
+    },
+    "metrics_minutes": {
+      "classical_gbdt": {
+        "mae_minutes": 3.258761844559234,
+        "rmse_minutes": 4.11428180716019,
+        "median_absolute_error_minutes": 2.7764858627341056
+      },
+      "classical_plus_ridge": {
+        "mae_minutes": 3.259587210509638,
+        "rmse_minutes": 4.11441315716407,
+        "median_absolute_error_minutes": 2.7664144113477676
+      },
+      "quantum_hybrid": {
+        "mae_minutes": 3.2620141696657465,
+        "rmse_minutes": 4.117239131177362,
+        "median_absolute_error_minutes": 2.7725203521484616
+      },
+      "selective_quantum": {
+        "mae_minutes": 3.2603587665277614,
+        "rmse_minutes": 4.114836147204668,
+        "median_absolute_error_minutes": 2.774437978586466
+      },
+      "operational_release": {
+        "mae_minutes": 3.258761844559234,
+        "rmse_minutes": 4.11428180716019,
+        "median_absolute_error_minutes": 2.7764858627341056
+      }
+    },
+    "metrics_match_final_metrics_record_and_posttest_manifest": true,
+    "operational_release_equals_classical_gbdt": true,
+    "selection_partition": "val",
+    "model_selection_source": "validation",
+    "freeze_timestamp_precedes_evaluation": true
+  }
+}

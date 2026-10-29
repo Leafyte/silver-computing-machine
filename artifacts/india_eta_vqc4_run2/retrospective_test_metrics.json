@@ -1,0 +1,105 @@
+{
+  "courier_groups": 176,
+  "finished_utc": "2026-10-29T14:57:08.110511+00:00",
+  "format": "india_eta_vqc4_retrospective_test_metrics_v1",
+  "inference": {
+    "device": "CPU; portable NumPy statevector and frozen HistGradientBoostingRegressor",
+    "elapsed_seconds": {
+      "baseline60_candidate": 0.07978150015696883,
+      "extended76_candidate": 0.0903445000294596,
+      "gbdt_only": 0.01171690016053617,
+      "operational_alpha0": 0.01171690016053617,
+      "ridge_control": 0.012108599999919534
+    },
+    "latency_convention": "one un-repeated batch call per candidate; excludes input parsing and metrics; shared GBDT/feature mapping is included in each hybrid pipeline's total",
+    "python_batch_evaluations": 1,
+    "ridge_correction_increment_seconds": 0.00030239997431635857,
+    "row_level_model_calls": {
+      "GBDT": {
+        "calls": 1,
+        "rows": 5941
+      },
+      "Ridge residual": {
+        "calls": 1,
+        "rows": 5941
+      },
+      "baseline60 candidate": {
+        "calls": 1,
+        "rows": 5941
+      },
+      "extended76 candidate": {
+        "calls": 1,
+        "rows": 5941
+      },
+      "operational alpha=0": {
+        "additional_VQC_calls": 0,
+        "rows": 5941
+      }
+    },
+    "shared_feature_mapping_seconds": 8.929986506700516e-05,
+    "shared_gbdt_seconds": 0.01171690016053617,
+    "test_records_per_pipeline": 5941,
+    "vqc_residual_forward_seconds": {
+      "baseline60": 0.06797530013136566,
+      "extended76": 0.07853830000385642
+    }
+  },
+  "metrics": {
+    "baseline60_candidate": {
+      "MAE_minutes": 3.1472684570404104,
+      "RMSE_minutes": 3.9695990516653983,
+      "median_absolute_error_minutes": 2.7038575900610873
+    },
+    "extended76_candidate": {
+      "MAE_minutes": 3.1441209390448908,
+      "RMSE_minutes": 3.9678098550028214,
+      "median_absolute_error_minutes": 2.68958711151987
+    },
+    "gbdt_only": {
+      "MAE_minutes": 3.146739649378528,
+      "RMSE_minutes": 3.968179672000034,
+      "median_absolute_error_minutes": 2.6860812275775956
+    },
+    "operational_alpha0": {
+      "MAE_minutes": 3.146739649378528,
+      "RMSE_minutes": 3.968179672000034,
+      "median_absolute_error_minutes": 2.6860812275775956
+    },
+    "ridge_control": {
+      "MAE_minutes": 3.14667499360026,
+      "RMSE_minutes": 3.9683156209438537,
+      "median_absolute_error_minutes": 2.6886234607949397
+    }
+  },
+  "partition": "test",
+  "policy": {
+    "alpha": 0.0,
+    "choice_source": "pretest validation-only freeze",
+    "selected_variant": null,
+    "test_used_for_selection": false
+  },
+  "prediction_artifact": {
+    "path": "artifacts\\india_eta_vqc4_run2\\retrospective_test_predictions.parquet",
+    "rows": 5941,
+    "sha256": "b7a5e2794057ec8ff1769ab51f174bcc6c9ffc76520bc916a2bf4c0c4821c139"
+  },
+  "pretest_freeze_sha256": "6dd053da6e85d8afa04de023a6695a5f9ad37bd6614b63b5edb4d0a38a40b5a3",
+  "qualification": "The original test partition was previously accessed/scored in a RUN2 2-qubit evaluation. The 4Q acceptance audit also materialized test feature columns during a row-filter failure but did not read target or synthetic-label columns. These results are retrospective, not a pristine or unseen holdout.",
+  "release_archive_sha256": "18d5d4859e53d3d59063e60cdcdd45cb6eff6757bba6474f024cdde91aa06b80",
+  "row_group_behavior": {
+    "non_test_targets_used_for_scoring": false,
+    "source_rows_materialized_by_fastparquet": 41522,
+    "test_rows_used_for_prediction_and_metrics": 5941,
+    "why_materialized_count_exceeds_test_count": "fastparquet ignored row-level filters for the single mixed-split row group; records were filtered in memory before inference/scoring"
+  },
+  "rows": 5941,
+  "source_hashes": {
+    "gbdt_table": "bd03b47c3d3e23050329cefc69d752aad607031cacdb9696151d237e3534a627",
+    "split_manifest": "10bee51eebac51bf68813a35a42b06adeb2e30588accdc582bbe9b0d8136c1bb"
+  },
+  "started_utc": "2026-10-29T14:57:06.907558+00:00",
+  "status": "COMPLETED_RETROSPECTIVE_TEST_EVALUATION_NO_SELECTION",
+  "target": "delivery_duration_min",
+  "unique_record_ids": 5941,
+  "unit": "minutes"
+}

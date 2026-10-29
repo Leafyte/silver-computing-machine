@@ -1,0 +1,101 @@
+{
+  "format": "india-eta-ridge-residual-control-v1",
+  "status": "frozen_experimental_classical_control_not_operationally_activated",
+  "estimator": "closed-form centered Ridge with unpenalized intercept",
+  "target": "delivery_duration_min minus courier-held-out GBDT OOF prediction",
+  "target_unit": "minutes",
+  "feature_names": [
+    "vqc_x0_distance",
+    "vqc_x1_congestion",
+    "vqc_x2_multidelivery",
+    "vqc_x3_preptime"
+  ],
+  "feature_scaling": "Use the committed VQC candidate features as stored in [0,1]; no refit or additional scaling.",
+  "alpha": 0.01,
+  "alpha_candidates": [
+    0.01,
+    1.0,
+    100.0
+  ],
+  "coefficients_min_per_unit": [
+    0.01343638599776571,
+    0.03592518652875294,
+    0.08964988289930156,
+    -0.0002770147217950317
+  ],
+  "intercept_min": -0.04421844306345724,
+  "training_rows": 29592,
+  "training_record_ids_sha256": "7daef6863a2490a57ffe02a67baaad25ba3df4c8732fb7184c6ec8ed65207e9b",
+  "training_courier_groups": 819,
+  "training_oof_residual_sha256": "b09edc730da62e8f6be33f08d5464d4cb2b4efaf728fcd0bf6033046d7f4b651",
+  "join_keys": [
+    "delivery_record_id",
+    "courier_id",
+    "split_partition"
+  ],
+  "gbdt_model_sha256": "f1f94fbcc932f3519aaafcff7dc99d65b7951c0240730e54c320259152bbebdf",
+  "gbdt_recovery_manifest_sha256": "abe44ec210312bb70e45659f0a286d5898ed46681d1005edb98b4bd4d8358520",
+  "gbdt_oof_predictions_sha256": "78a5461c89387e8630421008b92dfffcc84864e9e25bea7476eefa2c8d48032f",
+  "gbdt_validation_predictions_sha256": "3d9485c513e6a997516baea1a4a6c497c6021240f9cbf64d524037e9e8753f1a",
+  "validation_role_assignment_sha256": "631dbb800d8759858ccbed05345d95549940782fa8c81390e9a4affeb0ba6425",
+  "split_manifest_sha256": "10bee51eebac51bf68813a35a42b06adeb2e30588accdc582bbe9b0d8136c1bb",
+  "source_parquet_sha256": {
+    "gbdt": "bd03b47c3d3e23050329cefc69d752aad607031cacdb9696151d237e3534a627",
+    "vqc": "a633677472e6e0e874c2797a66eb7b011e3a307285553f8fa00c6ee664df4b4e"
+  },
+  "validation_model_selection_couriers": 117,
+  "validation_model_selection_rows": 4124,
+  "validation_calibration_couriers": 58,
+  "validation_calibration_rows_not_used_for_choice": 1865,
+  "selection_trials": [
+    {
+      "alpha": 0.01,
+      "model_selection_metrics": {
+        "mae_min": 3.172206895053659,
+        "rmse_min": 3.9319029662576477,
+        "median_absolute_error_min": 2.796162762952937
+      },
+      "model_selection_rows": 4124
+    },
+    {
+      "alpha": 1.0,
+      "model_selection_metrics": {
+        "mae_min": 3.1722073409050173,
+        "rmse_min": 3.9319030423580674,
+        "median_absolute_error_min": 2.79615613426426
+      },
+      "model_selection_rows": 4124
+    },
+    {
+      "alpha": 100.0,
+      "model_selection_metrics": {
+        "mae_min": 3.172247840019592,
+        "rmse_min": 3.9319103540105265,
+        "median_absolute_error_min": 2.7959103695721454
+      },
+      "model_selection_rows": 4124
+    }
+  ],
+  "selection_baseline_gbdt_only_metrics": {
+    "mae_min": 3.1725834746282136,
+    "rmse_min": 3.9320943971729907,
+    "median_absolute_error_min": 2.7939225849262996
+  },
+  "selection_selected_control_metrics": {
+    "mae_min": 3.172206895053659,
+    "rmse_min": 3.9319029662576477,
+    "median_absolute_error_min": 2.796162762952937
+  },
+  "calibration_selected_control_metrics_diagnostic_only": {
+    "mae_min": 3.077200240848379,
+    "rmse_min": 3.8473705650594465,
+    "median_absolute_error_min": 2.654299833235882
+  },
+  "all_validation_selected_control_metrics_descriptive_only": {
+    "mae_min": 3.142621420000587,
+    "rmse_min": 3.905775377323222,
+    "median_absolute_error_min": 2.7481917910303366
+  },
+  "test_partition": "not loaded into this control, not scored, and not serialized",
+  "activation_policy": "Experimental comparison control only; do not activate without separate Opus review and frozen quantum comparison."
+}

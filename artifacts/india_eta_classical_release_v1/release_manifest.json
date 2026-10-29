@@ -1,0 +1,189 @@
+{
+  "release_name": "India ETA classical CPU release",
+  "release_version": "1.0.0",
+  "created_from_frozen_checkpoint": true,
+  "training_performed_during_packaging": false,
+  "model": {
+    "estimator_identity": "sklearn.ensemble.HistGradientBoostingRegressor",
+    "objective": "squared_error regression",
+    "target": "delivery_duration_min",
+    "target_unit": "minutes",
+    "config": {
+      "name": "hgb_medium",
+      "max_iter": 160,
+      "learning_rate": 0.06,
+      "max_leaf_nodes": 31,
+      "min_samples_leaf": 25,
+      "l2_regularization": 1.0
+    },
+    "feature_count": 59,
+    "feature_order": [
+      "haversine_distance_km",
+      "departure_hour",
+      "day_of_week",
+      "is_weekend",
+      "is_rush_hour",
+      "is_lunch_rush",
+      "is_dinner_rush",
+      "delivery_person_age_imp",
+      "delivery_person_ratings_imp",
+      "order_to_pickup_min_imp",
+      "order_to_pickup_missing_flag",
+      "vehicle_condition",
+      "multiple_deliveries_imp",
+      "is_festival",
+      "traffic_density_ordinal_imp",
+      "is_adverse_weather",
+      "weather_clean_imp_Cloudy",
+      "weather_clean_imp_Fog",
+      "weather_clean_imp_Sandstorms",
+      "weather_clean_imp_Stormy",
+      "weather_clean_imp_Sunny",
+      "weather_clean_imp_Windy",
+      "traffic_density_clean_High",
+      "traffic_density_clean_Jam",
+      "traffic_density_clean_Low",
+      "traffic_density_clean_Medium",
+      "type_of_order_clean_Buffet",
+      "type_of_order_clean_Drinks",
+      "type_of_order_clean_Meal",
+      "type_of_order_clean_Snack",
+      "type_of_vehicle_clean_bicycle",
+      "type_of_vehicle_clean_electric_scooter",
+      "type_of_vehicle_clean_motorcycle",
+      "type_of_vehicle_clean_scooter",
+      "city_type_clean_imp_Metropolitian",
+      "city_type_clean_imp_Semi-Urban",
+      "city_type_clean_imp_Urban",
+      "city_code_AGR",
+      "city_code_ALH",
+      "city_code_AURG",
+      "city_code_BANG",
+      "city_code_BHP",
+      "city_code_CHEN",
+      "city_code_COIMB",
+      "city_code_DEH",
+      "city_code_GOA",
+      "city_code_HYD",
+      "city_code_INDO",
+      "city_code_JAP",
+      "city_code_KNP",
+      "city_code_KOC",
+      "city_code_KOL",
+      "city_code_LUDH",
+      "city_code_MUM",
+      "city_code_MYS",
+      "city_code_PUNE",
+      "city_code_RANCHI",
+      "city_code_SUR",
+      "city_code_VAD"
+    ],
+    "source_checkpoint_sha256": "f1f94fbcc932f3519aaafcff7dc99d65b7951c0240730e54c320259152bbebdf",
+    "validation_metrics_min": {
+      "all_validation_descriptive": {
+        "mae_min": 3.1428400105847487,
+        "rmse_min": 3.905969622745767,
+        "median_absolute_error_min": 2.742486943251812
+      },
+      "model_selection": {
+        "mae_min": 3.1725834746282136,
+        "rmse_min": 3.9320943971729907,
+        "median_absolute_error_min": 2.7939225849262996
+      },
+      "fusion_calibration": {
+        "mae_min": 3.077069476689172,
+        "rmse_min": 3.847571202618295,
+        "median_absolute_error_min": 2.643647408825128
+      }
+    },
+    "baseline_metrics_min": {
+      "type": "training-set median",
+      "prediction_min": 26.0,
+      "metrics_all_validation": {
+        "mae_min": 7.536984471531141,
+        "rmse_min": 9.372132499627966,
+        "median_absolute_error_min": 7.0
+      },
+      "metrics_model_selection": {
+        "mae_min": 7.562803103782735,
+        "rmse_min": 9.399359719820282,
+        "median_absolute_error_min": 7.0
+      },
+      "metrics_fusion_calibration": {
+        "mae_min": 7.479892761394102,
+        "rmse_min": 9.311643378741941,
+        "median_absolute_error_min": 7.0
+      }
+    }
+  },
+  "data_provenance": {
+    "source_commit": "7ffb99e85e01f775772783c472c9d24f39f9d868",
+    "canonical_source_csv_sha256": "4baa699e1c09d286f06790010a8c0b284ed3376cbde7e346e19d0ded16a240e3",
+    "worktree_source_csv_sha256_crlf": "d293b6fc7157aef30fb34301216a3432ec895d407ce2ea9edddf942b416cdde1",
+    "gbdt_parquet_sha256": "bd03b47c3d3e23050329cefc69d752aad607031cacdb9696151d237e3534a627",
+    "split_manifest_sha256": "10bee51eebac51bf68813a35a42b06adeb2e30588accdc582bbe9b0d8136c1bb",
+    "source_feature_schema_sha256": "a3b013ec731e5b6767f45a6c6a5d87c99cdffefe8a06976a02f46c97a966c7d5",
+    "test_metrics_included": false
+  },
+  "dependencies": {
+    "python": "3.12.10",
+    "numpy": "1.26.4",
+    "scikit_learn": "1.4.2",
+    "joblib": "1.6.0",
+    "inference_device": "CPU"
+  },
+  "preprocessing_availability": {
+    "artifact_included": "preprocessing_artifacts.json",
+    "artifact_sha256": "df20646f12b77cb9fb03bf831b3373e5f8c9f69d6e5f0c92c35bbd46c682f351",
+    "raw_record_feature_engineering_code_included": false,
+    "input_contract": "Caller supplies the committed 59 numeric GBDT features in exact schema order; the release does not include raw dataset files or the full raw-record preprocessing pipeline."
+  },
+  "synthetic_reference": {
+    "path": "reference_fixture.json",
+    "sha256": "fd6d7da8e3d8dd8191fde10a483ad72ef896feabe61be9ee1862add9d28dd806",
+    "rows": 3,
+    "expected_predictions_min": [
+      16.1660334406336,
+      45.00122079780686,
+      45.77053974629729
+    ]
+  },
+  "artifacts": {
+    "README.md": {
+      "path": "README.md",
+      "bytes": 2575,
+      "sha256": "837ce635b273cf651f05718f7ff8fdaab2a1ce502b8d4252e5f0ff36c3736859"
+    },
+    "feature_schema.json": {
+      "path": "feature_schema.json",
+      "bytes": 2681,
+      "sha256": "5743a95aadb02b0e6d1869316ded2b4c9da5bde04cc1737e46be56d6b2a4dcc9"
+    },
+    "model.joblib": {
+      "path": "model.joblib",
+      "bytes": 232302,
+      "sha256": "f1f94fbcc932f3519aaafcff7dc99d65b7951c0240730e54c320259152bbebdf"
+    },
+    "predictor.py": {
+      "path": "predictor.py",
+      "bytes": 7834,
+      "sha256": "e80f312d29320316a61114c24884e269069cbdb9baef8a7b1b4ec1ca183d67ff"
+    },
+    "preprocessing_artifacts.json": {
+      "path": "preprocessing_artifacts.json",
+      "bytes": 883,
+      "sha256": "df20646f12b77cb9fb03bf831b3373e5f8c9f69d6e5f0c92c35bbd46c682f351"
+    },
+    "reference_fixture.json": {
+      "path": "reference_fixture.json",
+      "bytes": 8288,
+      "sha256": "fd6d7da8e3d8dd8191fde10a483ad72ef896feabe61be9ee1862add9d28dd806"
+    },
+    "requirements.txt": {
+      "path": "requirements.txt",
+      "bytes": 51,
+      "sha256": "f276c15bb797a2af8b518bb0dd041d0cdb05441d50772414912ef36724e12463"
+    }
+  },
+  "loader_security": "predictor.py checks hard-coded model, schema, preprocessing, and fixture SHA-256 pins before joblib.load; archive consumers should also verify the external ZIP SHA-256 file."
+}

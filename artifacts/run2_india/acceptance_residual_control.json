@@ -1,0 +1,74 @@
+{
+  "all_validation_metrics_descriptive_only_min": {
+    "mae_min": 3.142621420000587,
+    "median_absolute_error_min": 2.7481917910303366,
+    "rmse_min": 3.905775377323222
+  },
+  "calibration_couriers": 58,
+  "calibration_metrics_diagnostic_only_min": {
+    "mae_min": 3.077200240848379,
+    "median_absolute_error_min": 2.654299833235882,
+    "rmse_min": 3.8473705650594465
+  },
+  "calibration_rows": 1865,
+  "checkpoint_sha256": "5203fe9844a9721cfed1f26411a32bb0ebd872cafa8f64e661c73c2afc8189e2",
+  "control_manifest_sha256": "423acbc6f53545dc63a33539a60d063be8a261488e56d144250470c9c6046c45",
+  "limitations": [
+    "control is not a VQC and demonstrates no quantum improvement",
+    "test evaluation remains held"
+  ],
+  "model_selection_metrics_recomputed_min": {
+    "gbdt_only": {
+      "mae_min": 3.1725834746282136,
+      "median_absolute_error_min": 2.7939225849262996,
+      "rmse_min": 3.9320943971729907
+    },
+    "ridge_candidates": [
+      {
+        "alpha": 0.01,
+        "model_selection_metrics": {
+          "mae_min": 3.172206895053659,
+          "median_absolute_error_min": 2.796162762952937,
+          "rmse_min": 3.9319029662576477
+        },
+        "model_selection_rows": 4124
+      },
+      {
+        "alpha": 1.0,
+        "model_selection_metrics": {
+          "mae_min": 3.1722073409050173,
+          "median_absolute_error_min": 2.79615613426426,
+          "rmse_min": 3.9319030423580674
+        },
+        "model_selection_rows": 4124
+      },
+      {
+        "alpha": 100.0,
+        "model_selection_metrics": {
+          "mae_min": 3.172247840019592,
+          "median_absolute_error_min": 2.7959103695721454,
+          "rmse_min": 3.9319103540105265
+        },
+        "model_selection_rows": 4124
+      }
+    ],
+    "selected_ridge": {
+      "mae_min": 3.172206895053659,
+      "median_absolute_error_min": 2.796162762952937,
+      "rmse_min": 3.9319029662576477
+    }
+  },
+  "saved_validation_correction_max_abs_error_min": 0.0,
+  "saved_validation_prediction_max_abs_error_min": 0.0,
+  "scope": "independent pretest audit of frozen classical residual control using train OOF and validation only",
+  "selected_alpha_by_independent_selection_only_recompute": 0.01,
+  "selection_couriers": 117,
+  "selection_rows": 4124,
+  "status": "PASS",
+  "status_is_experimental_not_activated": true,
+  "test_targets_read": false,
+  "training_oof_residual_target_sha256": "b09edc730da62e8f6be33f08d5464d4cb2b4efaf728fcd0bf6033046d7f4b651",
+  "training_record_ids_sha256": "7daef6863a2490a57ffe02a67baaad25ba3df4c8732fb7184c6ec8ed65207e9b",
+  "training_rows": 29592,
+  "validation_predictions_sha256": "3a0b20e1c59c7a71d986e574309acc1f13cf854c6b73bbd0bba639928cc57b69"
+}

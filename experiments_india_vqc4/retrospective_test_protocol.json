@@ -1,0 +1,46 @@
+{
+  "protocol": "india_eta_vqc4_retrospective_test_v1",
+  "created_utc": "2026-10-29",
+  "test_status": "previously exposed by prior 2Q test evaluation; 4Q acceptance also materialized test feature columns through an ignored Parquet row filter, without targets; not pristine or unseen",
+  "test_partition": {
+    "source_split": "data/split_manifest.json",
+    "expected_rows": 5941,
+    "expected_courier_groups": 176,
+    "scoring_count": 1,
+    "purpose": "qualified retrospective descriptive evaluation only; no model, architecture, or fusion selection"
+  },
+  "freeze_gate_before_read": [
+    "baseline60 checkpoint SHA-256 and extended76 checkpoint SHA-256 are recorded",
+    "run manifest binds the exact circuit and trainer source SHA-256 values",
+    "development-only architecture choice and operational fusion policy are recorded",
+    "policy is fixed before test prediction and uses no test outcomes",
+    "the qualified prior-exposure disclosure accompanies all reported test metrics"
+  ],
+  "rows_and_metrics": {
+    "identity_key": ["delivery_record_id", "courier_id", "split_partition"],
+    "required_split_value": "test",
+    "methods": [
+      "frozen_histgradientboosting_baseline",
+      "frozen_ridge_residual_control",
+      "baseline60_candidate_diagnostic",
+      "extended76_candidate_diagnostic",
+      "development_frozen_operational_policy"
+    ],
+    "metrics": ["MAE_minutes", "RMSE_minutes", "median_absolute_error_minutes"],
+    "identity_requirements": "all methods use the same 5,941 unique test keys in the same order; prediction logs bind each method to the keys",
+    "tuning_after_scoring": false
+  },
+  "interpretation": {
+    "may_claim_pristine_holdout": false,
+    "may_claim_unseen_test": false,
+    "may_use_test_to_change_policy": false,
+    "report_label": "retrospective evaluation on previously exposed test partition",
+    "pretest_feature_access_incident": {
+      "occurred": true,
+      "test_feature_rows_materialized": 5941,
+      "test_targets_or_synthetic_labels_read": false,
+      "test_features_used_for_selection_or_metrics": false,
+      "cause": "fastparquet read_parquet filters silently returned all source rows during a feature-only cross-source validation; the audit block was removed"
+    }
+  }
+}

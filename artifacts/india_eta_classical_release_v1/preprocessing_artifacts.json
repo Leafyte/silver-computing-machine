@@ -1,0 +1,35 @@
+{
+  "pipeline_version": "1.0.0",
+  "random_seed": 42,
+  "imputation": {
+    "delivery_person_age_median": 30.0,
+    "delivery_person_ratings_median": 4.7,
+    "order_to_pickup_min_median": 10.0,
+    "multiple_deliveries_median": 1.0,
+    "weather_clean_mode": "Fog",
+    "traffic_density_ordinal_mode": 0.0,
+    "traffic_density_clean_mode": "Low",
+    "city_type_clean_mode": "Metropolitian",
+    "festival_clean_mode": "No"
+  },
+  "scaling": {
+    "haversine_distance_min": 1.4650674052309467,
+    "haversine_distance_max": 20.969489380087342,
+    "delivery_duration_min": 10.0,
+    "delivery_duration_max": 54.0,
+    "vqc_distance_scale_range": [
+      0.0,
+      1.0
+    ],
+    "vqc_congestion_scale_range": [
+      0.0,
+      1.0
+    ]
+  },
+  "traffic_ordinal_mapping": {
+    "Low": 0.0,
+    "Medium": 1.0,
+    "High": 2.0,
+    "Jam": 3.0
+  }
+}

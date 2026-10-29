@@ -1,0 +1,274 @@
+{
+  "status": "trained",
+  "run_type": "bounded committed-data reconstruction",
+  "data_provenance": {
+    "source_commit": "7ffb99e85e01f775772783c472c9d24f39f9d868",
+    "worktree_head": "40bd7fad0166b35b40bbc116e997cbac474e2c22",
+    "source_csv": {
+      "path": "data/train.csv",
+      "worktree_sha256_crlf": "d293b6fc7157aef30fb34301216a3432ec895d407ce2ea9edddf942b416cdde1",
+      "canonical_git_sha256_lf": "4baa699e1c09d286f06790010a8c0b284ed3376cbde7e346e19d0ded16a240e3",
+      "expected_git_sha256_lf": "4baa699e1c09d286f06790010a8c0b284ed3376cbde7e346e19d0ded16a240e3",
+      "bytes": 7772212,
+      "crlf_count": 45594,
+      "normalization": "CRLF-to-LF only; byte-level normalization equals the committed Git blob"
+    },
+    "files_sha256": {
+      "source_csv": "d293b6fc7157aef30fb34301216a3432ec895d407ce2ea9edddf942b416cdde1",
+      "gbdt_parquet": "bd03b47c3d3e23050329cefc69d752aad607031cacdb9696151d237e3534a627",
+      "vqc_parquet": "a633677472e6e0e874c2797a66eb7b011e3a307285553f8fa00c6ee664df4b4e",
+      "clean_parquet": "9034d24389c7162f0ea0e275e5b4cc9ec16f04bba75c0f239dbcef8535a1f7c1"
+    },
+    "schema_sha256": "a32f3c4491347be51c10a70d00d5bcc24dbb1d1db11a9a0105e40d809e8bed51",
+    "split_manifest_sha256": "10bee51eebac51bf68813a35a42b06adeb2e30588accdc582bbe9b0d8136c1bb",
+    "preprocessing_artifacts_sha256": "df20646f12b77cb9fb03bf831b3373e5f8c9f69d6e5f0c92c35bbd46c682f351",
+    "gbdt_feature_count": 59,
+    "target": "delivery_duration_min",
+    "target_unit": "minutes",
+    "split_counts_expected": {
+      "train": 29592,
+      "val": 5989,
+      "test": 5941
+    },
+    "split_counts_loaded_train_val": {
+      "train": 29592,
+      "val": 5989
+    },
+    "courier_counts_train_val": {
+      "train": 819,
+      "val": 175
+    },
+    "validation_role_counts": {
+      "model_selection": 4124,
+      "fusion_calibration": 1865
+    },
+    "validation_role_courier_counts": {
+      "fusion_calibration": 58,
+      "model_selection": 117
+    },
+    "validation_role_algorithm": "Sort unique validation courier IDs by (SHA256(b'india-eta-val-role-v1|20261029|' + courier_id UTF-8) raw digest bytes, courier_id); first floor(N/3) groups=fusion_calibration, remaining groups=model_selection",
+    "validation_role_assignment_sha256": "631dbb800d8759858ccbed05345d95549940782fa8c81390e9a4affeb0ba6425",
+    "prediction_join_key": [
+      "ID",
+      "Delivery_person_ID",
+      "split_partition"
+    ],
+    "vqc_features": [
+      "vqc_x0_distance",
+      "vqc_x1_congestion",
+      "vqc_x2_multidelivery",
+      "vqc_x3_preptime"
+    ],
+    "test_partition": "not loaded into DataBundle, not scored, not written to prediction artifacts"
+  },
+  "estimator_identity": "sklearn.ensemble.HistGradientBoostingRegressor",
+  "sklearn_version": "1.4.2",
+  "numpy_version": "1.26.4",
+  "pandas_version": "2.2.3",
+  "python_version": "3.12.10",
+  "fastparquet_version": "2024.11.0",
+  "training_code_sha256": "13ce9314a37e450d8e756eef063f3f39eb04c318761206081307d9b52442e620",
+  "existing_checkpoint_search": "No valid India ETA regression checkpoint found in scoped local artifacts; this is an authorized bounded reconstruction.",
+  "model_selection": {
+    "criterion": "minimum validation model_selection MAE",
+    "trials": [
+      {
+        "config": {
+          "name": "hgb_small",
+          "max_iter": 100,
+          "learning_rate": 0.08,
+          "max_leaf_nodes": 15,
+          "min_samples_leaf": 30,
+          "l2_regularization": 1.0
+        },
+        "selection_metrics": {
+          "mae_min": 3.2600135864244377,
+          "rmse_min": 4.055276122288983,
+          "median_absolute_error_min": 2.8538697436591107
+        },
+        "selection_rows": 4124,
+        "calibration_rows_not_used_for_selection": 1865,
+        "training_seconds": 0.2896455000154674,
+        "complexity": {
+          "iterations_fitted": 100,
+          "trees_per_iteration": 1,
+          "total_trees": 100,
+          "total_leaf_nodes": 1500,
+          "feature_count": 59
+        }
+      },
+      {
+        "config": {
+          "name": "hgb_medium",
+          "max_iter": 160,
+          "learning_rate": 0.06,
+          "max_leaf_nodes": 31,
+          "min_samples_leaf": 25,
+          "l2_regularization": 1.0
+        },
+        "selection_metrics": {
+          "mae_min": 3.1725834746282136,
+          "rmse_min": 3.9320943971729907,
+          "median_absolute_error_min": 2.7939225849262996
+        },
+        "selection_rows": 4124,
+        "calibration_rows_not_used_for_selection": 1865,
+        "training_seconds": 0.5180184000637382,
+        "complexity": {
+          "iterations_fitted": 160,
+          "trees_per_iteration": 1,
+          "total_trees": 160,
+          "total_leaf_nodes": 4960,
+          "feature_count": 59
+        }
+      },
+      {
+        "config": {
+          "name": "hgb_regularized",
+          "max_iter": 140,
+          "learning_rate": 0.06,
+          "max_leaf_nodes": 15,
+          "min_samples_leaf": 50,
+          "l2_regularization": 4.0
+        },
+        "selection_metrics": {
+          "mae_min": 3.2787015953906558,
+          "rmse_min": 4.069632675059165,
+          "median_absolute_error_min": 2.8740627657765643
+        },
+        "selection_rows": 4124,
+        "calibration_rows_not_used_for_selection": 1865,
+        "training_seconds": 0.3060022999998182,
+        "complexity": {
+          "iterations_fitted": 140,
+          "trees_per_iteration": 1,
+          "total_trees": 140,
+          "total_leaf_nodes": 2100,
+          "feature_count": 59
+        }
+      }
+    ],
+    "chosen_config": {
+      "name": "hgb_medium",
+      "max_iter": 160,
+      "learning_rate": 0.06,
+      "max_leaf_nodes": 31,
+      "min_samples_leaf": 25,
+      "l2_regularization": 1.0
+    }
+  },
+  "training_rows": 29592,
+  "training_courier_groups": 819,
+  "training_record_ids_sha256": "7daef6863a2490a57ffe02a67baaad25ba3df4c8732fb7184c6ec8ed65207e9b",
+  "training_courier_ids_sha256": "13db2daa6d2b5c0bdacf9f10b619dbf100b6b3225a52a4dec8ab53ddf7a7a9ec",
+  "validation_rows": 5989,
+  "validation_courier_groups": 175,
+  "validation_role_counts_rows": {
+    "model_selection": 4124,
+    "fusion_calibration": 1865
+  },
+  "validation_role_courier_counts": {
+    "fusion_calibration": 58,
+    "model_selection": 117
+  },
+  "validation_role_algorithm": "Sort unique validation courier IDs by (SHA256(b'india-eta-val-role-v1|20261029|' + courier_id UTF-8) raw digest bytes, courier_id); first floor(N/3) groups=fusion_calibration, remaining groups=model_selection",
+  "validation_role_assignment_sha256": "631dbb800d8759858ccbed05345d95549940782fa8c81390e9a4affeb0ba6425",
+  "baseline": {
+    "type": "training-set median",
+    "prediction_min": 26.0,
+    "metrics_all_validation": {
+      "mae_min": 7.536984471531141,
+      "rmse_min": 9.372132499627966,
+      "median_absolute_error_min": 7.0
+    },
+    "metrics_model_selection": {
+      "mae_min": 7.562803103782735,
+      "rmse_min": 9.399359719820282,
+      "median_absolute_error_min": 7.0
+    },
+    "metrics_fusion_calibration": {
+      "mae_min": 7.479892761394102,
+      "rmse_min": 9.311643378741941,
+      "median_absolute_error_min": 7.0
+    }
+  },
+  "frozen_model_metrics": {
+    "all_validation_descriptive": {
+      "mae_min": 3.1428400105847487,
+      "rmse_min": 3.905969622745767,
+      "median_absolute_error_min": 2.742486943251812
+    },
+    "model_selection": {
+      "mae_min": 3.1725834746282136,
+      "rmse_min": 3.9320943971729907,
+      "median_absolute_error_min": 2.7939225849262996
+    },
+    "fusion_calibration": {
+      "mae_min": 3.077069476689172,
+      "rmse_min": 3.847571202618295,
+      "median_absolute_error_min": 2.643647408825128
+    }
+  },
+  "cpu_training_seconds": {
+    "selection_full_train_runs": [
+      0.2896455000154674,
+      0.5180184000637382,
+      0.3060022999998182
+    ],
+    "oof_fold_runs": [
+      0.45664669992402196,
+      0.5548404001165181,
+      0.5315926999319345,
+      0.49737030011601746,
+      0.5175356001127511
+    ],
+    "final_refit_full_train": 0.5571304000914097
+  },
+  "inference_latency": {
+    "measurement": "31 single-row predict calls; median elapsed time",
+    "median_microseconds_per_row": 756.1000529676676,
+    "measured_on": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD"
+  },
+  "model_complexity": {
+    "iterations_fitted": 160,
+    "trees_per_iteration": 1,
+    "total_trees": 160,
+    "total_leaf_nodes": 4960,
+    "feature_count": 59
+  },
+  "prediction_artifacts": {
+    "oof": {
+      "path": "artifacts\\india_eta_recovery\\oof_predictions.parquet",
+      "rows": 29592,
+      "sha256": "78a5461c89387e8630421008b92dfffcc84864e9e25bea7476eefa2c8d48032f"
+    },
+    "validation": {
+      "path": "artifacts\\india_eta_recovery\\validation_predictions.parquet",
+      "rows": 5989,
+      "sha256": "3d9485c513e6a997516baea1a4a6c497c6021240f9cbf64d524037e9e8753f1a"
+    },
+    "oof_fold_manifest": {
+      "path": "artifacts\\india_eta_recovery\\oof_fold_manifest.json",
+      "sha256": "f8d283f3bd854984ee4406fc339786399ce94246b6815765fc63f5c00c0609d7"
+    },
+    "validation_role_assignment": {
+      "path": "artifacts\\india_eta_recovery\\validation_role_assignment.json",
+      "sha256": "c13704aa421e4d05138640c60c73dc734afece75610c1aaf43b2c884524640ef"
+    }
+  },
+  "model_artifacts": {
+    "model": {
+      "path": "artifacts\\india_eta_recovery\\gbdt\\india_eta_hgb_regressor.joblib",
+      "sha256": "f1f94fbcc932f3519aaafcff7dc99d65b7951c0240730e54c320259152bbebdf"
+    },
+    "feature_schema": {
+      "path": "artifacts\\india_eta_recovery\\gbdt\\feature_schema.json",
+      "sha256": "a3b013ec731e5b6767f45a6c6a5d87c99cdffefe8a06976a02f46c97a966c7d5"
+    },
+    "preprocessing_artifacts": {
+      "path": "artifacts\\india_eta_recovery\\gbdt\\preprocessing_artifacts.json",
+      "sha256": "df20646f12b77cb9fb03bf831b3373e5f8c9f69d6e5f0c92c35bbd46c682f351"
+    }
+  },
+  "sealed_test": "not loaded by DataBundle, not used in fitting, selection, calibration, or written to artifacts"
+}
