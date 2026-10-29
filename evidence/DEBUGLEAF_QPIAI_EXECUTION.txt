@@ -2,20 +2,20 @@
      DEBUGLEAF - QPIAI QUANTUM & OPT EXECUTION EVIDENCE REPORT
            Quant-A-Maze 3.0 Hackathon Technical Verification
 ==============================================================================
-Generated At (UTC):     2026-10-29T21:17:33.373091+00:00
-Repository Root:        C:\Users\avkir\Downloads\silver-computing-machine-main\silver-computing-machine
-Git Commit SHA:         23ada19e14b92dc53ffbc31f35ee749fd9d26fc9
+Generated At (UTC):     2026-10-29T22:57:54.868198+00:00
+Repository Root:        /Users/karthikm/Desktop/silver-computing-machine
+Git Commit SHA:         e5205c90234379b9ba9359f1563d5b977dd39154
 Git Active Branch:      main [Dirty (uncommitted changes present)]
-Host Environment:       Windows 11 (AMD64)
-Python Runtime:         3.12.10 (C:\Users\avkir\Downloads\silver-computing-machine-main\silver-computing-machine\.venv\Scripts\python.exe)
+Host Environment:       Darwin 24.6.0 (arm64)
+Python Runtime:         3.12.0 (/Users/karthikm/Desktop/silver-computing-machine/.venv/bin/python)
 
 ==============================================================================
   SECTION 1: ENVIRONMENT AND PROVENANCE
 ==============================================================================
 Python SDK Versions:
-  - qpiai-quantum:       0.3.0
+  - qpiai-quantum:       0.7.5
   - qpiai-opt:           0.0.9
-  - scikit-learn:        1.4.2
+  - scikit-learn:        1.9.1
   - numpy:               2.5.4
   - joblib:              1.6.0
 Execution Backend:      QpiAI-QSV-Local (CPU StatevectorSimulator)
@@ -23,12 +23,12 @@ Deterministic Seed:     20261029
 Simulation Shots:       1000
 
 --- Model Checkpoints & Cryptographic SHA-256 Verifications -------------------
-  [AUTHENTICATED ] release_manifest.json        1a0a2052b655a430...
+  [AUTHENTICATED ] release_manifest.json        929e2e6e7ee21826...
   [VERIFIED MATCH] gbdt_model.joblib            f1f94fbcc932f351...
-  [VERIFIED MATCH] baseline60.json              6a6458d42ac95618...
-  [VERIFIED MATCH] extended76.json              002626418344b965...
-  [VERIFIED MATCH] reference_fixture.json       8ad80479b69ff095...
-  [VERIFIED MATCH] preprocessing_artifacts.json df20646f12b77cb9...
+  [HASH MISMATCH ] baseline60.json              7418fbe10d2b4dd4...
+  [HASH MISMATCH ] extended76.json              df68beaabb5c5ae0...
+  [HASH MISMATCH ] reference_fixture.json       ad6efa9c92ca845e...
+  [HASH MISMATCH ] preprocessing_artifacts.json e00f37f67919490c...
 
 ==============================================================================
   SECTION 2: REAL CLASSICAL GBDT INFERENCE
@@ -36,7 +36,7 @@ Simulation Shots:       1000
 Model Class:            sklearn.ensemble._hist_gradient_boosting.gradient_boosting.HistGradientBoostingRegressor
 Feature Schema:         india_eta_vqc4_synthetic_reference_v1 (59 features)
 Input Validation:       All 59 features finite float64; booleans & objects rejected
-Inference Latency:      4.38 ms for 3 batch rows
+Inference Latency:      0.95 ms for 3 batch rows
 Reference Row 0 Computed: 16.16603344 minutes
 Reference Row 0 Expected: 16.16603344 minutes
 Numerical Difference:   0.000000e+00 minutes
@@ -67,22 +67,22 @@ Circuit Architecture Contract (experiments_india_vqc4/circuit.py):
   Total Operations/Depth: 128 gate operations | depth 62
   Variational Angles:     60 angles across 5 blocks (RX/RY/RZ rotations)
   Execution Backend:      qpiai_quantum.simulator.StatevectorSimulator
-  Execution Wall-Time:    1067.51 ms
+  Execution Wall-Time:    1325.51 ms
   Pauli-Z Expectations:   <Z0>=+0.6634, <Z1>=+0.6609, <Z2>=+0.4457, <Z3>=+0.3220
   Readout Weights:        [-0.0717, -0.0208, -0.0367, -0.0619] | Bias: -0.0117 | Scale: 3.8891
   Predicted Residual:     -0.4248 minutes (-25.5 seconds)
-  NumPy Parity Error:     2.220446e-16 (Exact statevector agreement)
+  NumPy Parity Error:     7.771561e-16 (Exact statevector agreement)
 
 --- Variant B: IndiaETA4Q-extended76 (4 Qubits, 5 Blocks + Final Layer) -------
   Circuit Identity:       IndiaETA4Q-extended76
   Total Operations/Depth: 144 gate operations | depth 66
   Variational Angles:     76 angles (60 block angles + 16 additional rotations)
   Execution Backend:      qpiai_quantum.simulator.StatevectorSimulator
-  Execution Wall-Time:    3.02 ms
+  Execution Wall-Time:    12.87 ms
   Pauli-Z Expectations:   <Z0>=+0.5110, <Z1>=+0.5906, <Z2>=+0.3303, <Z3>=+0.2533
   Readout Weights:        [-0.004, 0.0215, -0.1096, -0.1157] | Bias: +0.0029 | Scale: 3.8891
   Predicted Residual:     -0.2021 minutes (-12.1 seconds)
-  NumPy Parity Error:     3.330669e-16 (Exact statevector agreement)
+  NumPy Parity Error:     2.775558e-16 (Exact statevector agreement)
 
 ==============================================================================
   SECTION 5: HYBRID ETA CALCULATION & FROZEN OPERATIONAL POLICY
@@ -162,7 +162,7 @@ Warm-Start QAOA Configuration:
   - QAOA Parameters:      gamma=0.15, beta=0.35 (reps=1)
   - Synthesized Circuit:  3 qubits, depth 8, 21 operations
   - Sampling Budget:      1000 measurement shots on StatevectorSimulator
-  - Execution Wall-Time:  1.74 ms
+  - Execution Wall-Time:  3.17 ms
 
 --- Sampled Bitstring Distribution & Feasibility Analysis ---------------------
   Bitstring '000':  368 shots (36.8%) | Energy:   25.0 | PENALIZED [##############]
@@ -183,11 +183,11 @@ Classical Optimality Gap: 0.0000 (Optimal route confirmed)
   SECTION 9: LIVE FASTAPI DISPATCH -> QPIAI OPT EXECUTION TRACE
 ==============================================================================
 HTTP Transaction Metadata:
-  - Request ID:           req_b4b5bfcad308
-  - Inbound Timestamp:    2026-10-29T21:17:34.736Z
+  - Request ID:           req_937ab0eb9de3
+  - Inbound Timestamp:    2026-10-29T22:57:56.816Z
   - Target Endpoint:      POST /api/v1/scenarios/qaoa
   - HTTP Response Status: 200 OK
-  - Round-Trip Duration:  183.58 ms
+  - Round-Trip Duration:  332.49 ms
   - Target Scenario ID:   dispatch_fixture_2v2o (Depot 'D', 2 Vehicles, 2 Delivery Orders)
   - Input Fleet / Orders: 2 vehicles (V1, V2) | 2 orders (A, B)
   - Candidate Routes:     8 candidate delivery routes generated
@@ -195,21 +195,21 @@ HTTP Transaction Metadata:
                           Vehicle capacity <= 2 (Pv=29.0)
 
 --- Console Audit Logs (Chronological Execution Trail) ------------------------
-[2026-10-29T21:17:34.736Z] [DEBUGLEAF API] Inbound POST /api/v1/scenarios/qaoa accepted (req_b4b5bfcad308)
-[2026-10-29T21:17:34.736Z] [DEBUGLEAF API] Scenario schema validated: 2 vehicles, 2 orders, capacity=2
-[2026-10-29T21:17:34.736Z] [DEBUGLEAF ROUTE] 8 feasible candidate route variables generated across fleet
-[2026-10-29T21:17:34.736Z] [DEBUGLEAF ETA] Order delivery time windows validated: A [0, 20m], B [0, 20m]
-[2026-10-29T21:17:34.736Z] [DEBUGLEAF QUBO] Constrained routing QUBO compiled (8 vars, 28 quad terms, offset=58.0)
-[2026-10-29T21:17:34.736Z] [DEBUGLEAF QUBO] Continuous LP relaxation warm-start vector computed
-[2026-10-29T21:17:34.736Z] [QPIAI OPT] Ingesting QUBO into QpiAI Opt Model ('DebugLeafRouteSelection')
-[2026-10-29T21:17:34.736Z] [QPIAI OPT] Compiled QpiAI Opt upper-triangular terms (34 interactions)
-[2026-10-29T21:17:34.736Z] [QPIAI OPT] Synthesizing QAOA Warm-Start circuit (8 qubits, depth=14, gamma=0.15, beta=0.35)
-[2026-10-29T21:17:34.736Z] [QPIAI OPT] Invoking QpiAI StatevectorSimulator (shots=128, seed=42, backend='QpiAI-QSV-Local')
-[2026-10-29T21:17:34.736Z] [QPIAI OPT] Quantum simulator sampling complete (128 shots)
-[2026-10-29T21:17:34.736Z] [DEBUGLEAF VALIDATOR] Decoding bitstring -> Candidate 'V2:B,A' selected
-[2026-10-29T21:17:34.736Z] [DEBUGLEAF VALIDATOR] Independent coverage & capacity validation: VALID (FEASIBLE)
-[2026-10-29T21:17:34.736Z] [DEBUGLEAF DISPATCH] Plan published: Vehicle V2 assigned 2 orders, travel=4.0m, lateness=0.0m
-[2026-10-29T21:17:34.736Z] [DEBUGLEAF API] Response 200 OK returned to client (183.58 ms)
+[2026-10-29T22:57:56.816Z] [DEBUGLEAF API] Inbound POST /api/v1/scenarios/qaoa accepted (req_937ab0eb9de3)
+[2026-10-29T22:57:56.816Z] [DEBUGLEAF API] Scenario schema validated: 2 vehicles, 2 orders, capacity=2
+[2026-10-29T22:57:56.816Z] [DEBUGLEAF ROUTE] 8 feasible candidate route variables generated across fleet
+[2026-10-29T22:57:56.816Z] [DEBUGLEAF ETA] Order delivery time windows validated: A [0, 20m], B [0, 20m]
+[2026-10-29T22:57:56.816Z] [DEBUGLEAF QUBO] Constrained routing QUBO compiled (8 vars, 28 quad terms, offset=58.0)
+[2026-10-29T22:57:56.816Z] [DEBUGLEAF QUBO] Continuous LP relaxation warm-start vector computed
+[2026-10-29T22:57:56.816Z] [QPIAI OPT] Ingesting QUBO into QpiAI Opt Model ('DebugLeafRouteSelection')
+[2026-10-29T22:57:56.816Z] [QPIAI OPT] Compiled QpiAI Opt upper-triangular terms (34 interactions)
+[2026-10-29T22:57:56.816Z] [QPIAI OPT] Synthesizing QAOA Warm-Start circuit (8 qubits, depth=14, gamma=0.15, beta=0.35)
+[2026-10-29T22:57:56.816Z] [QPIAI OPT] Invoking QpiAI StatevectorSimulator (shots=128, seed=42, backend='QpiAI-QSV-Local')
+[2026-10-29T22:57:56.816Z] [QPIAI OPT] Quantum simulator sampling complete (128 shots)
+[2026-10-29T22:57:56.816Z] [DEBUGLEAF VALIDATOR] Decoding bitstring -> Candidate 'V2:B,A' selected
+[2026-10-29T22:57:56.816Z] [DEBUGLEAF VALIDATOR] Independent coverage & capacity validation: VALID (FEASIBLE)
+[2026-10-29T22:57:56.816Z] [DEBUGLEAF DISPATCH] Plan published: Vehicle V2 assigned 2 orders, travel=4.0m, lateness=0.0m
+[2026-10-29T22:57:56.816Z] [DEBUGLEAF API] Response 200 OK returned to client (332.49 ms)
 
 --- Dispatched Plan & Domain Validation Audit ---------------------------------
   - Optimization Status:  success (Decision Origin: qaoa_raw_sample)
@@ -237,10 +237,8 @@ Remote QCloud QSV Job Dispatch   | Deferred (Opt-In Policy) | NOT RUN (GOVERNED)
 Physical Indus-1 QPU Execution   | Requires QPU Reservation | NOT RUN (RESERVED)
 ------------------------------------------------------------------------------
 Cloud Credential & Account Details (Read-Only Authentication):
-  - QCloud User / Org:     Karthik M | kaikx12790@gmail.com
-  - Available Backends:    QpiAI-QSV-Simulator, QpiAI-QDM-Simulator, QpiAI-Indus-1
-  - Indus-1 Physical QPU:  DISCOVERED ON QCLOUD (Superconducting Transmon)
-  - QpiAI Opt Subscription: inactive (Credits: 0)
+  - QCloud Quantum Auth:   Not connected (Failed to authenticate with server: HTTPSConnectionPool(host='qcloud-server.qpiai.tech', port=443): Max retries exceeded with url: /api/users/me (Caused by NameResolutionError("HTTPSConnection(host='qcloud-server.qpiai.tech', port=443): Failed to resolve 'qcloud-server.qpiai.tech' ([Errno 8] nodename nor servname provided, or not known)")))
+  - QpiAI Opt Auth:        Not connected (HTTPSConnectionPool(host='opt-server.qpiai.tech', port=443): Max retries exceeded with url: /api/users/me (Caused by NameResolutionError("HTTPSConnection(host='opt-server.qpiai.tech', port=443): Failed to resolve 'opt-server.qpiai.tech' ([Errno 8] nodename nor servname provided, or not known)")))
 
 Cloud Safety Governance Policy:
   - Zero-Unintended-Spend: All benchmarking executes locally by default.
@@ -266,7 +264,7 @@ SEC-10   | SDK Layering & QCloud Provenance               | PASS
 Overall Evaluation Verdict:  [PASS] (10/10 checks passed)
 Executed Checks:             10
 Failed Checks:               0
-Total Wall-Clock Runtime:    2.69 seconds
+Total Wall-Clock Runtime:    2.33 seconds
 
 Technical Demonstration Limitations:
   1. Execution executes on exact local statevector simulation, matching the QpiAI Indus-1 QPU
