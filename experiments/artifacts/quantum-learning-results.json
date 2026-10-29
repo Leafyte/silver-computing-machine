@@ -61,8 +61,8 @@
   },
   "runtime": {
     "execution": "local CPU exact statevector; no vendor SDK invocation",
-    "platform": "Windows-11-10.0.26300-SP0",
-    "python": "3.12.14"
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.10"
   },
   "synthetic_oracle_test_cost": 2.4583333333333335,
   "test_metrics": {

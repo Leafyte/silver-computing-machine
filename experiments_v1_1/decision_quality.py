@@ -324,7 +324,7 @@ class NewtonGBDT:
         best_left: List[int] = []
         best_right: List[int] = []
 
-        for feat in (0, 1):
+        for feat in range(len(xs[0])):
             sorted_idx = sorted(indices, key=lambda i: xs[i][feat])
             g_left, h_left = 0.0, 0.0
             for pos in range(len(sorted_idx) - 1):
