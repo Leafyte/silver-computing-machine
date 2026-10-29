@@ -1,0 +1,18 @@
+{
+  "run_id": "luna_hgbr_recovery_20261029T131809Z_v5",
+  "attempt": 1,
+  "started_at_utc": "2026-10-29T13:42:23.986124+00:00",
+  "status": "aborted_before_metrics_persisted",
+  "release_manifest_sha256": "e8c8f679761018036f1ebe3eff3251ea44572fab7c766057625b7302b53ff189",
+  "evaluator_source_sha256_at_attempt": "32edfdae076e4b9646a28b9721d03087ee3121fa2d7600a5f8b26abdce60375e",
+  "failure": {
+    "type": "KeyError",
+    "message": "'reupload'",
+    "location": "experiments_india_qml/portable_release_v5.py: residuals[selected_arch]",
+    "cause": "bookkeeping alias used architecture name, while residual map keys are prefixed with quantum_"
+  },
+  "test_data_was_read": true,
+  "metrics_or_predictions_persisted": false,
+  "test_outcomes_inspected_or_used_for_selection": false,
+  "recovery": "code-only mapping correction; no fitting, parameter selection, or frozen artifact change"
+}

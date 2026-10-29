@@ -1,0 +1,38 @@
+{
+  "captured_at_utc": "2026-10-29T13:18:16.893599+00:00",
+  "columns_loaded": [
+    "ID",
+    "Delivery_person_ID",
+    "split_partition",
+    "is_model_eligible"
+  ],
+  "courier_intersection_counts": {
+    "train_test": 0,
+    "train_val": 0,
+    "val_test": 0
+  },
+  "dataset_path": "C:\\Users\\avkir\\Downloads\\silver-computing-machine-main\\trainingv3\\data\\indian_delivery_clean.parquet",
+  "dataset_sha256": "9034d24389c7162f0ea0e275e5b4cc9ec16f04bba75c0f239dbcef8535a1f7c1",
+  "eligible_row_ids_unique": true,
+  "eligible_rows": 41522,
+  "evidence_type": "row/group split integrity only; no duration or target columns loaded; no test scores or metric selection",
+  "group_disjoint": true,
+  "partitions": {
+    "test": {
+      "rows": 5941,
+      "unique_couriers": 176,
+      "unique_row_ids": 5941
+    },
+    "train": {
+      "rows": 29592,
+      "unique_couriers": 819,
+      "unique_row_ids": 29592
+    },
+    "val": {
+      "rows": 5989,
+      "unique_couriers": 175,
+      "unique_row_ids": 5989
+    }
+  },
+  "total_rows": 45593
+}

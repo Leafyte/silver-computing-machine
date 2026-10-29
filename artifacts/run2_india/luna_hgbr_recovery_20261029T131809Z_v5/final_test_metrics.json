@@ -1,0 +1,131 @@
+{
+  "evaluation_attempt": 2,
+  "prior_attempt_aborted_without_metrics": true,
+  "prior_attempt_evidence_path": "artifacts/run2_india/luna_hgbr_recovery_20261029T131809Z_v5/sealed_test_attempt1_aborted.json",
+  "evaluation_start_sentinel_path": ".runtime/run2/luna_hgbr_recovery_20261029T131809Z_v5/sealed_test_evaluation_retry.json",
+  "test_row_count": 5941,
+  "unique_test_ids": 5941,
+  "test_target_unit": "minutes",
+  "metrics": {
+    "classical_gbdt": {
+      "mae_minutes": 3.258761844559234,
+      "rmse_minutes": 4.11428180716019,
+      "median_absolute_error_minutes": 2.7764858627341056
+    },
+    "classical_plus_ridge": {
+      "mae_minutes": 3.259587210509638,
+      "rmse_minutes": 4.11441315716407,
+      "median_absolute_error_minutes": 2.7664144113477676
+    },
+    "quantum_one_block_hybrid": {
+      "mae_minutes": 3.258761844559234,
+      "rmse_minutes": 4.11428180716019,
+      "median_absolute_error_minutes": 2.7764858627341056
+    },
+    "quantum_one_block_selective": {
+      "mae_minutes": 3.258761844559234,
+      "rmse_minutes": 4.11428180716019,
+      "median_absolute_error_minutes": 2.7764858627341056
+    },
+    "quantum_reupload_hybrid": {
+      "mae_minutes": 3.2620141696657465,
+      "rmse_minutes": 4.117239131177362,
+      "median_absolute_error_minutes": 2.7725203521484616
+    },
+    "quantum_reupload_selective": {
+      "mae_minutes": 3.2603587665277614,
+      "rmse_minutes": 4.114836147204668,
+      "median_absolute_error_minutes": 2.774437978586466
+    },
+    "quantum_hybrid": {
+      "mae_minutes": 3.2620141696657465,
+      "rmse_minutes": 4.117239131177362,
+      "median_absolute_error_minutes": 2.7725203521484616
+    },
+    "selective_quantum": {
+      "mae_minutes": 3.2603587665277614,
+      "rmse_minutes": 4.114836147204668,
+      "median_absolute_error_minutes": 2.774437978586466
+    },
+    "alpha_zero_fallback": {
+      "mae_minutes": 3.258761844559234,
+      "rmse_minutes": 4.11428180716019,
+      "median_absolute_error_minutes": 2.7764858627341056
+    },
+    "operational_release": {
+      "mae_minutes": 3.258761844559234,
+      "rmse_minutes": 4.11428180716019,
+      "median_absolute_error_minutes": 2.7764858627341056
+    }
+  },
+  "residual_target_metrics": {
+    "classical_plus_ridge": {
+      "mae_minutes": 3.2596112487460274,
+      "rmse_minutes": 4.114421717563382,
+      "median_absolute_error_minutes": 2.768007287069746
+    },
+    "quantum_one_block": {
+      "mae_minutes": 3.260629537435375,
+      "rmse_minutes": 4.114189818455124,
+      "median_absolute_error_minutes": 2.787181662923354
+    },
+    "quantum_one_block_selective": {
+      "mae_minutes": 3.258761844559234,
+      "rmse_minutes": 4.11428180716019,
+      "median_absolute_error_minutes": 2.7764858627341056
+    },
+    "quantum_reupload": {
+      "mae_minutes": 3.262495680738531,
+      "rmse_minutes": 4.117725054710351,
+      "median_absolute_error_minutes": 2.7697321295068758
+    },
+    "quantum_reupload_selective": {
+      "mae_minutes": 3.260616804983311,
+      "rmse_minutes": 4.114994968897998,
+      "median_absolute_error_minutes": 2.7700735411850816
+    },
+    "selected_quantum": {
+      "mae_minutes": 3.262495680738531,
+      "rmse_minutes": 4.117725054710351,
+      "median_absolute_error_minutes": 2.7697321295068758
+    },
+    "selected_quantum_selective": {
+      "mae_minutes": 3.260616804983311,
+      "rmse_minutes": 4.114994968897998,
+      "median_absolute_error_minutes": 2.7700735411850816
+    }
+  },
+  "quantum_invocations": {
+    "one_block": 0,
+    "reupload": 3243
+  },
+  "quantum_invocation_rates": {
+    "one_block": 0.0,
+    "reupload": 0.5458676990405655
+  },
+  "selected_architecture": "reupload",
+  "selected_alpha": 0.0,
+  "validation_candidate_alpha": 0.9015612265845507,
+  "operational_release_policy": "alpha=0 GBDT fallback, selected before test because the candidate hybrid was slightly worse on full validation RMSE",
+  "selection_partition": "val",
+  "model_selection_source": "validation",
+  "evaluated_at_utc": "2026-10-29T13:43:33.364149+00:00",
+  "prediction_artifact": {
+    "path": ".runtime/run2/luna_hgbr_recovery_20261029T131809Z_v5/final_test_predictions.parquet",
+    "sha256": "ee92ecaa747db935e4a9349ac9337f65b4a6f1991b252fd737945310c2e19a85"
+  },
+  "quantum_execution_work": {
+    "implementation": "local NumPy statevector simulator; no QPU",
+    "all_row_candidate_diagnostic_examples_by_architecture": {
+      "one_block": 5941,
+      "reupload": 5941
+    },
+    "selective_reupload_candidate_examples": 3243,
+    "total_statevector_example_evaluations_in_scoring_run": 15125,
+    "deployment_policy_expected_invocations": {
+      "operational_alpha_zero": 0,
+      "selective_reupload_candidate": 3243
+    },
+    "note": "The scorer ran all-row candidate diagnostics for C and both architectures, then the input-gated path for D. The selective invocation rate is the frozen deployment policy rate, separate from total diagnostic simulator work."
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "version": "india-vqc-2feature-train-only-v1",
+  "fit_partition": "original train covariates only",
+  "features_order": [
+    "vqc_x0_distance",
+    "vqc_x1_congestion"
+  ],
+  "vqc_x0_distance": {
+    "source": "haversine_distance_km",
+    "min_km": 1.4650674052309467,
+    "max_km": 20.969489380087342,
+    "output_range": [
+      0.0,
+      1.0
+    ],
+    "clip": true
+  },
+  "vqc_x1_congestion": {
+    "source": [
+      "traffic_density_ordinal",
+      "is_rush_hour",
+      "is_adverse_weather"
+    ],
+    "traffic_missing_mode": 0.0,
+    "formula": "clip((traffic_density_ordinal/3)*0.60 + is_rush_hour*0.25 + is_adverse_weather*0.15,0,1)",
+    "output_range": [
+      0.0,
+      1.0
+    ]
+  },
+  "fit_row_count": 29592,
+  "fit_group_count": 819
+}

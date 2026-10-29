@@ -1,0 +1,163 @@
+{
+  "backend_profile": {
+    "cpu": {
+      "batch_size": 128,
+      "device": "cpu",
+      "first_loss": 1.023595929145813,
+      "measured_updates": 3,
+      "median_update_seconds": 0.016899900045245886,
+      "post_update_prediction": [
+        -0.01878109574317932,
+        -0.04597991332411766,
+        0.005006702616810799,
+        -0.021620377898216248,
+        -0.0013273104559630156,
+        -0.08597725629806519,
+        0.023437263444066048,
+        0.006058701314032078
+      ]
+    },
+    "cpu_threads": 8,
+    "cuda": {
+      "batch_size": 128,
+      "device": "cuda",
+      "first_loss": 1.0235958099365234,
+      "measured_updates": 3,
+      "median_update_seconds": 0.05618859990499914,
+      "peak_memory_bytes": 68388864,
+      "post_update_prediction": [
+        -0.018781106919050217,
+        -0.045979950577020645,
+        0.005006722640246153,
+        -0.021620411425828934,
+        -0.0013273581862449646,
+        -0.08597735315561295,
+        0.02343732863664627,
+        0.006058751605451107
+      ]
+    },
+    "gpu": "NVIDIA GeForce RTX 5060 Laptop GPU",
+    "post_update_max_abs_prediction_difference": 9.685754776000977e-08,
+    "purpose": "matched small synthetic forward/backward/Adam update profile; not a production workload",
+    "python": "3.12.10",
+    "torch": "2.14.1+cu130"
+  },
+  "backend_profile_path": ".runtime\\run2\\backend_profile.json",
+  "backend_profile_sha256": "16b937c088255e0ce819db0d2a825d946152aac8233120d25c17ba6e0de34e56",
+  "calibration_metrics_after_freeze": {
+    "baseline60": {
+      "mae_min": 3.0764369391918387,
+      "median_absolute_error_min": 2.653338366567004,
+      "rmse_min": 3.849746853266552
+    },
+    "extended76": {
+      "mae_min": 3.078506991621733,
+      "median_absolute_error_min": 2.6669313112627133,
+      "rmse_min": 3.846651255457078
+    },
+    "gbdt_only": {
+      "mae_min": 3.077069476689172,
+      "median_absolute_error_min": 2.643647408825128,
+      "rmse_min": 3.847571202618295
+    },
+    "ridge_control": {
+      "mae_min": 3.077200240848379,
+      "median_absolute_error_min": 2.6542998332358856,
+      "rmse_min": 3.8473705650594465
+    }
+  },
+  "calibration_rows_held_until_freeze": 1865,
+  "checkpoint_paths": {
+    "baseline60": "baseline60_best.json",
+    "extended76": "extended76_best.json"
+  },
+  "circuit_code_sha256": "801468f544e25ae913c26e1f2131cf5f88b384b8495172da62be9051d5a96ba0",
+  "cuda_available": true,
+  "cuda_name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+  "device": "cpu",
+  "feature_names": [
+    "vqc_x0_distance",
+    "vqc_x1_congestion",
+    "vqc_x2_multidelivery",
+    "vqc_x3_preptime"
+  ],
+  "format": "india_eta_vqc4_run2_training_v1",
+  "input_scale": "committed VQC features, unchanged in [0,1]",
+  "numpy": "1.26.4",
+  "python": "3.12.10",
+  "residual_scale_minutes": 3.889107305742781,
+  "role_algorithm": "Sort unique validation courier IDs by (SHA256(b'india-eta-val-role-v1|20261029|' + courier_id UTF-8) raw digest bytes, courier_id); first floor(N/3) groups=fusion_calibration, remaining groups=model_selection",
+  "run_finished_unix": 1793284933.0781293,
+  "run_started_unix": 1793284856.2244952,
+  "scale_fit": "population std of training OOF residual only; floor 1.0",
+  "seed": 20261029,
+  "selected_alpha": 0.0,
+  "selection_choice": "alpha0_gbdt_only",
+  "selection_metrics": {
+    "baseline60": {
+      "mae_min": 3.1702072209585737,
+      "median_absolute_error_min": 2.7790780882758384,
+      "rmse_min": 3.9328099592823405
+    },
+    "extended76": {
+      "mae_min": 3.171809379360695,
+      "median_absolute_error_min": 2.759695088041674,
+      "rmse_min": 3.933179045841373
+    },
+    "gbdt_only": {
+      "mae_min": 3.1725834746282136,
+      "median_absolute_error_min": 2.7939225849262996,
+      "rmse_min": 3.9320943971729907
+    },
+    "ridge_control": {
+      "mae_min": 3.172206895053659,
+      "median_absolute_error_min": 2.796162762952937,
+      "rmse_min": 3.9319029662576477
+    }
+  },
+  "selection_rows": 4124,
+  "source_hashes": {
+    "gbdt_checkpoint": "f1f94fbcc932f3519aaafcff7dc99d65b7951c0240730e54c320259152bbebdf",
+    "oof_predictions": "78a5461c89387e8630421008b92dfffcc84864e9e25bea7476eefa2c8d48032f",
+    "ridge_control": "5203fe9844a9721cfed1f26411a32bb0ebd872cafa8f64e661c73c2afc8189e2",
+    "validation_predictions": "3d9485c513e6a997516baea1a4a6c497c6021240f9cbf64d524037e9e8753f1a",
+    "validation_role_assignment": "631dbb800d8759858ccbed05345d95549940782fa8c81390e9a4affeb0ba6425"
+  },
+  "stages": {
+    "baseline60": {
+      "best_epoch": 3,
+      "best_selection_mae_min": 3.1702072182866066,
+      "checkpoint_sha256": "6a6458d42ac9561845bd606543f9017f997a01ae31b4afa75a4f554d0d30cffe",
+      "epochs_run": 8,
+      "optimizer_steps": 1856
+    },
+    "extended76": {
+      "best_epoch": 5,
+      "best_selection_mae_min": 3.171809376687596,
+      "checkpoint_sha256": "002626418344b9650a24da3ca02309acc743d9fc57a166899941c1f0d216ec14",
+      "epochs_run": 10,
+      "optimizer_steps": 2320
+    }
+  },
+  "status": "frozen_models_selection_only_no_test_read",
+  "target": "y_true_min - gbdt_pred_min; minutes",
+  "test_partition": "not read, scored, or used; final evaluation is separate after freeze",
+  "thread_count": 8,
+  "torch": "2.14.1+cu130",
+  "train_rows": 29592,
+  "training_code_sha256": "88e0506c94d86c6650270599f4133488b6e2c5059a307bd34859a2c0aee56154",
+  "training_config": {
+    "batch_size": 128,
+    "epochs60_max": 30,
+    "epochs76_max": 25,
+    "loss": "MSE of minute residuals",
+    "lr60": 0.01,
+    "lr76": 0.002,
+    "optimizer": "AdamW",
+    "patience": 5,
+    "resume_requested": false,
+    "weight_decay": 0.0001
+  },
+  "training_log_sha256": "b6ef085a141533085ee7472948515319578c8d76c52897f17fcd4edb632882c7",
+  "validation_predictions_sha256": "13272e72a57e7430c12c4c175105af7359962e1dceae3912ab9a7cbd439cd15d"
+}

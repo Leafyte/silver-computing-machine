@@ -1,0 +1,164 @@
+{
+  "artifacts": {
+    "README.md": {
+      "bytes": 768,
+      "path": "README.md",
+      "sha256": "9e16181a42b83e6edfeb8f933696f38425da05316fcab63765e10be6143b5500"
+    },
+    "baseline60.json": {
+      "bytes": 4011,
+      "path": "baseline60.json",
+      "sha256": "6a6458d42ac9561845bd606543f9017f997a01ae31b4afa75a4f554d0d30cffe"
+    },
+    "circuit.py": {
+      "bytes": 29701,
+      "path": "circuit.py",
+      "sha256": "801468f544e25ae913c26e1f2131cf5f88b384b8495172da62be9051d5a96ba0"
+    },
+    "extended76.json": {
+      "bytes": 4917,
+      "path": "extended76.json",
+      "sha256": "002626418344b9650a24da3ca02309acc743d9fc57a166899941c1f0d216ec14"
+    },
+    "feature_schema.json": {
+      "bytes": 2681,
+      "path": "feature_schema.json",
+      "sha256": "5743a95aadb02b0e6d1869316ded2b4c9da5bde04cc1737e46be56d6b2a4dcc9"
+    },
+    "fusion_policy.json": {
+      "bytes": 1835,
+      "path": "fusion_policy.json",
+      "sha256": "e2869bec6f4f995964dd04426340710f462cca86348697d766d6a1b68fcc8ecf"
+    },
+    "gbdt_model.joblib": {
+      "bytes": 232302,
+      "path": "gbdt_model.joblib",
+      "sha256": "f1f94fbcc932f3519aaafcff7dc99d65b7951c0240730e54c320259152bbebdf"
+    },
+    "preprocessing_artifacts.json": {
+      "bytes": 883,
+      "path": "preprocessing_artifacts.json",
+      "sha256": "df20646f12b77cb9fb03bf831b3373e5f8c9f69d6e5f0c92c35bbd46c682f351"
+    },
+    "reference_fixture.json": {
+      "bytes": 8949,
+      "path": "reference_fixture.json",
+      "sha256": "8ad80479b69ff095f5a43ea71b83fee4ab157995010b7f292c71cb9aaa5fa90b"
+    },
+    "requirements.txt": {
+      "bytes": 51,
+      "path": "requirements.txt",
+      "sha256": "f276c15bb797a2af8b518bb0dd041d0cdb05441d50772414912ef36724e12463"
+    },
+    "ridge_control.json": {
+      "bytes": 3954,
+      "path": "ridge_control.json",
+      "sha256": "5203fe9844a9721cfed1f26411a32bb0ebd872cafa8f64e661c73c2afc8189e2"
+    }
+  },
+  "circuit_sha256": "801468f544e25ae913c26e1f2131cf5f88b384b8495172da62be9051d5a96ba0",
+  "feature_count": 59,
+  "feature_names": [
+    "haversine_distance_km",
+    "departure_hour",
+    "day_of_week",
+    "is_weekend",
+    "is_rush_hour",
+    "is_lunch_rush",
+    "is_dinner_rush",
+    "delivery_person_age_imp",
+    "delivery_person_ratings_imp",
+    "order_to_pickup_min_imp",
+    "order_to_pickup_missing_flag",
+    "vehicle_condition",
+    "multiple_deliveries_imp",
+    "is_festival",
+    "traffic_density_ordinal_imp",
+    "is_adverse_weather",
+    "weather_clean_imp_Cloudy",
+    "weather_clean_imp_Fog",
+    "weather_clean_imp_Sandstorms",
+    "weather_clean_imp_Stormy",
+    "weather_clean_imp_Sunny",
+    "weather_clean_imp_Windy",
+    "traffic_density_clean_High",
+    "traffic_density_clean_Jam",
+    "traffic_density_clean_Low",
+    "traffic_density_clean_Medium",
+    "type_of_order_clean_Buffet",
+    "type_of_order_clean_Drinks",
+    "type_of_order_clean_Meal",
+    "type_of_order_clean_Snack",
+    "type_of_vehicle_clean_bicycle",
+    "type_of_vehicle_clean_electric_scooter",
+    "type_of_vehicle_clean_motorcycle",
+    "type_of_vehicle_clean_scooter",
+    "city_type_clean_imp_Metropolitian",
+    "city_type_clean_imp_Semi-Urban",
+    "city_type_clean_imp_Urban",
+    "city_code_AGR",
+    "city_code_ALH",
+    "city_code_AURG",
+    "city_code_BANG",
+    "city_code_BHP",
+    "city_code_CHEN",
+    "city_code_COIMB",
+    "city_code_DEH",
+    "city_code_GOA",
+    "city_code_HYD",
+    "city_code_INDO",
+    "city_code_JAP",
+    "city_code_KNP",
+    "city_code_KOC",
+    "city_code_KOL",
+    "city_code_LUDH",
+    "city_code_MUM",
+    "city_code_MYS",
+    "city_code_PUNE",
+    "city_code_RANCHI",
+    "city_code_SUR",
+    "city_code_VAD"
+  ],
+  "format": "india_eta_vqc4_cpu_release_v1",
+  "independent_acceptance_sha256": "d24be325f30c9ff2689917cfb7c6d39c0920621e94280b7234ca699334ebfc7a",
+  "inference": {
+    "cloud": false,
+    "device": "CPU",
+    "qpu": false,
+    "torch_required": false
+  },
+  "input_contract": "59 ordered committed numeric features; no identifiers, split labels, or target",
+  "release_name": "India ETA 4-qubit residual VQC CPU release",
+  "release_version": "1.0.0",
+  "reproduced_frozen_checkpoints_bitwise": true,
+  "resource_reproduction": {
+    "cpu_process_seconds": {
+      "baseline60": 242.015625,
+      "extended76": 372.96875,
+      "total": 615.078125
+    },
+    "optimizer_steps": 4176,
+    "wall_seconds": {
+      "baseline60": 30.24630229966715,
+      "extended76": 46.65995969995856,
+      "total": 77.10607420001179
+    },
+    "windows_peak_working_set_bytes": 860368896
+  },
+  "resource_reproduction_sha256": "d4b040187601229b9c472a0fbe990613b79242d6781959964297ea01ca0bd2bd",
+  "retrospective_test_protocol_sha256": "65c443c77f08714aadd88e5eeb7a5f6404ef0c5b4f1621033e5e9322db7adf5f",
+  "selected_alpha": 0.0,
+  "selection_choice": "alpha0_gbdt_only",
+  "source_hashes": {
+    "gbdt_checkpoint": "f1f94fbcc932f3519aaafcff7dc99d65b7951c0240730e54c320259152bbebdf",
+    "oof_predictions": "78a5461c89387e8630421008b92dfffcc84864e9e25bea7476eefa2c8d48032f",
+    "ridge_control": "5203fe9844a9721cfed1f26411a32bb0ebd872cafa8f64e661c73c2afc8189e2",
+    "validation_predictions": "3d9485c513e6a997516baea1a4a6c497c6021240f9cbf64d524037e9e8753f1a",
+    "validation_role_assignment": "631dbb800d8759858ccbed05345d95549940782fa8c81390e9a4affeb0ba6425"
+  },
+  "target": "delivery_duration_min",
+  "target_unit": "minutes",
+  "test_status": "retrospective_exposed_partition",
+  "training_code_sha256": "88e0506c94d86c6650270599f4133488b6e2c5059a307bd34859a2c0aee56154",
+  "training_manifest_sha256": "d12f2ba6f62b1bc760954e7e6de60f1027a871f3ef234768b36c571426e000f3"
+}

@@ -1,0 +1,42 @@
+{
+  "schema": "run2.india.validation_role_protocol.v1",
+  "frozen_at": "2026-10-29",
+  "source_partition": "val",
+  "source_rows_expected": 5989,
+  "source_courier_groups_expected": 175,
+  "assignment": {
+    "algorithm": "deduplicate validation courier_id; sort by (SHA256(b'india-eta-val-role-v1|20261029|' + courier_id UTF-8) digest bytes, courier_id); first floor(N/3) groups fusion_calibration, remainder model_selection",
+    "prefix_ascii": "india-eta-val-role-v1|20261029|",
+    "calibration_role": "fusion_calibration",
+    "selection_role": "model_selection",
+    "groups_per_role_expected": {
+      "fusion_calibration": 58,
+      "model_selection": 117
+    },
+    "counts_are_by": "unique courier groups; record counts depend on original validation group sizes",
+    "labels_used_for_assignment": false,
+    "assignment_artifact": "artifacts/india_eta_recovery/validation_role_assignment.json",
+    "assignment_file_sha256": "c13704aa421e4d05138640c60c73dc734afece75610c1aaf43b2c884524640ef",
+    "assignment_map_sha256": "631dbb800d8759858ccbed05345d95549940782fa8c81390e9a4affeb0ba6425"
+  },
+  "selection_use": [
+    "GBDT validation model selection",
+    "VQC architecture and training epoch selection",
+    "classical residual control selection"
+  ],
+  "calibration_use": [
+    "fit/choose fixed residual fusion scale and clip policy after all model weights are frozen",
+    "decide whether VQC residual is activated"
+  ],
+  "pretest_activation_criterion": {
+    "primary": "selective VQC calibration MAE must be strictly lower than both frozen GBDT and frozen small classical residual control",
+    "guardrail": "selective VQC calibration RMSE must be no worse than either comparator",
+    "failure_action": "set operational VQC alpha to zero; keep trained VQC as experimental only",
+    "evidence_qualification": "calibration rows are used to select the fusion policy; this comparison is calibration evidence, not an unbiased final estimate"
+  },
+  "sealed_test": {
+    "accessible_for_model_selection": false,
+    "accessible_for_fusion_calibration": false,
+    "evaluation_stage": "one independent metric evaluation after model weights, dependencies, preprocessing, fusion policy, and release manifest are frozen"
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "comparisons": {
+    "train": {
+      "all_values_equal_after_float32_rounding": true,
+      "feature_columns": [
+        "vqc_x0_distance",
+        "vqc_x1_congestion",
+        "vqc_x2_multidelivery",
+        "vqc_x3_preptime"
+      ],
+      "max_abs_error": 0.0,
+      "max_abs_error_by_feature": {
+        "vqc_x0_distance": 0.0,
+        "vqc_x1_congestion": 0.0,
+        "vqc_x2_multidelivery": 0.0,
+        "vqc_x3_preptime": 0.0
+      },
+      "rows_exactly_key_matched": 29592,
+      "unique_record_ids": 29592
+    },
+    "val": {
+      "all_values_equal_after_float32_rounding": true,
+      "feature_columns": [
+        "vqc_x0_distance",
+        "vqc_x1_congestion",
+        "vqc_x2_multidelivery",
+        "vqc_x3_preptime"
+      ],
+      "max_abs_error": 0.0,
+      "max_abs_error_by_feature": {
+        "vqc_x0_distance": 0.0,
+        "vqc_x1_congestion": 0.0,
+        "vqc_x2_multidelivery": 0.0,
+        "vqc_x3_preptime": 0.0
+      },
+      "rows_exactly_key_matched": 5989,
+      "unique_record_ids": 5989
+    }
+  },
+  "distance_bounds_train_only_km": {
+    "max": 20.969489380087342,
+    "min": 1.4650674052309467
+  },
+  "equations": {
+    "vqc_x0_distance": "clip((haversine_distance_km - train_distance_min) / (train_distance_max - train_distance_min), 0, 1)",
+    "vqc_x1_congestion": "clip(0.60*traffic_density_ordinal_imp/3 + 0.25*is_rush_hour + 0.15*is_adverse_weather, 0, 1)",
+    "vqc_x2_multidelivery": "clip(multiple_deliveries_imp/3, 0, 1)",
+    "vqc_x3_preptime": "clip((order_to_pickup_min_imp - 5)/10, 0, 1)"
+  },
+  "float32_rounding_contract": "stored VQC columns equal independently recomputed float64 values after IEEE-754 float32 conversion for every compared row and feature",
+  "format": "india_eta_vqc4_independent_feature_mapping_v1",
+  "method": "independent formulas recomputed from committed GBDT-view source columns for each split, then stable-key one-to-one join to frozen OOF/validation four-feature columns",
+  "provenance": {
+    "oof_sha256": "78a5461c89387e8630421008b92dfffcc84864e9e25bea7476eefa2c8d48032f",
+    "portable_code_sha256": "6bcc5f2e8110b32fc349c2020126e8b9e40e0dc51b61369f38686cdc19a8bcae",
+    "preprocessing_sha256": "df20646f12b77cb9fb03bf831b3373e5f8c9f69d6e5f0c92c35bbd46c682f351",
+    "validation_sha256": "3d9485c513e6a997516baea1a4a6c497c6021240f9cbf64d524037e9e8753f1a"
+  },
+  "source": {
+    "caveat": "fastparquet reads the single mixed-split row group; only six raw predictor features and three key/split columns were requested, then train/val rows were retained before transforms or joins.",
+    "non_train_validation_rows_decoded_as_keys_and_features_then_dropped": 5941,
+    "path": "data/indian_delivery_gbdt.parquet",
+    "requested_columns": [
+      "ID",
+      "Delivery_person_ID",
+      "split_partition",
+      "haversine_distance_km",
+      "traffic_density_ordinal_imp",
+      "is_rush_hour",
+      "is_adverse_weather",
+      "multiple_deliveries_imp",
+      "order_to_pickup_min_imp"
+    ],
+    "row_filter_applied": false,
+    "rows_materialized_by_fastparquet": 41522,
+    "sha256": "bd03b47c3d3e23050329cefc69d752aad607031cacdb9696151d237e3534a627",
+    "target_columns_requested": false,
+    "target_or_label_values_read": false,
+    "train_and_validation_rows_retained_before_calculation_or_join": 35581
+  },
+  "status": "PASS"
+}

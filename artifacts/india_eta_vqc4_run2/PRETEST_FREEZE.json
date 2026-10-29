@@ -1,0 +1,64 @@
+{
+  "created_utc": "2026-10-29T14:56:51.476004+00:00",
+  "evaluation_contract": {
+    "expected_courier_groups": 176,
+    "expected_test_rows": 5941,
+    "methods": [
+      "gbdt_only",
+      "ridge_control",
+      "baseline60_candidate",
+      "extended76_candidate",
+      "operational_alpha0"
+    ],
+    "metrics": [
+      "MAE_minutes",
+      "RMSE_minutes",
+      "median_absolute_error_minutes"
+    ],
+    "nonnegative_eta_clip": "max(0, GBDT + correction)",
+    "selection_after_test": false,
+    "single_scoring_attempt": true
+  },
+  "format": "india_eta_vqc4_pretest_freeze_v1",
+  "fusion_policy": {
+    "alpha": 0.0,
+    "choice": "GBDT only; chosen on validation model-selection couriers, not calibration or test",
+    "policy_sha256": "e2869bec6f4f995964dd04426340710f462cca86348697d766d6a1b68fcc8ecf",
+    "selected_variant": null
+  },
+  "git_head": "40bd7fad0166b35b40bbc116e997cbac474e2c22",
+  "hashes": {
+    "baseline60_checkpoint": "6a6458d42ac9561845bd606543f9017f997a01ae31b4afa75a4f554d0d30cffe",
+    "circuit_code": "801468f544e25ae913c26e1f2131cf5f88b384b8495172da62be9051d5a96ba0",
+    "extended76_checkpoint": "002626418344b9650a24da3ca02309acc743d9fc57a166899941c1f0d216ec14",
+    "independent_acceptance": "d24be325f30c9ff2689917cfb7c6d39c0920621e94280b7234ca699334ebfc7a",
+    "package_builder_code": "759b5a3825753402e41ccd1d89b2ec0fda33d10efe469de73da6fae66b8a15b3",
+    "portable_code": "6bcc5f2e8110b32fc349c2020126e8b9e40e0dc51b61369f38686cdc19a8bcae",
+    "protocol": "65c443c77f08714aadd88e5eeb7a5f6404ef0c5b4f1621033e5e9322db7adf5f",
+    "release_archive": "18d5d4859e53d3d59063e60cdcdd45cb6eff6757bba6474f024cdde91aa06b80",
+    "release_manifest": "1a0a2052b655a4306189ed0fe0d5f99be29b0379b0e322cf31aa514eb9200c5b",
+    "reproduction_metrics": "d4b040187601229b9c472a0fbe990613b79242d6781959964297ea01ca0bd2bd",
+    "run_manifest": "d12f2ba6f62b1bc760954e7e6de60f1027a871f3ef234768b36c571426e000f3",
+    "runtime_status": "3b284f63a400368ad0a40860a6837456bec38a6e06df744a35aee1460ff49080",
+    "scorer_code": "70c483bc1be41b57d3267f54f5f15a649942b4f56f6260d1ba6ce445d29a352d",
+    "trainer_code": "88e0506c94d86c6650270599f4133488b6e2c5059a307bd34859a2c0aee56154"
+  },
+  "model_checkpoints": {
+    "baseline60": "6a6458d42ac9561845bd606543f9017f997a01ae31b4afa75a4f554d0d30cffe",
+    "extended76": "002626418344b9650a24da3ca02309acc743d9fc57a166899941c1f0d216ec14"
+  },
+  "portable_release": {
+    "contains_raw_data_or_oof": false,
+    "manifest_sha256": "1a0a2052b655a4306189ed0fe0d5f99be29b0379b0e322cf31aa514eb9200c5b",
+    "zip_sha256": "18d5d4859e53d3d59063e60cdcdd45cb6eff6757bba6474f024cdde91aa06b80"
+  },
+  "resource_reproduction_sha256": "d4b040187601229b9c472a0fbe990613b79242d6781959964297ea01ca0bd2bd",
+  "status": "FROZEN_BEFORE_RETROSPECTIVE_TEST_SCORE",
+  "test_qualification": {
+    "new_4q_test_target_access_before_this_freeze": false,
+    "no_test_values_used_for_model_or_policy_selection": true,
+    "pristine_or_unseen": false,
+    "reason": "The same original test partition was opened/scored in a prior 2Q RUN2 workflow; a later 4Q source-feature filter failure also materialized feature columns for all 5,941 test rows, without target or synthetic labels.",
+    "required_interpretation": "retrospective descriptive evaluation only; never claim an untouched holdout"
+  }
+}

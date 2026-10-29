@@ -1,0 +1,31 @@
+{
+  "run_id": "luna_hgbr_recovery_20261029T131809Z_v4",
+  "protocol_written_at_utc": "2026-10-29T13:30:09.425684+00:00",
+  "change_from_v3": "Correct OOF residual preprocessing to fit GBDT imputers and categorical modes within each GroupKFold training fold; use one VQC feature scaler fit on all original-train covariates and shared across OOF/validation; reuse the v3 final train-only checkpoint, with no GBDT search or refit.",
+  "model_configuration": {
+    "class": "sklearn.ensemble.HistGradientBoostingRegressor",
+    "max_iter": 100,
+    "learning_rate": 0.08,
+    "max_leaf_nodes": 15,
+    "min_samples_leaf": 30,
+    "l2_regularization": 1.0,
+    "max_bins": 255,
+    "early_stopping": false,
+    "random_state": 42
+  },
+  "target": {
+    "name": "delivery_duration_min",
+    "unit": "minutes"
+  },
+  "split_manifest_sha256": "10bee51eebac51bf68813a35a42b06adeb2e30588accdc582bbe9b0d8136c1bb",
+  "source_feature_schema_sha256": "a32f3c4491347be51c10a70d00d5bcc24dbb1d1db11a9a0105e40d809e8bed51",
+  "model_checkpoint_path": "artifacts/run2_india/luna_hgbr_recovery_20261029T131809Z_v3/recovered_eta_gbdt.joblib",
+  "model_checkpoint_sha256": "da709331715ad3fd312e8708f17d0c86a135bec4e1bfaa1d185545db766c351a",
+  "crossfit": {
+    "method": "GroupKFold",
+    "n_splits": 5,
+    "group": "Delivery_person_ID",
+    "partition": "original train"
+  },
+  "test_labels": "not loaded, read, fit, or used in this v4 stage"
+}

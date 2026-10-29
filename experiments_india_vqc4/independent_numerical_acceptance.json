@@ -1,0 +1,67 @@
+{
+  "format": "india_eta_vqc4_independent_numerics_v1",
+  "git_head": "40bd7fad0166b35b40bbc116e997cbac474e2c22",
+  "circuit_sha256": "801468f544e25ae913c26e1f2131cf5f88b384b8495172da62be9051d5a96ba0",
+  "gate_structure": {
+    "qubits": 4,
+    "data_upload_blocks": 5,
+    "trainable_quantum_angles": {"baseline60": 60, "extended76": 76},
+    "readout_parameters": 5,
+    "logical_gates": {"baseline60": 128, "extended76": 144},
+    "ideal_dependency_dag_depth": {"baseline60": 42, "extended76": 46},
+    "depth_method": "parallel gate-layer count with each 4-edge forward/reverse CNOT ring scheduled in two edge-disjoint layers; includes two fixed final basis layers",
+    "scope": "abstract logical schedule only; no compiler, transpiler, backend or hardware depth claim"
+  },
+  "source_test_sha256": {
+    "tests/test_india_vqc4_circuit.py": "b1bdf3c4b1e2a79b0f1885090d032719c1c25c8dcea91e746dae9425f3aea334",
+    "tests/test_india_vqc4_independent_acceptance.py": "eece199b99720b968e448b96c72cbeda901e0ded3aa93f91b19afc26e90c28b7"
+  },
+  "train_oof_input": {
+    "path": "artifacts/india_eta_recovery/oof_predictions.parquet",
+    "sha256": "78a5461c89387e8630421008b92dfffcc84864e9e25bea7476eefa2c8d48032f",
+    "columns_read": [
+      "vqc_x0_distance",
+      "vqc_x1_congestion",
+      "vqc_x2_multidelivery",
+      "vqc_x3_preptime"
+    ],
+    "rows_used": 64,
+    "targets_or_nontrain_rows_read": false
+  },
+  "independent_dense_matrix_reference": {
+    "synthetic_rows": 6,
+    "angle_seeds": {
+      "base60": 420,
+      "extension16": 420
+    },
+    "max_amplitude_absolute_error": {
+      "baseline60": 4.440892098500626e-16,
+      "extended76": 3.065703529144609e-16
+    },
+    "max_state_norm_error": 1.4432899320127035e-15,
+    "z_expectation_and_little_endian_parity": "pass, absolute tolerance 2e-12",
+    "zero_extension_exact_prediction_equality": true
+  },
+  "numerical_observable_jacobian": {
+    "inputs": "64 evenly spaced rows from the train-only OOF file; four feature columns only",
+    "base_angle_seed": 641,
+    "base_angle_draw": "Normal(0, 0.23), 60 angles",
+    "finite_difference_step_radians": 1e-5,
+    "relative_svd_rank_tolerance": 1e-8,
+    "baseline60_local_rank": 60,
+    "extended76_local_rank_at_zero_extension": 76,
+    "rank_increment": 16,
+    "all_extension_directions_independent_of_base_tangent": true,
+    "minimum_extension_column_l2": 1.905566749575765,
+    "minimum_projected_increment_l2": 0.7084040129036802,
+    "interpretation": "local Jacobian rank at the stated initialization/input sample; not evidence of global identifiability"
+  },
+  "automated_tests": {
+    "command": "python -m pytest tests/test_india_vqc4_circuit.py tests/test_india_vqc4_independent_acceptance.py -q -rs",
+    "result": "10 passed in 9.67s",
+    "torch": "2.14.1+cpu",
+    "qPiai": "local StatevectorSimulator parity tests passed for both variants; no cloud or QPU",
+    "limitations": "three nonblocking pandas/fastparquet deprecation warnings; this does not include training or any test-partition evaluation"
+  },
+  "sealed_test_accessed": false
+}

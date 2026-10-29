@@ -1,0 +1,119 @@
+{
+  "captured_at_utc": "2026-10-29T13:05:28.712403+00:00",
+  "current_checkout": "C:\\Users\\avkir\\Downloads\\silver-computing-machine-main\\trainingv3",
+  "original_checkout": "C:\\Users\\avkir\\Downloads\\silver-computing-machine-main\\silver-computing-machine",
+  "host": {
+    "os": "Windows-11-10.0.26200-SP0",
+    "architecture": "AMD64",
+    "python_version": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+    "python_executable": "C:\\Users\\avkir\\Downloads\\silver-computing-machine-main\\silver-computing-machine\\.venv\\Scripts\\python.exe",
+    "processor": "AMD64 Family 26 Model 68 Stepping 0, AuthenticAMD"
+  },
+  "original_runtime_paths": {
+    "venv": {
+      "path": "C:\\Users\\avkir\\Downloads\\silver-computing-machine-main\\silver-computing-machine\\.venv",
+      "exists": true,
+      "is_symlink": false,
+      "is_junction": true,
+      "resolved_path": "C:\\Users\\avkir\\Downloads\\silver-computing-machine-main\\silver-computing-machine-main\\.venv"
+    },
+    "venv_python": {
+      "path": "C:\\Users\\avkir\\Downloads\\silver-computing-machine-main\\silver-computing-machine\\.venv\\Scripts\\python.exe",
+      "exists": true,
+      "is_symlink": false,
+      "is_junction": false,
+      "resolved_path": "C:\\Users\\avkir\\Downloads\\silver-computing-machine-main\\silver-computing-machine-main\\.venv\\Scripts\\python.exe"
+    },
+    "runtime": {
+      "path": "C:\\Users\\avkir\\Downloads\\silver-computing-machine-main\\silver-computing-machine\\.runtime",
+      "exists": true,
+      "is_symlink": false,
+      "is_junction": false,
+      "resolved_path": "C:\\Users\\avkir\\Downloads\\silver-computing-machine-main\\silver-computing-machine\\.runtime"
+    }
+  },
+  "runtime_packages": {
+    "distributions": {
+      "torch": null,
+      "pennylane": null,
+      "qpiai-quantum": "0.3.0",
+      "qpiai-opt": "0.0.9",
+      "numpy": "2.5.4",
+      "pandas": "3.1.0",
+      "scikit-learn": null,
+      "pytest": "9.2.0",
+      "xgboost": null,
+      "lightgbm": null,
+      "numba": "0.68.1",
+      "cupy": null,
+      "jax": null,
+      "jaxlib": null,
+      "tensorflow": null,
+      "cuda-python": null
+    },
+    "modules": {
+      "torch": null,
+      "pennylane": null,
+      "qpiai_quantum": "C:\\Users\\avkir\\Downloads\\silver-computing-machine-main\\silver-computing-machine\\.venv\\Lib\\site-packages\\qpiai_quantum\\__init__.py",
+      "qpiai_opt": "C:\\Users\\avkir\\Downloads\\silver-computing-machine-main\\silver-computing-machine\\.venv\\Lib\\site-packages\\qpiai_opt\\__init__.py",
+      "numba": "C:\\Users\\avkir\\Downloads\\silver-computing-machine-main\\silver-computing-machine\\.venv\\Lib\\site-packages\\numba\\__init__.py",
+      "cupy": null,
+      "jax": null,
+      "tensorflow": null
+    },
+    "imports": {
+      "qpiai_quantum": "imported",
+      "qpiai_opt": "imported"
+    },
+    "torch_runtime": {
+      "available": false,
+      "error_type": "ModuleNotFoundError"
+    },
+    "cuda_runtime": {
+      "available": false,
+      "frameworks": [
+        "PyTorch",
+        "CuPy",
+        "Numba CUDA",
+        "JAX",
+        "TensorFlow"
+      ],
+      "numba_cuda_available": false,
+      "devices": []
+    }
+  },
+  "gpu": {
+    "nvidia_smi": {
+      "available": true,
+      "returncode": 0,
+      "stdout": "Thu Oct 29 18:35:35 2026       \n+-----------------------------------------------------------------------------------------+\n| NVIDIA-SMI 610.88                 KMD Version: 610.88        CUDA UMD Version: 13.3     |\n+-----------------------------------------+------------------------+----------------------+\n| GPU  Name                  Driver-Model | Bus-Id          Disp.A | Volatile Uncorr. ECC |\n| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |\n|                                         |                        |               MIG M. |\n|=========================================+========================+======================|\n|   0  NVIDIA GeForce RTX 5060 ...  WDDM  |   00000000:01:00.0 Off |                  N/A |\n| N/A   48C    P8              4W /   88W |     246MiB /   8151MiB |      0%      Default |\n|                                         |                        |                  N/A |\n+-----------------------------------------+------------------------+----------------------+\n\n+-----------------------------------------------------------------------------------------+\n| Processes:                                                                              |\n|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |\n|        ID   ID                                                               Usage      |\n|=========================================================================================|\n|  No running processes found                                                             |\n+-----------------------------------------------------------------------------------------+",
+      "stderr": ""
+    },
+    "compute_processes": {
+      "available": true,
+      "returncode": 0,
+      "stdout": "44700, [Insufficient Permissions], [N/A]",
+      "stderr": ""
+    }
+  },
+  "candidate_model_artifacts": [],
+  "performance_profile": {
+    "status": "not_run",
+    "reason": "The frozen Indian ETA checkpoint is not present among the searched model artifact paths; benchmarking an invented replacement workload is not valid.",
+    "requested_batch_sizes": [
+      128,
+      256,
+      512
+    ],
+    "requested_correctness_batch": 32,
+    "requested_throughput_batch": 512,
+    "cpu_gpu_comparison": "unavailable until frozen model and its actual two-qubit workload are supplied"
+  },
+  "execution_boundaries": {
+    "packages_installed": false,
+    "serialized_models_loaded": false,
+    "quantum_workload_run": false,
+    "qpu_or_cloud_jobs_submitted": false,
+    "credentials_read_or_recorded": false
+  }
+}

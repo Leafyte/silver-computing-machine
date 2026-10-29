@@ -1,0 +1,39 @@
+{
+  "alpha": 0.0,
+  "correction": "max(0, gbdt_minutes + alpha * vqc_residual_minutes)",
+  "fallback_rule": "alpha=0 unless the selected VQC strictly improves MAE and is no worse in RMSE than both GBDT and the frozen Ridge control on model-selection validation rows",
+  "format": "india_eta_vqc4_fusion_policy_v1",
+  "fusion_calibration_rows_used_for_choice": false,
+  "pretest_feature_access_incident": "the independent audit materialized test feature columns via a fastparquet filter that returned all rows; target and synthetic label columns were never requested/read",
+  "selected_variant": null,
+  "selection_metrics": {
+    "baseline60": {
+      "mae_min": 3.1702072209585737,
+      "median_absolute_error_min": 2.7790780882758384,
+      "rmse_min": 3.9328099592823405
+    },
+    "extended76": {
+      "mae_min": 3.171809379360695,
+      "median_absolute_error_min": 2.759695088041674,
+      "rmse_min": 3.933179045841373
+    },
+    "gbdt_only": {
+      "mae_min": 3.1725834746282136,
+      "median_absolute_error_min": 2.7939225849262996,
+      "rmse_min": 3.9320943971729907
+    },
+    "ridge_control": {
+      "mae_min": 3.172206895053659,
+      "median_absolute_error_min": 2.796162762952937,
+      "rmse_min": 3.9319029662576477
+    }
+  },
+  "selection_role": "117 courier groups / 4,124 validation rows only",
+  "source_checkpoint_sha256": {
+    "baseline60": "6a6458d42ac9561845bd606543f9017f997a01ae31b4afa75a4f554d0d30cffe",
+    "extended76": "002626418344b9650a24da3ca02309acc743d9fc57a166899941c1f0d216ec14"
+  },
+  "source_manifest_sha256": "d12f2ba6f62b1bc760954e7e6de60f1027a871f3ef234768b36c571426e000f3",
+  "test_qualification": "original test partition was previously exposed by a prior 2Q evaluation; any new score is retrospective only",
+  "test_used_for_policy": false
+}
