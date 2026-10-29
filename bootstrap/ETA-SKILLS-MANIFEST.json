@@ -1,0 +1,78 @@
+{
+  "checked_at_utc": "2026-10-29T10:58:12.7830313Z",
+  "scope": "ETA integration additions only; original 25-skill manifest and other untracked skills unchanged",
+  "skills": [
+    {
+      "name": "api-design-principles",
+      "repository": "wshobson/agents",
+      "commit": "0874a27b17a22e2b7c2e2bcd725768e0803cad06",
+      "source_path": "plugins/backend-development/skills/api-design-principles",
+      "license": "MIT",
+      "review": "static_review_complete_with_limits",
+      "activation": "available_next_turn_not_runtime_verified",
+      "files": [
+        {
+          "path": "LICENSE",
+          "bytes": 1088,
+          "sha256": "402666abc624142a13aaf2a6fbeb46bd03b9f9dd53f77704991244134fe8169a"
+        },
+        {
+          "path": "SKILL.md",
+          "bytes": 3603,
+          "sha256": "1f6166c23c0a0f32d703c19d84b3c30c2873daefb9e8732339a009934fa17013"
+        },
+        {
+          "path": "assets/api-design-checklist.md",
+          "bytes": 3884,
+          "sha256": "ef98cb8910cdc555514198df7becc6de8b04e1a98e2291b1440bc62e14cd07e5"
+        },
+        {
+          "path": "assets/rest-api-template.py",
+          "bytes": 5323,
+          "sha256": "b359cda817740ee2cd3c9a901d7d5a14178cc0e2dcb46b75af053e5cc4d6012c"
+        },
+        {
+          "path": "references/details.md",
+          "bytes": 9808,
+          "sha256": "e8b19b192ab1e1e99a5d7fed285670c2cfc0f23877338efe68da56eeaeaf1649"
+        },
+        {
+          "path": "references/graphql-schema-design.md",
+          "bytes": 9005,
+          "sha256": "0f10cbe2f3d787be9de4ab8dcc88444ac36ab69786973666a229fdbffeb01638"
+        },
+        {
+          "path": "references/rest-best-practices.md",
+          "bytes": 7571,
+          "sha256": "675fbafdd5a6d5ac2c17ab97e17c90aa0a10c2a5608860128a8be14764130fae"
+        }
+      ]
+    },
+    {
+      "name": "fastapi-templates",
+      "repository": "wshobson/agents",
+      "commit": "0874a27b17a22e2b7c2e2bcd725768e0803cad06",
+      "source_path": "plugins/api-scaffolding/skills/fastapi-templates",
+      "license": "MIT",
+      "review": "static_review_complete_with_limits",
+      "activation": "available_next_turn_not_runtime_verified",
+      "files": [
+        {
+          "path": "LICENSE",
+          "bytes": 1088,
+          "sha256": "402666abc624142a13aaf2a6fbeb46bd03b9f9dd53f77704991244134fe8169a"
+        },
+        {
+          "path": "SKILL.md",
+          "bytes": 4483,
+          "sha256": "dba8e1287ae03591198ea0ea638bb9862ec3c7b5cbdeb1163368f3ebc9487cb6"
+        },
+        {
+          "path": "references/details.md",
+          "bytes": 13033,
+          "sha256": "5c390fb29a98af4742c489495a76505c5da6bdcf2f336c652186855d1a0bab1a"
+        }
+      ]
+    }
+  ]
+}
