@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "skills": {
+    "cuopt-numerical-optimization-formulation": {
+      "source": "nvidia/skills",
+      "sourceType": "github",
+      "skillPath": "skills/cuopt-numerical-optimization-formulation/SKILL.md",
+      "computedHash": "0472b1d101c3e63dfb7dae62b44219c92fbe28a42d7eb33868df0775e739dcb7"
+    },
+    "xgboost-lightgbm": {
+      "source": "tondevrel/scientific-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/xgboost-lightgbm/SKILL.md",
+      "computedHash": "0d12a2dd6d52e1a1d84aabefdaabd36fc67c99141f0c97aa0d1fc7327a0d0090"
+    }
+  }
+}
