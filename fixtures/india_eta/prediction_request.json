@@ -1,0 +1,22 @@
+{
+  "schema_version": "india_eta.prediction.request.v1",
+  "request_id": "fixture-001",
+  "prediction_time": "2026-01-01T10:00:00+05:30",
+  "source_domain": "india_food_delivery",
+  "geography": "IN",
+  "origin": {"id": "A", "latitude": 12.9, "longitude": 77.5},
+  "destination": {"id": "B", "latitude": 12.91, "longitude": 77.51},
+  "vehicle_type": "car",
+  "features": {
+    "distance_km": 5,
+    "traffic_index": 0.75,
+    "observed_at": {
+      "distance_km": "2026-01-01T09:50:00+05:30",
+      "traffic_index": "2026-01-01T09:55:00+05:30"
+    }
+  },
+  "model_id": "india-eta-linear-fixture",
+  "model_version": "1.0.0",
+  "feature_schema_hash": "sha256:25c0fe95ab8d1cb722a5c7f8c3b9d059c09004ddfee1ebd7bfd5529930838563",
+  "qml_requested": true
+}

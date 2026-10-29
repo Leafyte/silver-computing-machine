@@ -114,11 +114,15 @@ def _validated_locked_prefixes(raw: Any, original: dict[str, Any], plan: dict[st
     return validated
 
 
-def create_app(job_manager: JobManager | None = None, *, auth_config: AuthConfig | None = None) -> FastAPI:
+def create_app(job_manager: JobManager | None = None, *, auth_config: AuthConfig | None = None,
+               eta_db_path=None, eta_registry=None, eta_uncertainty_registry=None,
+               eta_controller=None, eta_job_manager=None) -> FastAPI:
     manager = job_manager
     app = FastAPI(title="DebugLeaf Dispatch API", version="1.0.0")
     auth = auth_config or AuthConfig.from_environment()
     app.state.auth_mode = auth.mode if auth.ready else "misconfigured"
+    from .india_eta.body_limit import EtaBodyLimit
+    app.add_middleware(EtaBodyLimit)
     app.add_middleware(TokenAuthMiddleware, config=auth)
     app.state.job_manager = manager
     compute_slots = BoundedSemaphore(2)
@@ -572,6 +576,11 @@ def create_app(job_manager: JobManager | None = None, *, auth_config: AuthConfig
         return JSONResponse(status_code=422, content={"error": {
             "code": "invalid_request", "message": "request body is invalid"}})
 
+    from .india_eta.api import create_eta_router
+    app.include_router(create_eta_router(app, auth, db_path=eta_db_path,
+                                        registry=eta_registry, uncertainty_registry=eta_uncertainty_registry,
+                                        controller=eta_controller,
+                                        job_manager=eta_job_manager))
     return app
 
 

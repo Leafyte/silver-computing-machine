@@ -1,0 +1,28 @@
+{
+  "schema_version": "india_eta.feature_schema.v1",
+  "feature_order": ["distance_km", "traffic_index"],
+  "features": {
+    "distance_km": {
+      "type": "number",
+      "unit": "km",
+      "minimum": 0,
+      "minimum_inclusive": false,
+      "maximum": null,
+      "maximum_inclusive": null
+    },
+    "traffic_index": {
+      "type": "number",
+      "unit": "dimensionless_0_to_1",
+      "minimum": 0,
+      "minimum_inclusive": true,
+      "maximum": 1,
+      "maximum_inclusive": true
+    }
+  },
+  "observation_time": {
+    "type": "ISO-8601",
+    "timezone_required": true,
+    "one_timestamp_per_feature": true,
+    "constraint": "each_observed_at_must_be_at_or_before_prediction_time"
+  }
+}

@@ -1,0 +1,235 @@
+{
+  "base_commit": "819913ede85194908fc87419ed7a1b0efe7caa6a",
+  "started_at_utc": "2026-10-29T11:13:37Z",
+  "deadline_utc": "2026-10-29T16:13:37Z",
+  "wrap_up_utc": "2026-10-29T15:58:37Z",
+  "authorization": "Owner new bounded India ETA implementation instruction; no prior Terra deadline modified",
+  "limits": {
+    "stress_requests": 20,
+    "max_quantum_variables": 8,
+    "gpu": "none",
+    "max_joint_scenarios": 100,
+    "training": "none",
+    "max_workers": 2,
+    "stress_jobs": 10,
+    "qpu": "none"
+  },
+  "protected_files": [
+    {
+      "path": "backend/__init__.py",
+      "sha256": "cde0991d311e5a1455f77ae94ddde1c5515791435f25f9482626dcb2c842ae81"
+    },
+    {
+      "path": "backend/domain.py",
+      "sha256": "6105e44eaa022b20b2702dcb0a5ac08c5b046758409ef2e03281b5ddfd3b3462"
+    },
+    {
+      "path": "backend/financial.py",
+      "sha256": "d9579a1997b0fe5b464900acc76f4fb2c607ec00ab0e3ac4f64622bb7609505c"
+    },
+    {
+      "path": "backend/jobs.py",
+      "sha256": "bee441f6ad54104d82cea394163f3379eeac9843aafcd12c67bfbd6c5b691ec9"
+    },
+    {
+      "path": "backend/learning_dispatch.py",
+      "sha256": "5c3eebff42f5785354a2a499fb7dcba07a6bd4178dcd81c491a28cd9c9ecfa0d"
+    },
+    {
+      "path": "backend/learning_inference.py",
+      "sha256": "a16a24633d46ede002d64fc4dd16ced92df41200d370e53a7876c3308a1a6a66"
+    },
+    {
+      "path": "backend/prospective_dispatch.py",
+      "sha256": "860012872b8cd758b73fdac0d332649f8d8d35ec8314e7f2301d98ae40a83540"
+    },
+    {
+      "path": "backend/qaoa.py",
+      "sha256": "566484b86f25ef0715080adc8e0864264421438a98edcba3bf437570cd14523c"
+    },
+    {
+      "path": "backend/qaoa_dispatch.py",
+      "sha256": "f0b4025d1a6604dc3aaba4b5c097cc647f05d7b9f0baa98b6caefbaa84fd1d52"
+    },
+    {
+      "path": "backend/qpiai_adapter.py",
+      "sha256": "d89018d8493d312baa1e720833a3ba61e2b42bfe7c6b61140c3be50ff1319798"
+    },
+    {
+      "path": "backend/qpiai_vqc.py",
+      "sha256": "edc1e7914a1957fb18682341160084c65b4f9c0166dbe46dd2e516321ffdb54e"
+    },
+    {
+      "path": "backend/quantum_learning.py",
+      "sha256": "066157feb70c7602868b40a303c3a128d53167b29c03dfc7959fd8b35687192f"
+    },
+    {
+      "path": "backend/qubo.py",
+      "sha256": "d297e30bdce46186612d18a587e19281feb10a1bcdf82e0ba248e9aad8971ecb"
+    },
+    {
+      "path": "backend/recovery.py",
+      "sha256": "f561e99e82078b1bbcc3175d547dec8a10dd7fbf750b075f89866477906c050b"
+    },
+    {
+      "path": "backend/recovery_store.py",
+      "sha256": "b73521cf631e1366bd0f3d5239e1388b2de8f388e59df90580431764f3198b5e"
+    },
+    {
+      "path": "backend/risk.py",
+      "sha256": "1eacecddebd300bf796af23fae2287344955fa81411754d5604edfba4efe649a"
+    },
+    {
+      "path": "backend/validator.py",
+      "sha256": "adbefe37946491c632d98bff4988c33644c8712b9929b1861a0eac855c98c23e"
+    },
+    {
+      "path": "experiments_matched_budget/DATE-CORRECTION.md",
+      "sha256": "26e04411329f3c3a864503c85928b9bc50eb4ccd89d363d3739a85b7fa7f2f22"
+    },
+    {
+      "path": "experiments_matched_budget/INDEPENDENT-VALIDATION.md",
+      "sha256": "4ac0dbc182f58b16d432b6178ca6bb8e05700445cffed61a3a7bd874f61dcf0f"
+    },
+    {
+      "path": "experiments_matched_budget/PRE-RUN-GAP.md",
+      "sha256": "d0e175bcc08757707b2fb13821b5f2b8eed4f39e759dca8f1c50760d190f2bf4"
+    },
+    {
+      "path": "experiments_matched_budget/dataset_manifest.json",
+      "sha256": "0ad8e4099411b87c33f9742a674c132bb3a3bb624aae2a856c7613b1da31d952"
+    },
+    {
+      "path": "experiments_matched_budget/frozen_lock.json",
+      "sha256": "bfa3d80fb84db0d54e261d20f7f28f843a71ee72332a59987bd59e862e98cc08"
+    },
+    {
+      "path": "experiments_matched_budget/pre_generation_freeze.json",
+      "sha256": "630581a62d8abf581d319e5cb7d67ab4fee210074c64eef3013a8dfb15bba3d1"
+    },
+    {
+      "path": "experiments_matched_budget/protocol.json",
+      "sha256": "7819a390b0fd6b1e1bdf3c057dcb6558852a536f2ccf953d414140dc588bb0ba"
+    },
+    {
+      "path": "experiments_matched_budget/results.json",
+      "sha256": "5e108733119fd5480be09497b01e05099587e4130e93a475694d55600f302ba0"
+    },
+    {
+      "path": "experiments_matched_budget/run_experiment.py",
+      "sha256": "637465cdf337402b15895eaa20e2e1d894d7549b81099ad0fa7aa4bdb1a980d7"
+    },
+    {
+      "path": "experiments_matched_budget/tests/test_matched_budget_protocol.py",
+      "sha256": "f8d2862fd4778601e552574bf5903a98d1b216f41418162a7da38bb2af69c5e8"
+    },
+    {
+      "path": "experiments_matched_budget/validate_saved_results.py",
+      "sha256": "d1d51247d047b2c435f9468deaac6664ecb1adc2c151bf411d9502c9899a2b6b"
+    },
+    {
+      "path": "experiments_qaoa/README.md",
+      "sha256": "c6836a38aa508752780d250397851b7a5ea1d13c348f8d0ca898f9aef6c3f775"
+    },
+    {
+      "path": "experiments_qaoa/dispatch_fixture.json",
+      "sha256": "2ece7f8ec41642027636cb3351009b25cedcaf8a483c8a101fbf03b35ea712d3"
+    },
+    {
+      "path": "experiments_qaoa/qpiai_warm_start_results.json",
+      "sha256": "62c907fc5d6c21cd1c5aba3c5cd4894327d91fd83d4d03d81f983a43005d3948"
+    },
+    {
+      "path": "experiments_qaoa/run_qpiai_warm_start.py",
+      "sha256": "621290be0ec7fa57bad3251ef408e60610825a5546411bde975fe7fef7d98193"
+    },
+    {
+      "path": "experiments_qaoa/run_tiny.py",
+      "sha256": "4c6c98ef32316fa59eaa7d94bab26bb00396c89f3e0e2afbd63b5701ca2623e3"
+    },
+    {
+      "path": "experiments_qaoa/tiny_results.json",
+      "sha256": "1e4df18f382adfd86895de8145f3c3f54195679725f6127f5cf4742bb713b79c"
+    },
+    {
+      "path": "experiments_qpiai_vqc/README.md",
+      "sha256": "2bc9831025bf1d2dde48de568f42d7df5bda8c85904676d253ab95c8ab6660cb"
+    },
+    {
+      "path": "experiments_qpiai_vqc/local_decision_update_results.json",
+      "sha256": "492e6ad9532fee403a42eb22846aa80be70b23d1cbecc53dd3e847ed7a1eeaf5"
+    },
+    {
+      "path": "experiments_qpiai_vqc/run_local_decision_update.py",
+      "sha256": "2cdcfaf6f189d831f1422beae5f1c2ca6d56bda7529effbed630c74b4b456662"
+    },
+    {
+      "path": "experiments_strong_baseline/README.md",
+      "sha256": "778b40d1d717d1d0577d502af3f08534735a569516d6a12198766ede8fe8bc5e"
+    },
+    {
+      "path": "experiments_strong_baseline/dataset_manifest.json",
+      "sha256": "fc166128257b6b0970f43a31a71bf590d3063cbbc42b2b1a39bc5748030b5ab9"
+    },
+    {
+      "path": "experiments_strong_baseline/frozen-lock-v1-scikit-blocked.json",
+      "sha256": "389795fbdf27be32980c66b68e7efb8ad4dad6231d1f2963ce6b70bbe4bdfedd"
+    },
+    {
+      "path": "experiments_strong_baseline/frozen_lock.json",
+      "sha256": "3d6651d1909cd62c983c16e9c8732a603c09f998cc2d42d71ab1b83cd646e60a"
+    },
+    {
+      "path": "experiments_strong_baseline/protocol-history.md",
+      "sha256": "e99038b1e841594b18aba27c93242ff18ba882ec4987b557ec7f75fe2534f8ae"
+    },
+    {
+      "path": "experiments_strong_baseline/protocol-v1-scikit-blocked.json",
+      "sha256": "d394205d97b2162440ff7178da8e47274626bf2380863e62f578ada34a6f46f9"
+    },
+    {
+      "path": "experiments_strong_baseline/protocol.json",
+      "sha256": "7ff75a4aa7f43c969f203bd63a09d608934d2ac9212600e19957290924be8bdc"
+    },
+    {
+      "path": "experiments_strong_baseline/results.json",
+      "sha256": "d2b444d2cbbabbde83f15d4eb53a75cca95b214da04c1b9a5b3eb0a73fab321a"
+    },
+    {
+      "path": "experiments_strong_baseline/run_experiment.py",
+      "sha256": "40fb900e328ca169f6edd6f2448318db8edcd879b69581a33d202f883bc29ddd"
+    },
+    {
+      "path": "experiments_v1_1/V1_1_OPTIMIZATION_REPORT.md",
+      "sha256": "08b048f2be514239df35a68961ad02572adaab9ea205b181579150380a5a70f0"
+    },
+    {
+      "path": "experiments_v1_1/artifact_contract.py",
+      "sha256": "84e2e83807242a37da8f53eeaf692b4a3cd69a1d43242d7d6f73f431c2b0e1a1"
+    },
+    {
+      "path": "experiments_v1_1/artifacts/exported_hybrid_contract_sample.json",
+      "sha256": "80cd6f7326609f93e2985250c9cc4bef9628a19123aa711b19ab21ddc4972a61"
+    },
+    {
+      "path": "experiments_v1_1/decision_quality.py",
+      "sha256": "626631895107dcb6e09dbce1a3902df639c6202739f1ad6cc2f515d7148958d3"
+    },
+    {
+      "path": "experiments_v1_1/mathematical_verification.py",
+      "sha256": "4450394e8fe6e93d9ac9ed30d523e4413fff9843c4dff5ad41f6e74017efa393"
+    },
+    {
+      "path": "experiments_v1_1/quantum_optimization.py",
+      "sha256": "397324127fcad2924d5e28ff752dbad308ec2b7be7a1836b0a7fc79cd58f059c"
+    },
+    {
+      "path": "experiments_v1_1/results_v1_1.json",
+      "sha256": "8d20eff95fb21940c31680f67d1cd451a14bbb8cdef0948238fe48126f242e59"
+    },
+    {
+      "path": "experiments_v1_1/run_benchmarks.py",
+      "sha256": "3a3fc9c706701c8d585f19b9fe66366333c297c4ea48a8297c1863b5d2aca458"
+    }
+  ]
+}

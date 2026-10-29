@@ -1,0 +1,9 @@
+{
+  "checked_at_utc": "2026-10-29T11:46:25.5545320Z",
+  "file_count": 54,
+  "mismatches": [],
+  "actual_existing_application_diff": [
+    "backend/api.py",
+    "backend/auth.py"
+  ]
+}

@@ -1,0 +1,270 @@
+{
+  "schema_version": "debugleaf.india_eta.synthetic_workflow.v1",
+  "evidence_label": "synthetic_fixture",
+  "register": {
+    "plan_id": "departed-plan",
+    "version": 1,
+    "model_version": "fixture-m1",
+    "as_of": "2026-10-29T10:00:00Z",
+    "scenario": {
+      "depot": "D",
+      "vehicles": [
+        {
+          "id": "V1",
+          "capacity": 2
+        },
+        {
+          "id": "V2",
+          "capacity": 2
+        }
+      ],
+      "orders": [
+        {
+          "id": "A",
+          "demand": 1,
+          "window": [
+            0,
+            1000
+          ],
+          "service": 0,
+          "penalty": 20
+        },
+        {
+          "id": "B",
+          "demand": 1,
+          "window": [
+            0,
+            1000
+          ],
+          "service": 0,
+          "penalty": 20
+        }
+      ],
+      "travel": {
+        "D": {
+          "D": 0,
+          "A": 1,
+          "B": 1
+        },
+        "A": {
+          "D": 1,
+          "A": 0,
+          "B": 1
+        },
+        "B": {
+          "D": 1,
+          "A": 1,
+          "B": 0
+        }
+      }
+    },
+    "weighted_scenarios": [
+      {
+        "id": "base",
+        "weight": 1.0,
+        "travel": {
+          "D": {
+            "D": 0,
+            "A": 1,
+            "B": 1
+          },
+          "A": {
+            "D": 1,
+            "A": 0,
+            "B": 1
+          },
+          "B": {
+            "D": 1,
+            "A": 1,
+            "B": 0
+          }
+        },
+        "source_label": "synthetic_overlay",
+        "prediction_target": "travel_time"
+      }
+    ],
+    "plan": {
+      "status": "feasible",
+      "routes": [
+        {
+          "vehicle_id": "V1",
+          "order_ids": [
+            "A",
+            "B"
+          ],
+          "stops": [
+            {
+              "order_id": "A",
+              "arrival": 1.0,
+              "service_start": 1.0,
+              "departure": 1.0,
+              "lateness": 0.0,
+              "penalty_exposure": 0.0
+            },
+            {
+              "order_id": "B",
+              "arrival": 2.0,
+              "service_start": 2.0,
+              "departure": 2.0,
+              "lateness": 0.0,
+              "penalty_exposure": 0.0
+            }
+          ],
+          "return_time": 3.0,
+          "travel_cost": 3.0,
+          "lateness_exposure": 0.0,
+          "objective": 3.0
+        }
+      ],
+      "objective": 3.0,
+      "travel_cost": 3.0,
+      "lateness_exposure": 0.0
+    },
+    "switching_cost_threshold": 0.1,
+    "switching_cost": 0.0,
+    "cooldown_seconds": 0.0,
+    "hysteresis_cost_threshold": 0.0,
+    "mode": "synthetic_scenario"
+  },
+  "event": {
+    "event_id": "departed-event",
+    "plan_id": "departed-plan",
+    "plan_version": 1,
+    "model_version": "fixture-m1",
+    "as_of": "2026-10-29T10:01:00Z",
+    "observed_state": [
+      {
+        "vehicle_id": "V1",
+        "position": "D",
+        "position_type": "simulated",
+        "elapsed_minutes": 0,
+        "available_at": 20,
+        "completed_prefix": []
+      },
+      {
+        "vehicle_id": "V2",
+        "position": "D",
+        "position_type": "simulated",
+        "elapsed_minutes": 0,
+        "available_at": 0,
+        "completed_prefix": []
+      }
+    ],
+    "scenario": {
+      "depot": "D",
+      "vehicles": [
+        {
+          "id": "V1",
+          "capacity": 2
+        },
+        {
+          "id": "V2",
+          "capacity": 2
+        }
+      ],
+      "orders": [
+        {
+          "id": "A",
+          "demand": 1,
+          "window": [
+            0,
+            10
+          ],
+          "service": 0,
+          "penalty": 20
+        },
+        {
+          "id": "B",
+          "demand": 1,
+          "window": [
+            0,
+            10
+          ],
+          "service": 0,
+          "penalty": 20
+        }
+      ],
+      "travel": {
+        "D": {
+          "D": 0,
+          "A": 1,
+          "B": 1
+        },
+        "A": {
+          "D": 1,
+          "A": 0,
+          "B": 1
+        },
+        "B": {
+          "D": 1,
+          "A": 1,
+          "B": 0
+        }
+      }
+    },
+    "weighted_scenarios": [
+      {
+        "id": "event",
+        "weight": 1.0,
+        "travel": {
+          "D": {
+            "D": 0,
+            "A": 1,
+            "B": 1
+          },
+          "A": {
+            "D": 1,
+            "A": 0,
+            "B": 1
+          },
+          "B": {
+            "D": 1,
+            "A": 1,
+            "B": 0
+          }
+        },
+        "source_label": "synthetic_overlay",
+        "prediction_target": "travel_time"
+      }
+    ],
+    "event_type": "delay",
+    "mode": "synthetic_scenario"
+  },
+  "candidate_plan": {
+    "status": "feasible",
+    "routes": [
+      {
+        "vehicle_id": "V2",
+        "order_ids": [
+          "A",
+          "B"
+        ],
+        "stops": [
+          {
+            "order_id": "A",
+            "arrival": 1.0,
+            "service_start": 1.0,
+            "departure": 1.0,
+            "lateness": 0.0,
+            "penalty_exposure": 0.0
+          },
+          {
+            "order_id": "B",
+            "arrival": 2.0,
+            "service_start": 2.0,
+            "departure": 2.0,
+            "lateness": 0.0,
+            "penalty_exposure": 0.0
+          }
+        ],
+        "return_time": 3.0,
+        "travel_cost": 3.0,
+        "lateness_exposure": 0.0,
+        "objective": 3.0
+      }
+    ],
+    "objective": 3.0,
+    "travel_cost": 3.0,
+    "lateness_exposure": 0.0
+  }
+}

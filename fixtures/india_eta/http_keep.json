@@ -1,0 +1,363 @@
+{
+  "schema_version": "india_eta.demo.v1",
+  "source": "synthetic_fixture",
+  "register": {
+    "plan_id": "keep",
+    "version": 1,
+    "model_version": "fixture-v1",
+    "as_of": "2026-10-29T10:00:00Z",
+    "scenario": {
+      "depot": "D",
+      "vehicles": [
+        {
+          "id": "V_keep",
+          "capacity": 2
+        }
+      ],
+      "orders": [
+        {
+          "id": "A",
+          "demand": 1,
+          "window": [
+            0,
+            12
+          ],
+          "service": 0,
+          "penalty": 10
+        },
+        {
+          "id": "B",
+          "demand": 1,
+          "window": [
+            0,
+            100
+          ],
+          "service": 0,
+          "penalty": 0
+        }
+      ],
+      "travel": {
+        "D": {
+          "D": 0,
+          "A": 10,
+          "B": 1
+        },
+        "A": {
+          "D": 1,
+          "A": 0,
+          "B": 1
+        },
+        "B": {
+          "D": 1,
+          "A": 1,
+          "B": 0
+        }
+      }
+    },
+    "weighted_scenarios": [
+      {
+        "id": "joint1",
+        "weight": 1.0,
+        "travel": {
+          "D": {
+            "D": 0,
+            "A": 10,
+            "B": 1
+          },
+          "A": {
+            "D": 1,
+            "A": 0,
+            "B": 1
+          },
+          "B": {
+            "D": 1,
+            "A": 1,
+            "B": 0
+          }
+        },
+        "source_label": "synthetic_overlay",
+        "prediction_target": "travel_time"
+      }
+    ],
+    "plan": {
+      "status": "feasible",
+      "routes": [
+        {
+          "vehicle_id": "V_keep",
+          "order_ids": [
+            "A",
+            "B"
+          ],
+          "stops": [
+            {
+              "order_id": "A",
+              "arrival": 10.0,
+              "service_start": 10.0,
+              "departure": 10.0,
+              "lateness": 0.0,
+              "penalty_exposure": 0.0
+            },
+            {
+              "order_id": "B",
+              "arrival": 11.0,
+              "service_start": 11.0,
+              "departure": 11.0,
+              "lateness": 0.0,
+              "penalty_exposure": 0.0
+            }
+          ],
+          "return_time": 12.0,
+          "travel_cost": 12.0,
+          "lateness_exposure": 0.0,
+          "objective": 12.0
+        }
+      ],
+      "objective": 12.0,
+      "travel_cost": 12.0,
+      "lateness_exposure": 0.0
+    },
+    "currency": "XTS",
+    "operating_rate": 1.0,
+    "switching_cost": 0,
+    "cooldown_seconds": 30,
+    "mode": "synthetic_scenario"
+  },
+  "event": {
+    "event_id": "keep_event",
+    "plan_id": "keep",
+    "plan_version": 1,
+    "model_version": "fixture-v1",
+    "as_of": "2026-10-29T10:01:00Z",
+    "event_type": "delay",
+    "scenario": {
+      "depot": "D",
+      "vehicles": [
+        {
+          "id": "V_keep",
+          "capacity": 2
+        }
+      ],
+      "orders": [
+        {
+          "id": "A",
+          "demand": 1,
+          "window": [
+            0,
+            12
+          ],
+          "service": 0,
+          "penalty": 10
+        },
+        {
+          "id": "B",
+          "demand": 1,
+          "window": [
+            0,
+            100
+          ],
+          "service": 0,
+          "penalty": 0
+        }
+      ],
+      "travel": {
+        "D": {
+          "D": 0,
+          "A": 10,
+          "B": 1
+        },
+        "A": {
+          "D": 1,
+          "A": 0,
+          "B": 1
+        },
+        "B": {
+          "D": 1,
+          "A": 1,
+          "B": 0
+        }
+      }
+    },
+    "weighted_scenarios": [
+      {
+        "id": "joint1",
+        "weight": 1.0,
+        "travel": {
+          "D": {
+            "D": 0,
+            "A": 10,
+            "B": 1
+          },
+          "A": {
+            "D": 1,
+            "A": 0,
+            "B": 1
+          },
+          "B": {
+            "D": 1,
+            "A": 1,
+            "B": 0
+          }
+        },
+        "source_label": "synthetic_overlay",
+        "prediction_target": "travel_time"
+      }
+    ],
+    "mode": "synthetic_scenario",
+    "observed_state": [
+      {
+        "vehicle_id": "V_keep",
+        "position": "D",
+        "position_type": "simulated",
+        "elapsed_minutes": 1.0,
+        "available_at": 1.0,
+        "completed_prefix": []
+      }
+    ]
+  },
+  "observed_result": {
+    "event_id": "keep_event",
+    "status": "succeeded",
+    "request_sha256": "9c58830db01caf17582bd62d66e5f33e27e590e585de5c247ff09fe599547edf",
+    "result": {
+      "event_id": "keep_event",
+      "plan_id": "keep",
+      "status": "KEEP",
+      "reason": "no_material_change",
+      "expected_cost_before": 12.0,
+      "expected_cost_after": 12.0,
+      "material_cost_delta": 0.0,
+      "current_projection": {
+        "schema_version": "debugleaf.india_eta.optimization.v1",
+        "status": "projected",
+        "valid": true,
+        "projection_mode": "synthetic_scenario",
+        "evaluation": {
+          "valid": true,
+          "expected_cost": {
+            "amount": 12.0,
+            "currency": "XTS",
+            "transport_cost": 12.0,
+            "late_penalty_cost": 0.0
+          },
+          "scenario_costs": [
+            {
+              "id": "joint1",
+              "weight": 1.0,
+              "remaining_travel_minutes": 12.0,
+              "transport_cost_proxy": 12.0,
+              "currency": "XTS",
+              "late_penalty_cost": 0.0,
+              "total_cost_proxy": 12.0,
+              "hard_window_violation": false
+            }
+          ],
+          "hard_window_violation_frequency": 0
+        },
+        "state_mode": {
+          "V_keep": "simulated"
+        },
+        "plan": {
+          "routes": [
+            {
+              "vehicle_id": "V_keep",
+              "order_ids": [
+                "A",
+                "B"
+              ],
+              "position": "D",
+              "position_type": "simulated",
+              "elapsed_minutes": 1.0,
+              "available_at": 1.0,
+              "remaining_stops": [],
+              "future_stops": [
+                {
+                  "order_id": "A",
+                  "scenario_id": "joint1",
+                  "arrival": 11.0,
+                  "service_start": 11.0,
+                  "departure": 11.0,
+                  "waiting": 0.0,
+                  "service_minutes": 0.0,
+                  "lateness": 0.0,
+                  "penalty_exposure": 0.0,
+                  "hard_window_violation": false
+                },
+                {
+                  "order_id": "B",
+                  "scenario_id": "joint1",
+                  "arrival": 12.0,
+                  "service_start": 12.0,
+                  "departure": 12.0,
+                  "waiting": 0.0,
+                  "service_minutes": 0.0,
+                  "lateness": 0.0,
+                  "penalty_exposure": 0.0,
+                  "hard_window_violation": false
+                }
+              ]
+            }
+          ]
+        },
+        "prefix_validation": {
+          "valid": true,
+          "completed_stops": [],
+          "immutable_prefixes": {
+            "V_keep": []
+          }
+        },
+        "expected_remaining_cost": {
+          "remaining_travel_minutes": 12.0,
+          "currency": "XTS",
+          "transport_cost_proxy": 12.0,
+          "late_penalty_cost": 0.0,
+          "total_cost_proxy": 12.0,
+          "hard_window_violation_frequency": 0
+        },
+        "scenario_costs": [
+          {
+            "id": "joint1",
+            "weight": 1.0,
+            "remaining_travel_minutes": 12.0,
+            "transport_cost_proxy": 12.0,
+            "currency": "XTS",
+            "late_penalty_cost": 0.0,
+            "total_cost_proxy": 12.0,
+            "hard_window_violation": false
+          }
+        ],
+        "scenario_sources": [
+          {
+            "id": "joint1",
+            "source_label": "synthetic_overlay",
+            "prediction_target": "travel_time"
+          }
+        ],
+        "source_note": "caller-labeled travel-time matrices; no India full-delivery model is used as a travel arc",
+        "scenario_specific_future_stops": true,
+        "validator_scope": "state-aware prefix and route projection; backend.validator.validate_plan is depot-static and intentionally not applied to live state"
+      },
+      "context_hash": "1d39a981813ce3881119031d288746e6e296168b66f66b6bf6ecd7a2c211a652"
+    },
+    "error": null,
+    "submitted_at": "2026-10-29T11:46:22.227875+00:00",
+    "completed_at": "2026-10-29T11:46:22.238284+00:00",
+    "deadline_epoch": 1793274392.2278755,
+    "metadata": {
+      "execution_type": "local_cpu",
+      "python": "3.12.14",
+      "backend": "eta_controller",
+      "seed": 7,
+      "max_workers": 2,
+      "max_retained_jobs": 256,
+      "timeout_seconds": 10.0,
+      "dependency_versions": {
+        "fastapi": "0.162.0",
+        "pydantic": "2.14.1"
+      },
+      "implementation_sha256": "541222b82e6957dbe87ab47864d924a914dde4c652b133e3088ce59d1abd3eb5",
+      "data_provenance": "synthetic_joint_scenarios; full source inputs persisted",
+      "qpu_job_id": "not_applicable",
+      "quantum_sdk": "not used"
+    }
+  }
+}

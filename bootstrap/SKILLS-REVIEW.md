@@ -1,5 +1,7 @@
 # Project-local skill bootstrap review
 
+Owner-requested ETA integration additions (2026-10-29) are reviewed separately in [ETA-SKILLS-REVIEW.md](ETA-SKILLS-REVIEW.md), with pinned file hashes in [ETA-SKILLS-MANIFEST.json](ETA-SKILLS-MANIFEST.json). The original 25-skill audit below remains a historical bounded snapshot.
+
 **Date:** 2026-10-28  
 **Status:** 25 skills installed under `.agents/skills/`; static source, file, license, and metadata checks passed. Activation in a fresh agent turn is **NOT TESTED**.
 
